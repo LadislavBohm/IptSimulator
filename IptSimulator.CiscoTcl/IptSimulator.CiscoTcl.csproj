@@ -11,6 +11,8 @@
     <AssemblyName>IptSimulator.CiscoTcl</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +36,10 @@
       <HintPath>packages\Eagle.1.0.6119.57133\lib\Eagle.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>packages\NLog.4.3.9\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,7 +50,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Abstractions\CiscoTclCommand.cs" />
+    <Compile Include="Commands\FsmDefine.cs" />
+    <Compile Include="Commands\LegCollectDigits.cs" />
+    <Compile Include="Commands\LegConnect.cs" />
+    <Compile Include="Commands\LegDisconnect.cs" />
+    <Compile Include="Commands\LegSetupPack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="IptSimulator.Core\IptSimulator.Core.csproj">
+      <Project>{e0db2147-83fc-46e5-a0f1-110f72af1ed9}</Project>
+      <Name>IptSimulator.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Eagle.1.0.6119.57133\build\Eagle.targets" Condition="Exists('packages\Eagle.1.0.6119.57133\build\Eagle.targets')" />
