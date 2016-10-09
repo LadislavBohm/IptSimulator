@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Eagle._Components.Public;
 
-namespace IptSimulator.Core
+namespace IptSimulator.CiscoTcl.Utils
 {
     public class TclUtils
     {
@@ -62,14 +57,28 @@ namespace IptSimulator.Core
             return result.String == "1";
         }
 
-        public static bool SetVariable(Interpreter interpreter, ref Result result, string variableName, string value = "")
+        public static bool SetVariable(Interpreter interpreter, ref Result result, string variableName, string value)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(variableName));
             if (value == null) throw new ArgumentNullException(nameof(value));
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(value));
 
             var code = interpreter.EvaluateScript($"set {variableName} {value}", ref result);
+
+            return code == ReturnCode.Ok;
+        }
+
+        public static bool GetVariableValue(Interpreter interpreter, ref Result result, string variableName)
+        {
+            if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+            if (result == null) throw new ArgumentNullException(nameof(result));
+            if (string.IsNullOrWhiteSpace(variableName))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(variableName));
+
+            var code = interpreter.EvaluateScript($"set {variableName}", ref result);
 
             return code == ReturnCode.Ok;
         }
