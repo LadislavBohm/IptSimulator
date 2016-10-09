@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Commands\Abstractions\CiscoTclCommand.cs" />
     <Compile Include="Commands\FsmDefine.cs" />
+    <Compile Include="Model\FsmTransition.cs" />
     <Compile Include="Commands\LegCollectDigits.cs" />
     <Compile Include="Commands\LegConnect.cs" />
     <Compile Include="Commands\LegDisconnect.cs" />

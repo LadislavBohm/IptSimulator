@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,14 +7,13 @@ using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
+using IptSimulator.CiscoTcl.Model;
 using IptSimulator.Core;
 
 namespace IptSimulator.CiscoTcl.Commands
 {
     public class FsmDefine : CiscoTclCommand
     {
-        private readonly IDictionary<string,string> _transitions = new Dictionary<string, string>();
-
         public FsmDefine() : base(
             new CommandData("fsm define", null, null, null, typeof(FsmDefine).FullName, CommandFlags.None, null, 0))
         {
@@ -37,7 +35,7 @@ namespace IptSimulator.CiscoTcl.Commands
             var fsmArray = arguments[2];
             var initialState = arguments[3];
 
-            if (!interpreter.ArrayExists(fsmArray))
+            if (!TclUtils.ArrayExists(interpreter,fsmArray))
             {
                 var arrayNotExists = $"Array of fsm states with name: {fsmArray} does not exist (is not defined).";
 
@@ -47,27 +45,31 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
+            //TODO: vyresit, zda validovat existenci stavu v array (projeti vsech eventu a kontrola v array?)
+            //if (!TclUtils.ArrayKeyExists(interpreter,fsmArray, "CALL_INIT,ev_setup_indication"))
+            //{
+            //    var stateNotExists = $"State {initialState} does not exists in array {fsmArray}.";
 
-            result = $"Defining initial FSM state: {arguments.Last()}";
-            return ReturnCode.Ok;
-        }
+            //    BaseLogger.Error(stateNotExists);
+            //    result = stateNotExists;
 
-        
+            //    return ReturnCode.Error;
+            //}
 
-        private bool ProcedureExists(Interpreter interpreter, string procedureName)
-        {
-            if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
-            if (string.IsNullOrEmpty(procedureName))
-                throw new ArgumentException("Value cannot be null or empty.", nameof(procedureName));
+            BaseLogger.Info($"Setting FSM current state to {initialState}");
 
-            Result result = null;
-            ReturnCode code = interpreter.EvaluateScript($"info procs {procedureName}", ref result);
-
-            if (code != ReturnCode.Ok)
+            if (TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmCurrentStateVariable, initialState))
             {
-                return false;
+                BaseLogger.Info($"FSM current state was successfully set to {initialState}.");
             }
-            return !string.IsNullOrEmpty(result.String);
+            else
+            {
+                BaseLogger.Error($"Could not set FSM current state. Error: {result.String}");
+            }
+
+            result = $"FSM initial state {initialState} was successfully defined.";
+
+            return ReturnCode.Ok;
         }
     }
 }

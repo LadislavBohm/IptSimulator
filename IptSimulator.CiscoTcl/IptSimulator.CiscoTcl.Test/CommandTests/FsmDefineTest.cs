@@ -7,8 +7,11 @@ namespace IptSimulator.CiscoTcl.Test.CommandTests
     public class FsmDefineTest : InterpreterTestBase
     {
         [Theory,
-            InlineData("fsm define fsm CALL_INIT", "CALL_INIT"),
-            InlineData("fsm define fsm any_state", "any_state")]
+            InlineData("set fsm(CALL_INIT,ev_setup_indication) \"act_Setup, same_state\"\n" +
+                       "fsm define fsm CALL_INIT", "CALL_INIT"),
+            InlineData("set fsm(CALL_INIT,ev_setup_indication) \"act_Setup, same_state\"\n" +
+                       "set fsm(any_state,ev_disconnected)  \"act_Cleanup,same_state\"\n" +
+                       "fsm define fsm any_state", "any_state")]
         public void DefineFsm_ValidArguments_ReturnOk(string script, string expectedResult)
         {
             Result result = null;
