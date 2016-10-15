@@ -19,6 +19,8 @@ namespace IptSimulator.CiscoTcl.Test
 
         public string Pinovnice => ReadScriptFromEmbeddedResources("pinovnice.tcl");
 
+        public string FsmStateChanging => ReadScriptFromEmbeddedResources("fsm_state_changing.tcl");
+
         #endregion
 
         #region Helper methods

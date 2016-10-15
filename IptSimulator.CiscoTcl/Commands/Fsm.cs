@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
+using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
 using IptSimulator.CiscoTcl.Utils;
 
@@ -16,9 +18,10 @@ namespace IptSimulator.CiscoTcl.Commands
     {
         private const string DefineCommand = "define";
         private const string SetStateCommand = "setstate";
+        private const string RaiseEventCommand = "raise";
 
         public Fsm() : base(
-            new CommandData("fsm_define", null, null, null, typeof(Fsm).FullName, CommandFlags.None, null, 0))
+            new CommandData("fsm", null, null, null, typeof(Fsm).FullName, CommandFlags.None, null, 0))
         {
         }
 
@@ -26,15 +29,130 @@ namespace IptSimulator.CiscoTcl.Commands
         {
         }
 
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+            ref Result result)
         {
-            if (ValidateArguments(arguments, out result) != ReturnCode.Ok) return ReturnCode.Error;
-
-            if (arguments[1] == DefineCommand)
+            try
             {
-                return ExecuteDefine(interpreter,clientData,arguments,ref result);
+                if (ValidateArguments(arguments, out result) != ReturnCode.Ok) return ReturnCode.Error;
+
+                if (arguments[1] == DefineCommand)
+                {
+                    return ExecuteDefine(interpreter, clientData, arguments, ref result);
+                }
+                if (arguments[1] == SetStateCommand)
+                {
+                    return ExecuteSetState(interpreter, clientData, arguments, ref result);
+                }
+                if (arguments[1] == RaiseEventCommand)
+                {
+                    return ExecuteRaiseEvent(interpreter, clientData, arguments, ref result);
+                }
+
+                var invalidArgs = $"Invalid argument {arguments[1]} in FSM command.";
+
+                BaseLogger.Error(invalidArgs);
+                result = invalidArgs;
+                return ReturnCode.Error;
             }
-            return ExecuteSetState(interpreter,clientData,arguments, ref result);
+            catch (Exception e)
+            {
+                BaseLogger.Error(e,"Unexpected error occured while executing Fsm command. " +
+                                   $"Arguments: {(arguments == null ? "NULL" : string.Join(",",arguments))}");
+                return ReturnCode.Error;
+            }
+        }
+
+        private ReturnCode ExecuteRaiseEvent(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+            ref Result result)
+        {
+            var raisedEvent = arguments[2];
+
+            if (!CiscoTclEvents.All.Contains(raisedEvent.String))
+            {
+                BaseLogger.Error($"Event {raisedEvent} is not valid Cisco TCL event.");
+                BaseLogger.Debug($"Valid CiscoTcl events are: [{string.Join(", ", CiscoTclEvents.All)}]");
+
+                result = $"Event {raisedEvent} is not valid Cisco TCL event.";
+                return ReturnCode.Error;
+            }
+
+            if (!TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable))
+            {
+                var fsmStateArrayNotFound = $"Could not determine fsm array name. Checked for variable {TclConstants.FsmStatesArrayNameVariable}";
+
+                BaseLogger.Error(fsmStateArrayNotFound);
+                result = fsmStateArrayNotFound;
+                return ReturnCode.Error;
+            }
+
+            var fsmArray = result.String;
+            IEnumerable<FsmTransition> transitions;
+
+            if (!FsmUtils.TryGetFsmTransitions(interpreter, fsmArray, out transitions))
+            {
+                var transitionsFailed = $"Failed to get FSM transitions. Fsm array: {fsmArray}";
+
+                BaseLogger.Error(transitionsFailed);
+                result = transitionsFailed;
+                return ReturnCode.Error;
+            }
+
+            var transition = transitions.FirstOrDefault(t => t.Event == raisedEvent);
+
+            if (transition == null)
+            {
+                var transitionNotDefined = $"Transition for event {raisedEvent} is not defined in FSM.";
+
+                BaseLogger.Warn(transitionNotDefined);
+                result = transitionNotDefined;
+                return ReturnCode.Ok;
+            }
+            
+            BaseLogger.Info($"Found transition for event {raisedEvent} is {transition}.");
+
+            if (!TclUtils.ProcedureExists(interpreter, transition.Procedure))
+            {
+                var procedureNotExists = $"Procedure {transition.Procedure} which is defined in transition {transition} does not exist.";
+
+                BaseLogger.Error(procedureNotExists);
+                result = procedureNotExists;
+                return ReturnCode.Error;
+            }
+
+            var currentStateToSet = transition.DetermineActualTargetState();
+
+            if (!FsmUtils.ContainsState(interpreter, ref result, fsmArray, currentStateToSet))
+            {
+                var notDefinedState = $"Target state {currentStateToSet} defined in transition is not defined in FSM state array";
+
+                BaseLogger.Error(notDefinedState);
+                BaseLogger.Info($"Executed transition: {transition}");
+                result = notDefinedState;
+                return ReturnCode.Error;
+            }
+
+            var code = interpreter.EvaluateScript($"{transition.Procedure}", ref result);
+
+            if (code != ReturnCode.Ok)
+            {
+                var error = $"Error occured while executing procedure {transition.Procedure}. Error: {result.String}";
+
+                BaseLogger.Error(error);
+                result = error;
+                return ReturnCode.Error;
+            }
+
+            if (!TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmCurrentStateVariable,currentStateToSet))
+            {
+                var error = $"Error while setting current FSM state after executing procedure {transition.Procedure}. State: {currentStateToSet}. Error: {result}";
+
+                BaseLogger.Error(error);
+                result = error;
+                return ReturnCode.Error;
+            }
+
+            return ReturnCode.Ok;
         }
 
         private ReturnCode ExecuteDefine(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
@@ -93,13 +211,7 @@ namespace IptSimulator.CiscoTcl.Commands
         private ReturnCode ExecuteSetState(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
             ref Result result)
         {
-            if ((arguments == null) || (arguments.Count != 3))
-            {
-                result = Utility.WrongNumberOfArguments(this, 1, arguments, "fsm_state");
-
-                return ReturnCode.Error;
-            }
-
+            //TODO: upravit tak, aby stav vlozilo do promenne overriden state a ten potom po presunu do stavu zase smazala
             var fsmState = arguments[2];
 
             if (!TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable))
@@ -122,9 +234,9 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            if (!TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmCurrentStateVariable, fsmState))
+            if (!TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmOverriddenStateVariable, fsmState))
             {
-                var errorSettingState = $"Error occured while setting state {fsmState}. Error: {result.String}";
+                var errorSettingState = $"Error occured while setting overriden state {fsmState}. Error: {result.String}";
 
                 BaseLogger.Error(errorSettingState);
                 result = errorSettingState;
@@ -147,7 +259,7 @@ namespace IptSimulator.CiscoTcl.Commands
                 result = Utility.WrongNumberOfArguments(this, 2, null, "define/setstate");
                 return ReturnCode.Error;
             }
-            if (arguments.Count == 3 && arguments[1] != SetStateCommand)
+            if (arguments.Count == 3 && (arguments[1] != SetStateCommand && arguments[1] != RaiseEventCommand))
             {
                 result = Utility.WrongNumberOfArguments(this, 1, arguments, "fsm_state");
                 return ReturnCode.Error;
@@ -157,9 +269,9 @@ namespace IptSimulator.CiscoTcl.Commands
                 result = Utility.WrongNumberOfArguments(this, 2, arguments, "fsm_array init_state");
                 return ReturnCode.Error;
             }
-            if (arguments[1] != DefineCommand && arguments[1] != SetStateCommand)
+            if (arguments[1] != DefineCommand && arguments[1] != SetStateCommand && arguments[1] != RaiseEventCommand)
             {
-                result = $"Unknown FSM command {arguments[1]}, must be one of [{DefineCommand}, {SetStateCommand}]";
+                result = $"Unknown FSM command {arguments[1]}, must be one of [{DefineCommand}, {SetStateCommand}, {RaiseEventCommand}]";
                 return ReturnCode.Error;
             }
             result = string.Empty;

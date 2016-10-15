@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Eagle._Components.Public;
+using IptSimulator.CiscoTcl.Events;
+using IptSimulator.CiscoTcl.Model;
 
 namespace IptSimulator.CiscoTcl.Utils
 {
@@ -74,13 +78,38 @@ namespace IptSimulator.CiscoTcl.Utils
         public static bool GetVariableValue(Interpreter interpreter, ref Result result, string variableName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
-            if (result == null) throw new ArgumentNullException(nameof(result));
             if (string.IsNullOrWhiteSpace(variableName))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(variableName));
 
             var code = interpreter.EvaluateScript($"set {variableName}", ref result);
 
             return code == ReturnCode.Ok;
+        }
+
+        public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Interpreter interpreter)
+        {
+            if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+
+            Result result = null;
+            var code = interpreter.EvaluateScript("info vars", ref result);
+
+            if (code != ReturnCode.Ok)
+            {
+                return Enumerable.Empty<VariableWithValue>().ToList();
+            }
+
+            var variables = result.String.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            var variablesWithValues = new List<VariableWithValue>();
+
+            foreach (var variable in variables)
+            {
+                if (GetVariableValue(interpreter, ref result, variable) && !string.IsNullOrWhiteSpace(result))
+                {
+                    variablesWithValues.Add(new VariableWithValue(variable,result.String));
+                }
+            }
+
+            return variablesWithValues;
         }
     }
 }
