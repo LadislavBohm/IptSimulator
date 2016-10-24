@@ -21,6 +21,8 @@ namespace IptSimulator.CiscoTcl.Test
 
         public string FsmStateChanging => ReadScriptFromEmbeddedResources("fsm_state_changing.tcl");
 
+        public string FsmRaiseEvent => ReadScriptFromEmbeddedResources("fsm_event_raise_with_setstate.tcl");
+
         #endregion
 
         #region Helper methods

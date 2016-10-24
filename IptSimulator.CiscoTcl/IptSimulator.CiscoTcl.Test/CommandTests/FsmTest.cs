@@ -188,6 +188,12 @@ namespace IptSimulator.CiscoTcl.Test.CommandTests
             EvaluateAndExpectSuccess(ScriptProvider.FsmStateChanging,"FOURTH_STATE", new Fsm());
         }
 
+        [Fact]
+        public void RaiseFsmStateWithSetState_FromScript_ThirdState()
+        {
+            EvaluateAndExpectSuccess(ScriptProvider.FsmRaiseEvent, "THIRD_STATE", new Fsm());
+        }
+
         #endregion
 
     }

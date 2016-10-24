@@ -77,9 +77,9 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            if (!TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable))
+            if (!TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable, true))
             {
-                var fsmStateArrayNotFound = $"Could not determine fsm array name. Checked for variable {TclConstants.FsmStatesArrayNameVariable}";
+                var fsmStateArrayNotFound = $"Could not determine fsm array name. Checked for variable {TclConstants.FsmStatesArrayNameVariable}, Error: {result}";
 
                 BaseLogger.Error(fsmStateArrayNotFound);
                 result = fsmStateArrayNotFound;
@@ -87,6 +87,16 @@ namespace IptSimulator.CiscoTcl.Commands
             }
 
             var fsmArray = result.String;
+            if (!TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmCurrentStateVariable, true))
+            {
+                var fsmCurrentStateNotFound = $"Could not determine FSM current state. Checked for variable {TclConstants.FsmCurrentStateVariable}, Error: {result}";
+
+                BaseLogger.Error(fsmCurrentStateNotFound);
+                result = fsmCurrentStateNotFound;
+                return ReturnCode.Error;
+            }
+
+            var currentState = result.String;
             IEnumerable<FsmTransition> transitions;
 
             if (!FsmUtils.TryGetFsmTransitions(interpreter, fsmArray, out transitions))
@@ -98,8 +108,7 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            var transition = transitions.FirstOrDefault(t => t.Event == raisedEvent);
-
+            var transition = transitions.FirstOrDefault(t => t.SourceState == currentState && t.Event == raisedEvent);
             if (transition == null)
             {
                 var transitionNotDefined = $"Transition for event {raisedEvent} is not defined in FSM.";
@@ -120,20 +129,7 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            var currentStateToSet = transition.DetermineActualTargetState();
-
-            if (!FsmUtils.ContainsState(interpreter, ref result, fsmArray, currentStateToSet))
-            {
-                var notDefinedState = $"Target state {currentStateToSet} defined in transition is not defined in FSM state array";
-
-                BaseLogger.Error(notDefinedState);
-                BaseLogger.Info($"Executed transition: {transition}");
-                result = notDefinedState;
-                return ReturnCode.Error;
-            }
-
             var code = interpreter.EvaluateScript($"{transition.Procedure}", ref result);
-
             if (code != ReturnCode.Ok)
             {
                 var error = $"Error occured while executing procedure {transition.Procedure}. Error: {result.String}";
@@ -143,15 +139,44 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            if (!TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmCurrentStateVariable,currentStateToSet))
+            //next state MUST be determined after executing procedure, because in procedure there can be setstate
+            string nextStateToSet;
+            if (TclUtils.VariableExists(interpreter, ref result, TclConstants.FsmOverriddenStateVariable) &&
+                TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmOverriddenStateVariable, true))
             {
-                var error = $"Error while setting current FSM state after executing procedure {transition.Procedure}. State: {currentStateToSet}. Error: {result}";
+                //if overridden state variable is set and we successfully get it's value, set it as next state
+                nextStateToSet = result;
+            }
+            else
+            {
+                //if not, just determine state from transition
+                nextStateToSet = transition.DetermineActualTargetState();
+            }
+
+            if (!FsmUtils.ContainsState(interpreter, ref result, fsmArray, nextStateToSet))
+            {
+                var notDefinedState = $"Target state {nextStateToSet} defined in transition is not defined in FSM state array";
+
+                BaseLogger.Error(notDefinedState);
+                BaseLogger.Info($"Executed transition: {transition}");
+                result = notDefinedState;
+                return ReturnCode.Error;
+            }
+
+            if (!TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmCurrentStateVariable,nextStateToSet, true))
+            {
+                var error = $"Error while setting current FSM state after executing procedure {transition.Procedure}. State: {nextStateToSet}. Error: {result}";
 
                 BaseLogger.Error(error);
                 result = error;
                 return ReturnCode.Error;
             }
 
+            //unset overridden state no matter if it was or was not used
+            //also don't care for result of unset, just try to do it
+            TclUtils.UnsetVariable(interpreter, ref result, TclConstants.FsmOverriddenStateVariable);
+
+            result = $"FSM current state is {nextStateToSet}";
             return ReturnCode.Ok;
         }
 
@@ -182,7 +207,7 @@ namespace IptSimulator.CiscoTcl.Commands
             }
 
             BaseLogger.Debug($"Settings FSM state array variable name to {fsmArray}.");
-            if (TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable, fsmArray))
+            if (TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable, fsmArray, true))
             {
                 BaseLogger.Debug($"FSM state array variable name was successfully set to {fsmArray}.");
             }
@@ -193,7 +218,7 @@ namespace IptSimulator.CiscoTcl.Commands
             }
 
             BaseLogger.Debug($"Setting FSM current state to {initialState}");
-            if (TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmCurrentStateVariable, initialState))
+            if (TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmCurrentStateVariable, initialState, true))
             {
                 BaseLogger.Debug($"FSM current state was successfully set to {initialState}.");
             }
@@ -214,9 +239,9 @@ namespace IptSimulator.CiscoTcl.Commands
             //TODO: upravit tak, aby stav vlozilo do promenne overriden state a ten potom po presunu do stavu zase smazala
             var fsmState = arguments[2];
 
-            if (!TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable))
+            if (!TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmStatesArrayNameVariable, true))
             {
-                var fsmStateArrayNotFound = $"Could not determine fsm array name. Checked for variable {TclConstants.FsmStatesArrayNameVariable}";
+                var fsmStateArrayNotFound = $"Could not determine fsm array name. Checked for variable {TclConstants.FsmStatesArrayNameVariable}. Error: {result}.";
                 BaseLogger.Error(fsmStateArrayNotFound);
                 result = fsmStateArrayNotFound;
 
@@ -234,7 +259,7 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            if (!TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmOverriddenStateVariable, fsmState))
+            if (!TclUtils.SetVariable(interpreter, ref result, TclConstants.FsmOverriddenStateVariable, fsmState, true))
             {
                 var errorSettingState = $"Error occured while setting overriden state {fsmState}. Error: {result.String}";
 
@@ -243,7 +268,7 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            result = $"FSM successfully set to state {fsmState}.";
+            result = $"FSM overridden state successfuly set to {fsmState}.";
             return ReturnCode.Ok;
         }
 

@@ -61,7 +61,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return result.String == "1";
         }
 
-        public static bool SetVariable(Interpreter interpreter, ref Result result, string variableName, string value)
+        public static bool SetVariable(Interpreter interpreter, ref Result result, string variableName, string value, bool global)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
@@ -70,46 +70,75 @@ namespace IptSimulator.CiscoTcl.Utils
             if (string.IsNullOrWhiteSpace(value))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(value));
 
-            var code = interpreter.EvaluateScript($"set {variableName} {value}", ref result);
+            string defineAsGlobal = global ? $"global {variableName}" : string.Empty;
+            var code = interpreter.EvaluateScript($"{defineAsGlobal}\nset {variableName} {value}", ref result);
 
             return code == ReturnCode.Ok;
         }
 
-        public static bool GetVariableValue(Interpreter interpreter, ref Result result, string variableName)
+        public static bool UnsetVariable(Interpreter interpreter, ref Result result, string variableName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(variableName));
 
-            var code = interpreter.EvaluateScript($"set {variableName}", ref result);
+            var code = interpreter.EvaluateScript($"unset {variableName}", ref result);
 
             return code == ReturnCode.Ok;
         }
 
-        public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Interpreter interpreter)
+        public static bool GetVariableValue(Interpreter interpreter, ref Result result, string variableName, bool global)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+            if (string.IsNullOrWhiteSpace(variableName))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(variableName));
 
-            Result result = null;
-            var code = interpreter.EvaluateScript("info vars", ref result);
+            var code = interpreter.EvaluateScript($"set {(global ? "::" : string.Empty)}{variableName}", ref result);
+
+            return code == ReturnCode.Ok;
+        }
+
+        //public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Interpreter interpreter)
+        //{
+        //    if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+
+        //    Result result = null;
+        //    var code = interpreter.EvaluateScript("info vars", ref result);
+
+        //    if (code != ReturnCode.Ok)
+        //    {
+        //        return Enumerable.Empty<VariableWithValue>().ToList();
+        //    }
+
+        //    var variables = result.String.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+        //    var variablesWithValues = new List<VariableWithValue>();
+
+        //    foreach (var variable in variables)
+        //    {
+        //        if (GetVariableValue(interpreter, ref result, variable) && !string.IsNullOrWhiteSpace(result))
+        //        {
+        //            variablesWithValues.Add(new VariableWithValue(variable,result.String));
+        //        }
+        //    }
+
+        //    return variablesWithValues;
+        //}
+
+        public static bool VariableExists(Interpreter interpreter, ref Result result, string variableName)
+        {
+            if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+            if (string.IsNullOrWhiteSpace(variableName))
+                throw new ArgumentException("Value cannot be null or whitespace.", nameof(variableName));
+
+            var code = interpreter.EvaluateScript($"info exists {variableName}", ref result);
+
 
             if (code != ReturnCode.Ok)
             {
-                return Enumerable.Empty<VariableWithValue>().ToList();
+                return false;
             }
 
-            var variables = result.String.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-            var variablesWithValues = new List<VariableWithValue>();
-
-            foreach (var variable in variables)
-            {
-                if (GetVariableValue(interpreter, ref result, variable) && !string.IsNullOrWhiteSpace(result))
-                {
-                    variablesWithValues.Add(new VariableWithValue(variable,result.String));
-                }
-            }
-
-            return variablesWithValues;
+            return result.String == "1";
         }
     }
 }

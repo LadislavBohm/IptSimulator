@@ -80,6 +80,7 @@
     <Compile Include="InterpreterTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScriptDataProvider.cs" />
+    <EmbeddedResource Include="Scripts\fsm_event_raise_with_setstate.tcl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
