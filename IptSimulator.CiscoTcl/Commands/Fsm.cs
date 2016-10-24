@@ -139,19 +139,7 @@ namespace IptSimulator.CiscoTcl.Commands
                 return ReturnCode.Error;
             }
 
-            //next state MUST be determined after executing procedure, because in procedure there can be setstate
-            string nextStateToSet;
-            if (TclUtils.VariableExists(interpreter, ref result, TclConstants.FsmOverriddenStateVariable) &&
-                TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmOverriddenStateVariable, true))
-            {
-                //if overridden state variable is set and we successfully get it's value, set it as next state
-                nextStateToSet = result;
-            }
-            else
-            {
-                //if not, just determine state from transition
-                nextStateToSet = transition.DetermineActualTargetState();
-            }
+            var nextStateToSet = DetermineNextState(interpreter, ref result, transition);
 
             if (!FsmUtils.ContainsState(interpreter, ref result, fsmArray, nextStateToSet))
             {
@@ -178,6 +166,24 @@ namespace IptSimulator.CiscoTcl.Commands
 
             result = $"FSM current state is {nextStateToSet}";
             return ReturnCode.Ok;
+        }
+
+        private static string DetermineNextState(Interpreter interpreter, ref Result result, FsmTransition transition)
+        {
+            //next state MUST be determined after executing procedure, because in procedure there can be setstate
+            string nextStateToSet;
+            if (TclUtils.VariableExists(interpreter, ref result, TclConstants.FsmOverriddenStateVariable) &&
+                TclUtils.GetVariableValue(interpreter, ref result, TclConstants.FsmOverriddenStateVariable, true))
+            {
+                //if overridden state variable is set and we successfully get it's value, set it as next state
+                nextStateToSet = result;
+            }
+            else
+            {
+                //if not, just determine state from transition
+                nextStateToSet = transition.DetermineActualTargetState();
+            }
+            return nextStateToSet;
         }
 
         private ReturnCode ExecuteDefine(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
