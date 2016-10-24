@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IptSimulator.CiscoTcl.Test"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IptSimulator.Core", "IptSimulator.Core\IptSimulator.Core.csproj", "{E0DB2147-83FC-46E5-A0F1-110F72AF1ED9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IptSimulator.Client", "..\IptSimulator.Client\IptSimulator.Client.csproj", "{A107EC57-08CF-4FEA-AD82-125EF68BC275}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,22 @@ Global
 		{E0DB2147-83FC-46E5-A0F1-110F72AF1ED9}.Release|x64.Build.0 = Release|Any CPU
 		{E0DB2147-83FC-46E5-A0F1-110F72AF1ED9}.Release|x86.ActiveCfg = Release|Any CPU
 		{E0DB2147-83FC-46E5-A0F1-110F72AF1ED9}.Release|x86.Build.0 = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|ARM.Build.0 = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|x64.Build.0 = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Debug|x86.Build.0 = Debug|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|ARM.ActiveCfg = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|ARM.Build.0 = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|x64.ActiveCfg = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|x64.Build.0 = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|x86.ActiveCfg = Release|Any CPU
+		{A107EC57-08CF-4FEA-AD82-125EF68BC275}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
