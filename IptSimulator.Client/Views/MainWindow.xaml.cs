@@ -16,7 +16,7 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 
-namespace IptSimulator.Client
+namespace IptSimulator.Client.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
