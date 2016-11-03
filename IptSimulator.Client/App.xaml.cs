@@ -15,9 +15,9 @@ using IptSimulator.CiscoTcl.Commands;
 using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.Exceptions;
 using IptSimulator.Client.Views;
-using IptSimulator.Core;
+using IptSimulator.Core.Tcl;
 using NLog;
-using TclKeywords = IptSimulator.Core.Tcl.TclKeywords;
+
 
 namespace IptSimulator.Client
 {
@@ -49,7 +49,6 @@ namespace IptSimulator.Client
                     var result = HighlightingLoader.Load(reader, HighlightingManager.Instance);
 
                     HighlightingManager.Instance.RegisterHighlighting("TCL", new[] { ".tcl" }, result);
-
                 }
             }
             catch (Exception e)

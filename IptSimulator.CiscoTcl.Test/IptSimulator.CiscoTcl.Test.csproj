@@ -89,7 +89,7 @@
     <None Include="Scripts\pinovnice.tcl" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IptSimulator.CiscoTcl.csproj">
+    <ProjectReference Include="..\IptSimulator.CiscoTcl\IptSimulator.CiscoTcl.csproj">
       <Project>{eee0c038-33f7-41f7-99bb-112e21eb1683}</Project>
       <Name>IptSimulator.CiscoTcl</Name>
     </ProjectReference>

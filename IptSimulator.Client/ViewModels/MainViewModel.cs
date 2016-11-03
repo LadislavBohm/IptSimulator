@@ -51,16 +51,16 @@ namespace IptSimulator.Client.ViewModels
                                return;
                            }
 
+                           _logger.Debug("TEST DEBUG ");
+                           _logger.Warn("TES WARNING");
                            try
                            {
                                var code = _interpreter.EvaluateScript($"fsm raise {selectedEvent.Event}", ref _result);
                                _logger.Info($"RESULT CODE IS: {code}, RESULT VALUE IS: {_result.String}");
-                               MessageBox.Show($"RESULT CODE IS: {code}, RESULT VALUE IS: {_result.String}");
                            }
                            catch (Exception e)
                            {
                                _logger.Error(e,$"EXCEPTION OCCURED: {e.Message}");
-                               MessageBox.Show($"EXCEPTION OCCURED: {e.Message}");
                                throw;
                            }
                        }));

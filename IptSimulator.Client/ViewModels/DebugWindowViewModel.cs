@@ -31,6 +31,8 @@ namespace IptSimulator.Client.ViewModels
         public bool Error { get; set; } = true;
         public string LoggerFilter { get; set; } = string.Empty;
 
+        public string MessageFilter { get; set; } = string.Empty;
+
         public ObservableCollection<LogViewModel> Logs { get; set; } = new ObservableCollection<LogViewModel>();
         
         #endregion
@@ -86,6 +88,11 @@ namespace IptSimulator.Client.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(LoggerFilter) && 
                 !log.Logger.ToUpper().Contains(LoggerFilter.ToUpper()))
+            {
+                return false;
+            }
+            if(!string.IsNullOrWhiteSpace(MessageFilter) &&
+               !log.Message.ToUpper().Contains(MessageFilter.ToUpper()))
             {
                 return false;
             }
