@@ -36,6 +36,10 @@
       <HintPath>..\packages\Eagle.1.0.6119.57133\lib\Eagle.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.3.10\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,7 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompletionResult.cs" />
+    <Compile Include="ICompletionManager.cs" />
+    <Compile Include="ICompletionResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tcl\TclKeywords.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

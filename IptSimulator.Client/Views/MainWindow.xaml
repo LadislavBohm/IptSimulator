@@ -5,16 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:IptSimulator.Client"
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:controls="clr-namespace:IptSimulator.Client.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1050" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="900" Width="1300" WindowStartupLocation="CenterScreen">
     <Grid DataContext="{Binding Path=Main, Source={StaticResource Locator}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="240"/>
             <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="300"/>
+        </Grid.RowDefinitions>
 
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="0"
+              Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
@@ -46,16 +52,17 @@
         </Grid>
 
         <GridSplitter Grid.Column="1"
+                      Grid.Row="0"
                       Width="2"
                       HorizontalAlignment="Stretch" 
                       Background="LightGray"/>
+
+        <controls:TclEditor Grid.Column="2" 
+                            Grid.Row="0"/>
         
-        <avalonedit:TextEditor Grid.Column="2"
-                               Name="CenterTclEditor"
-                               WordWrap="True"
-                               SyntaxHighlighting="C#"
-                               >
-            
-        </avalonedit:TextEditor>
+        <Grid Grid.Row="1"
+              Grid.Column="2">
+            <controls:DebugWindow/>
+        </Grid>
     </Grid>
 </Window>

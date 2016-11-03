@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Command;
 using IptSimulator.CiscoTcl.Commands;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.Client.Model;
+using NLog;
 using PropertyChanged;
 
 namespace IptSimulator.Client.ViewModels
@@ -17,6 +18,7 @@ namespace IptSimulator.Client.ViewModels
     [ImplementPropertyChanged]
     public class MainViewModel
     {
+        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private Result _result;
         private readonly Interpreter _interpreter;
         private RelayCommand<EventWithDescription> _raiseEventCommand;
@@ -28,7 +30,9 @@ namespace IptSimulator.Client.ViewModels
             long token = 0;
             _interpreter.AddCommand(new Fsm(), null, ref token, ref _result);
             Events = new ObservableCollection<EventWithDescription>(
-                    CiscoTclEvents.All.Select(e => new EventWithDescription(e, e)));
+                    CiscoTclEvents.All.
+                    Select(e => new EventWithDescription(e, e))
+                    .OrderBy(e => e.Description));
         }
 
         public ObservableCollection<EventWithDescription> Events { get; set; }
@@ -50,10 +54,12 @@ namespace IptSimulator.Client.ViewModels
                            try
                            {
                                var code = _interpreter.EvaluateScript($"fsm raise {selectedEvent.Event}", ref _result);
+                               _logger.Info($"RESULT CODE IS: {code}, RESULT VALUE IS: {_result.String}");
                                MessageBox.Show($"RESULT CODE IS: {code}, RESULT VALUE IS: {_result.String}");
                            }
                            catch (Exception e)
                            {
+                               _logger.Error(e,$"EXCEPTION OCCURED: {e.Message}");
                                MessageBox.Show($"EXCEPTION OCCURED: {e.Message}");
                                throw;
                            }
