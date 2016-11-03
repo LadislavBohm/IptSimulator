@@ -26,19 +26,19 @@ namespace IptSimulator.Client.Model
                 _tclEvents = new HashSet<ICompletionResult>();
                 foreach (var tclEvent in CiscoTclEvents.All)
                 {
-                    _tclEvents.Add(new CompletionResult(tclEvent, tclEvent));
+                    _tclEvents.Add(new CompletionResult(tclEvent, 3));
                 }
 
                 _tclKeywords = new HashSet<ICompletionResult>();
                 foreach (var keyword in TclKeywords.All)
                 {
-                    _tclKeywords.Add(new CompletionResult(keyword, keyword));
+                    _tclKeywords.Add(new CompletionResult(keyword, 1));
                 }
 
                 _customTclCommands = new HashSet<ICompletionResult>();
                 foreach (var command in CustomCommandsProvider.GetCustomCommands())
                 {
-                    _customTclCommands.Add(new CompletionResult(command.Name, command.Name));
+                    _customTclCommands.Add(new CompletionResult(command.Name, 1));
                 }
 
                 _allCompletions = new HashSet<ICompletionResult>();
@@ -59,7 +59,26 @@ namespace IptSimulator.Client.Model
         {
             try
             {
-                return _allCompletions.OrderBy(c => c.Text);
+                var splitted = wholeScript
+                    .Split(' ')
+                    .Where(part => !part.Contains("#") && 
+                                   !part.Contains("{") && 
+                                   !part.Contains("}") && 
+                                   !part.Contains("-") &&
+                                   !part.Contains("(") &&
+                                   !part.Contains(")") &&
+                                   !part.Contains(",") &&
+                                   !part.Contains(";"))
+                    .Select(part => new CompletionResult(part, 1));
+
+                var result = new List<ICompletionResult>();
+
+                result.AddRange(_allCompletions);
+
+                result.AddRange(splitted.Where(fromScript => !_allCompletions.Contains(fromScript)));
+
+                return result;
+                
             }
             catch (Exception e)
             {

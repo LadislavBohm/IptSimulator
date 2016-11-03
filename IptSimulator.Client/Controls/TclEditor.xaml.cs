@@ -110,7 +110,7 @@ namespace IptSimulator.Client.Controls
             foreach (var completionResult in _completionManager.GetCompletions(MainTextEditor.Document.Text))
             {
                 i++;
-                data.Add(new EditorCompletionData(_tclIcon, completionResult.Text, i));
+                data.Add(new EditorCompletionData(_tclIcon, completionResult.Text, completionResult.Priority + i));
             }
 
             if (data.Count == 0)

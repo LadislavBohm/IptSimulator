@@ -2,7 +2,7 @@
 {
     public interface ICompletionResult
     {
-        string Description { get; }
+        int Priority { get; }
         string Text { get; }
     }
 }

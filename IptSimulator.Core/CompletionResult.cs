@@ -8,13 +8,13 @@ namespace IptSimulator.Core
 {
     public class CompletionResult : ICompletionResult
     {
-        public CompletionResult(string text, string description)
+        public CompletionResult(string text, int priority)
         {
             Text = text;
-            Description = description;
+            Priority = priority;
         }
 
         public string Text { get; }
-        public string Description { get; }
+        public int Priority { get; }
     }
 }
