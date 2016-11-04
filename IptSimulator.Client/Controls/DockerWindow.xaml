@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="IptSimulator.Client.Controls.DockerWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IptSimulator.Client.Controls"
+             xmlns:dockctrl="http://schemas.xceed.com/wpf/xaml/avalondock"
+             xmlns:docks="clr-namespace:IptSimulator.Client.ViewModels.Dockable"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <Style TargetType="{x:Type dockctrl:LayoutItem}" x:Key="LayoutItemStyle">
+                <Setter Property="Title" Value="{Binding Model.Title}"/>
+                <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <dockctrl:DockingManager
+        DataContext="{Binding Source={StaticResource Locator}, Path=DockManager}"
+        DocumentsSource="{Binding Documents}"
+        AnchorablesSource="{Binding Anchorables}"
+        LayoutItemContainerStyle="{StaticResource LayoutItemStyle}"
+        AllowMixedOrientation="True">
+        
+        <dockctrl:DockingManager.Resources>
+            <DataTemplate DataType="{x:Type docks:TclEditorViewModel}">
+                <local:TclEditor DataContext="{Binding}"/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type docks:DebugWindowViewModel}">
+                <local:DebugWindow DataContext="{Binding}"/>
+            </DataTemplate>
+        </dockctrl:DockingManager.Resources> 
+
+    </dockctrl:DockingManager>
+</UserControl>
+
+
+

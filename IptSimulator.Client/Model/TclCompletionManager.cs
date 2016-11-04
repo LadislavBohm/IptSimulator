@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Utils;
+using IptSimulator.Client.Model.Interfaces;
 using IptSimulator.Core;
 using IptSimulator.Core.Tcl;
 using NLog;

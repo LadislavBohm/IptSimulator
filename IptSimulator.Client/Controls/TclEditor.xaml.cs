@@ -22,6 +22,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
 using IptSimulator.Client.Exceptions;
+using IptSimulator.Client.Model.Interfaces;
 using IptSimulator.Client.Views;
 using IptSimulator.Core;
 using NLog;

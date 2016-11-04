@@ -3,66 +3,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:IptSimulator.Client"
-        xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:controls="clr-namespace:IptSimulator.Client.Controls"
         mc:Ignorable="d"
         Title="MainWindow" Height="900" Width="1300" WindowStartupLocation="CenterScreen">
-    <Grid DataContext="{Binding Path=Main, Source={StaticResource Locator}}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="240"/>
-            <ColumnDefinition Width="2"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+
+    <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="300"/>
         </Grid.RowDefinitions>
-
-        <Grid Grid.Column="0"
-              Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Button Margin="10,4,10,4"
-                        HorizontalAlignment="Left"
-                        Width="100"
-                        Content="Raise"
-                        Command="{Binding RaiseEventCommand}"
-                        CommandParameter="{Binding Path=SelectedItem, ElementName=EventsListBox}"/>
-                <Button Margin="10,4,10,4"
-                        HorizontalAlignment="Right"
-                        Width="100"
-                        Content="Evaluate"
-                        Command="{Binding EvaluateScriptCommand}"
-                        CommandParameter="{Binding Path=Document.Text, ElementName=CenterTclEditor}"/>
-            </Grid>
-            <ListBox Grid.Row="1"
-                     Name="EventsListBox"
-                     SelectionMode="Single"
-                     ItemsSource="{Binding Events}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Description}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </Grid>
-
-        <GridSplitter Grid.Column="1"
-                      Grid.Row="0"
-                      Width="2"
-                      HorizontalAlignment="Stretch" 
-                      Background="LightGray"/>
-
-        <controls:TclEditor Grid.Column="2" 
-                            Grid.Row="0"/>
         
-        <Grid Grid.Row="1"
-              Grid.Column="2">
-            <controls:DebugWindow/>
-        </Grid>
+        <controls:DockerMenu Grid.Row="0"/>
+        <controls:DockerWindow Grid.Row="1"/>
     </Grid>
+
 </Window>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

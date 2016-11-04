@@ -2,20 +2,19 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using IptSimulator.Client.Model.NLog;
+using IptSimulator.Client.ViewModels.Abstractions;
+using IptSimulator.Client.ViewModels.Data;
 using NLog;
 using PropertyChanged;
 
-namespace IptSimulator.Client.ViewModels
+namespace IptSimulator.Client.ViewModels.Dockable
 {
     [ImplementPropertyChanged]
-    public class DebugWindowViewModel : ViewModelBase
+    public class DebugWindowViewModel : DockWindowViewModel
     {
-        private IList<LogViewModel> _allLogs = new List<LogViewModel>();
+        private readonly IList<LogViewModel> _allLogs = new List<LogViewModel>();
         private RelayCommand _filterLogsCommand;
 
         public DebugWindowViewModel()
@@ -25,10 +24,16 @@ namespace IptSimulator.Client.ViewModels
 
         #region Properties
 
+        public override string Title { get; set; } = "Debug window";
+
         public bool Debug { get; set; } = true;
+
         public bool Info { get; set; } = true;
+
         public bool Warning { get; set; } = true;
+
         public bool Error { get; set; } = true;
+
         public string LoggerFilter { get; set; } = string.Empty;
 
         public string MessageFilter { get; set; } = string.Empty;

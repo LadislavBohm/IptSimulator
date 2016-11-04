@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace IptSimulator.Core
+namespace IptSimulator.Client.Model.Interfaces
 {
     public interface ICompletionManager
     {

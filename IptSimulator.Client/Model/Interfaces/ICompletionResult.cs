@@ -1,4 +1,4 @@
-﻿namespace IptSimulator.Core
+﻿namespace IptSimulator.Client.Model.Interfaces
 {
     public interface ICompletionResult
     {

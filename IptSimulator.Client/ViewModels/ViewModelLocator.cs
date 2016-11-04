@@ -1,23 +1,25 @@
-using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
 
 namespace IptSimulator.Client.ViewModels
 {
     public class ViewModelLocator
     {
-        /// <summary>
-        /// Initializes a new instance of the ViewModelLocator class.
-        /// </summary>
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<DebugWindowViewModel>();
+            Initialize();
         }
 
-        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
+        public MainViewModel Main { get; private set; }
+                
+        public DockManagerViewModel DockManager { get; private set; }
 
-        public DebugWindowViewModel DebugWindow => ServiceLocator.Current.GetInstance<DebugWindowViewModel>();
+        public MenuViewModel Menu { get; private set; }
+
+        private void Initialize()
+        {
+            Main = new MainViewModel();
+            DockManager = new DockManagerViewModel();
+            Menu = new MenuViewModel(DockManager.Documents);
+        }
 
         public static void Cleanup()
         {

@@ -50,9 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompletionResult.cs" />
-    <Compile Include="ICompletionManager.cs" />
-    <Compile Include="ICompletionResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tcl\TclKeywords.cs" />
   </ItemGroup>
