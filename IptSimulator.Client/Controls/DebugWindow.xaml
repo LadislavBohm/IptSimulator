@@ -2,26 +2,27 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:IptSimulator.Client.Controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:converters="clr-namespace:IptSimulator.Client.Converters"
+             xmlns:behaviors="clr-namespace:IptSimulator.Client.Behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="700"
-             DataContext="{Binding Path=DebugWindow, Source={StaticResource Locator}}">
+             d:DesignHeight="300" d:DesignWidth="700">
     <UserControl.Resources>
         <ResourceDictionary>
-            <SolidColorBrush x:Key="ErrorLogColor" Color="#8EEE0000"/>
             <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         
-        <StackPanel Orientation="Horizontal"
-                    Grid.Row="0">
+        <WrapPanel Orientation="Horizontal"
+                   Grid.Row="0"
+                   VerticalAlignment="Center"
+                   Margin="0,5,0,5">
+            
             <CheckBox VerticalAlignment="Center" Margin="10,0,0,0" IsChecked="{Binding Debug}"
                       Command="{Binding FilterLogsCommand}">
                 DEBUG
@@ -38,7 +39,7 @@
                       Command="{Binding FilterLogsCommand}">
                 ERROR
             </CheckBox>
-            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
                 <TextBlock VerticalAlignment="Center">Logger: </TextBlock>
                 <TextBox Width="140" Height="24" Margin="10,0,0,0" VerticalContentAlignment="Center"
                          Text="{Binding LoggerFilter, UpdateSourceTrigger=PropertyChanged}">
@@ -50,7 +51,7 @@
                 </TextBox>
             </StackPanel>
             
-            <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Margin="10,0,0,0" VerticalAlignment="Center">
                 <TextBlock VerticalAlignment="Center">Message: </TextBlock>
                 <TextBox Width="140" Height="24" Margin="10,0,0,0" VerticalContentAlignment="Center"
                          Text="{Binding MessageFilter, UpdateSourceTrigger=PropertyChanged}">
@@ -61,11 +62,14 @@
                 </i:Interaction.Triggers>
                 </TextBox>
             </StackPanel>
-        </StackPanel>
+        </WrapPanel>
         
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Logs}"
                   SelectionMode="Single">
+            <i:Interaction.Behaviors>
+                <behaviors:AutoScrollToLastItemBehavior />
+            </i:Interaction.Behaviors>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Time" Width="100" DisplayMemberBinding="{Binding Date}" />

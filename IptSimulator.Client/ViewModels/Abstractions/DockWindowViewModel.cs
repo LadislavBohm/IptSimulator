@@ -20,6 +20,8 @@ namespace IptSimulator.Client.ViewModels.Abstractions
 
         #region Properties
 
+        public abstract string ContentId { get; }
+
         public abstract string Title { get; set; }
 
         public virtual bool CanClose { get;  } = true;

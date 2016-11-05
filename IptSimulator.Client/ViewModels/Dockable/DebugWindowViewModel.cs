@@ -23,6 +23,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
         }
 
         #region Properties
+        public override string ContentId => "DA0B2C7B-85B0-45FB-8EE0-BE5FCDE52D22";
 
         public override string Title { get; set; } = "Debug window";
 

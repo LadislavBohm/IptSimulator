@@ -2,7 +2,7 @@
              xmlns:viewModels="clr-namespace:IptSimulator.Client.ViewModels">
   <Application.Resources>
     <ResourceDictionary>
-      <viewModels:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
-    </ResourceDictionary>
+            <viewModels:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+        </ResourceDictionary>
   </Application.Resources>
 </Application>

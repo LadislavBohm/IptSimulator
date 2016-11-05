@@ -9,13 +9,13 @@ using NLog;
 
 namespace IptSimulator.CiscoTcl.Utils
 {
-    public class CustomCommandsProvider
+    public class TclCommandProvider
     {
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public static IEnumerable<Default> GetCustomCommands()
         {
-            var customCommandsAssembly = typeof(CustomCommandsProvider).Assembly;
+            var customCommandsAssembly = typeof(TclCommandProvider).Assembly;
 
             Logger.Debug($"Loading custom TCL commands from {customCommandsAssembly.FullName} assembly.");
 

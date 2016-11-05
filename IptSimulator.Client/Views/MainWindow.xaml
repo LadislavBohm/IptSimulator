@@ -5,7 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:IptSimulator.Client.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1300" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" Height="900" Width="1300" 
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -13,7 +15,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <controls:DockerMenu Grid.Row="0"/>
+        <!--<controls:DockerMenu Grid.Row="0"/>-->
+        
         <controls:DockerWindow Grid.Row="1"/>
     </Grid>
 

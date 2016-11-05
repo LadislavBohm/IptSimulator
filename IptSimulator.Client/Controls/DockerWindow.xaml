@@ -4,45 +4,108 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:IptSimulator.Client.Controls"
-             xmlns:dockctrl="http://schemas.xceed.com/wpf/xaml/avalondock"
+             xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
              xmlns:docks="clr-namespace:IptSimulator.Client.ViewModels.Dockable"
+             xmlns:model="clr-namespace:IptSimulator.Client.Model"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="800">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <Style TargetType="{x:Type dockctrl:LayoutItem}" x:Key="LayoutItemStyle">
-                <Setter Property="Title" Value="{Binding Model.Title}"/>
-                <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
-                <Setter Property="CloseAllButThisCommand" Value="{Binding Model.CloseAllButThisCommand}" />
-                <Setter Property="CloseAllCommand" Value="{Binding ElementName=MainDockingManager, Path=DataContext.CloseAllCommand}"/>
-                <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
-            </Style>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    
-    <dockctrl:DockingManager
-        Name="MainDockingManager"
-        DataContext="{Binding Source={StaticResource Locator}, Path=DockManager}"
-        DocumentsSource="{Binding Documents}"
-        AnchorablesSource="{Binding Anchorables}"
-        ActiveContent="{Binding ActiveDocument, Mode=TwoWay}"
-        LayoutItemContainerStyle="{StaticResource LayoutItemStyle}"
-        AllowMixedOrientation="True">
-        <dockctrl:DockingManager.Theme>
-            <dockctrl:AeroTheme />
-        </dockctrl:DockingManager.Theme>
-        
-        <dockctrl:DockingManager.Resources>
-            <DataTemplate DataType="{x:Type docks:TclEditorViewModel}">
-                <local:TclEditor DataContext="{Binding}"/>
-            </DataTemplate>
-            <DataTemplate DataType="{x:Type docks:DebugWindowViewModel}">
-                <local:DebugWindow DataContext="{Binding}"/>
-            </DataTemplate>
-        </dockctrl:DockingManager.Resources> 
+             d:DesignHeight="800" d:DesignWidth="800">
+    <avalonDock:DockingManager Name="MainDockingManager" 
+                               AllowMixedOrientation="True"
+                               Loaded="MainDockingManager_OnLoaded">
+        <avalonDock:DockingManager.Theme>
+            <avalonDock:AeroTheme/>
+        </avalonDock:DockingManager.Theme>
+        <avalonDock:DockingManager.LayoutUpdateStrategy>
+            <model:AvalonDockLayoutInitializer/>
+        </avalonDock:DockingManager.LayoutUpdateStrategy>
 
-    </dockctrl:DockingManager>
+        <avalonDock:LayoutRoot>
+            <avalonDock:LayoutPanel Orientation="Horizontal">
+                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="260">
+                    <avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorable Title="Event raising" 
+                                                     CanClose="False" 
+                                                     CanHide="False"
+                                                     ContentId="1444b85f1bb3487fb5b72325ea93e3a7">
+                            <local:EventRaisingWindow DataContext="{Binding Source={StaticResource Locator}, Path=EventRaising}"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorablePane>
+                </avalonDock:LayoutAnchorablePaneGroup>
+                <avalonDock:LayoutDocumentPaneGroup Orientation="Horizontal" DockMinWidth="500" DockMinHeight="600">
+                    <avalonDock:LayoutDocumentPane>
+                        <avalonDock:LayoutDocument Title="TCL editor"
+                                                   CanClose="False"
+                                                   ContentId="7818d6eef886408ead8bec1b981bccc4">
+                            <local:TclEditorWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
+                        </avalonDock:LayoutDocument>
+                    </avalonDock:LayoutDocumentPane>
+                </avalonDock:LayoutDocumentPaneGroup>
+                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="200">
+                    <avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorable Title="Something else" 
+                                                     CanClose="False" 
+                                                     CanHide="False"
+                                                     ContentId="621ff620795a4759a65f6ebc088231e8">
+                            <TextBlock Text="TBD"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorablePane>
+                </avalonDock:LayoutAnchorablePaneGroup>
+            </avalonDock:LayoutPanel>
+            <avalonDock:LayoutRoot.BottomSide>
+                <avalonDock:LayoutAnchorSide>
+                    <avalonDock:LayoutAnchorGroup x:Name="BottomRightAnchorGroup">
+                        <avalonDock:LayoutAnchorable x:Name="WatchWindowAnchor"
+                                                     Title="Watch"
+                                                     CanClose="False"
+                                                     CanHide="False"
+                                                     ContentId="f9d4cfc95ad14ff8b6ec0114227d4de2">
+                            <local:WatchWindow DataContext="{Binding Source={StaticResource Locator}, Path=Watch}"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorGroup>
+                    <avalonDock:LayoutAnchorGroup x:Name="BottomLeftAnchorGroup">
+                        <avalonDock:LayoutAnchorable x:Name="DebugWindowAnchor"
+                                                     Title="Debug window"
+                                                     AutoHideHeight="200"
+                                                     CanClose="False"
+                                                     CanHide="False"
+                                                     ContentId="a37da6c4bcfb4c12a29fec8e519c795d">
+                            <local:DebugWindow DataContext="{Binding Source={StaticResource Locator}, Path=Debug}"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorGroup>
+                </avalonDock:LayoutAnchorSide>
+            </avalonDock:LayoutRoot.BottomSide>
+        </avalonDock:LayoutRoot>
+
+    </avalonDock:DockingManager>
 </UserControl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

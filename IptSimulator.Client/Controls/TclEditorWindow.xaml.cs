@@ -23,6 +23,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
 using IptSimulator.Client.Exceptions;
 using IptSimulator.Client.Model.Interfaces;
+using IptSimulator.Client.ViewModels.Dockable;
 using IptSimulator.Client.Views;
 using IptSimulator.Core;
 using NLog;
@@ -31,16 +32,16 @@ using TclCompletionManager = IptSimulator.Client.Model.TclCompletionManager;
 namespace IptSimulator.Client.Controls
 {
     /// <summary>
-    /// Interaction logic for TclEditor.xaml
+    /// Interaction logic for TclEditorWindow.xaml
     /// </summary>
-    public partial class TclEditor : UserControl
+    public partial class TclEditorWindow : UserControl
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private ImageSource _tclIcon;
         private ICompletionManager _completionManager;
         private CompletionWindow _completionWindow;
 
-        public TclEditor()
+        public TclEditorWindow()
         {
             InitializeComponent();
             InitializeTclEditor();
@@ -54,6 +55,7 @@ namespace IptSimulator.Client.Controls
 
                 SetSearchPanel();
                 SetCompletionHandling();
+                SetSelectionHandling();
 
                 _logger.Info("TCL editor successfully initialized.");
             }
@@ -62,6 +64,17 @@ namespace IptSimulator.Client.Controls
                 _logger.Info(e,"Error while initializing TCL editor.");
                 throw;
             }
+        }
+
+        private void SetSelectionHandling()
+        {
+            MainTextEditor.TextArea.SelectionChanged += (sender, args) =>
+            {
+                var vm = MainTextEditor.DataContext as TclEditorViewModel;
+                if (vm == null) return;
+
+                vm.SelectedScript = MainTextEditor.SelectedText;
+            };
         }
 
 

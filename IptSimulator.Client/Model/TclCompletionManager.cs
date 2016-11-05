@@ -37,7 +37,7 @@ namespace IptSimulator.Client.Model
                 }
 
                 _customTclCommands = new HashSet<ICompletionResult>();
-                foreach (var command in CustomCommandsProvider.GetCustomCommands())
+                foreach (var command in TclCommandProvider.GetCustomCommands())
                 {
                     _customTclCommands.Add(new CompletionResult(command.Name, 1));
                 }

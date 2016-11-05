@@ -28,6 +28,9 @@ namespace IptSimulator.Client.ViewModels
             SetVisibleDocuments();
             SetActiveDocument();
             RegisterMessenger();
+
+            TclEditor = new TclEditorViewModel();
+            DebugWindow = new DebugWindowViewModel();
         }
 
         #region Properties
@@ -37,6 +40,9 @@ namespace IptSimulator.Client.ViewModels
         public ObservableCollection<object> Anchorables { get; private set; }
 
         public DockWindowViewModel ActiveDocument { get; set; }
+
+        public DockWindowViewModel TclEditor { get; set; }
+        public DockWindowViewModel DebugWindow { get; set; }
 
         #endregion
 

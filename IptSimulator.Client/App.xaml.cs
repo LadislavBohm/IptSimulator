@@ -90,7 +90,7 @@ namespace IptSimulator.Client
             }
 
             _logger.Debug("Adding custom TCL commands.");
-            foreach (var tclCommand in CustomCommandsProvider.GetCustomCommands())
+            foreach (var tclCommand in TclCommandProvider.GetCustomCommands())
             {
                 _logger.Debug($"Adding {tclCommand} TCL command to keywords.");
                 keywords.Add(new XElement(ns + "Word", tclCommand.Name));

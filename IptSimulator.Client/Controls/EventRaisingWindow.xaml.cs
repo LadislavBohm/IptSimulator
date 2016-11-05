@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace IptSimulator.Client.Views
+namespace IptSimulator.Client.Controls
 {
     /// <summary>
-    /// Interaction logic for TestPage.xaml
+    /// Interaction logic for EventRaisingWindow.xaml
     /// </summary>
-    public partial class TestPage : Page
+    public partial class EventRaisingWindow : UserControl
     {
-        public TestPage()
+        public EventRaisingWindow()
         {
             InitializeComponent();
         }
