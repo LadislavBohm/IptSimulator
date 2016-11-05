@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Eagle._Components.Public;
 using GalaSoft.MvvmLight.Command;
+using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
 using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.ViewModels.Abstractions;
@@ -20,9 +21,12 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private RelayCommand _evaluateCommand;
         private RelayCommand _evaluateSelectionCommand;
-
-        private Interpreter _interpreter;
         private RelayCommand _reinitializeCommand;
+        private RelayCommand _filterEventsCommand;
+        private RelayCommand _raiseEventCommand;
+        private Interpreter _interpreter;
+        private IList<string> _allEvents;
+        private string _selectedEvent;
 
         public TclEditorViewModel()
         {
@@ -43,13 +47,33 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public ObservableCollection<WatchVariableViewModel> Variables { get; set; }
 
+        public ObservableCollection<string> Events { get; set; }
+
+        public string SelectedEvent
+        {
+            get { return _selectedEvent; }
+            set
+            {
+                _selectedEvent = value;
+                RaisePropertyChanged();
+                RaiseEventCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public bool CanRaiseEvent => !string.IsNullOrWhiteSpace(SelectedEvent);
+
+        public string FilterEventsText { get; set; }
+
+        public string EvaluationResult { get; set; } = string.Empty;
+
         #endregion
 
         #region Commands
 
         public RelayCommand EvaluateCommand
         {
-            get {
+            get
+            {
                 return _evaluateCommand ?? (_evaluateCommand = new RelayCommand(() =>
                        {
                            try
@@ -68,17 +92,21 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
                                if (code == ReturnCode.Ok)
                                {
-                                   _logger.Info("Script successfully evaluated with " + 
-                                       (string.IsNullOrWhiteSpace(result.String) ? "no result" : $"following result: {result}"));
+                                   _logger.Info("Script successfully evaluated with " +
+                                                (string.IsNullOrWhiteSpace(result.String)
+                                                    ? "no result"
+                                                    : $"following result: {result}"));
                                }
                                else
                                {
                                    _logger.Warn($"Script evaluated following code: {code}. Result: {result}");
                                }
+                               EvaluationResult = result;
                            }
                            catch (Exception e)
                            {
                                _logger.Error(e, "Script evaluation has thrown an exception.");
+                               EvaluationResult = string.Empty;
                            }
                        }));
             }
@@ -106,16 +134,25 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
                                if (code == ReturnCode.Ok)
                                {
-                                   _logger.Info($"Selected script successfully evaluated with following result: {result}");
+                                   _logger.Info(
+                                       $"Selected script successfully evaluated with " +
+                                            (string.IsNullOrWhiteSpace(result.String)
+                                                ? "o result"
+                                                : $"following result: {result}"));
                                }
                                else
                                {
-                                   _logger.Warn($"Selected script evaluated following code: {code}. Result: {result}");
+                                   _logger.Warn($"Selected script evaluated following code: {code}. " +
+                                                (string.IsNullOrWhiteSpace(result.String)
+                                                    ? "No result"
+                                                    : $"Result: {result}"));
                                }
+                               EvaluationResult = result;
                            }
                            catch (Exception e)
                            {
                                _logger.Error(e, "Script evaluation has thrown an exception.");
+                               EvaluationResult = string.Empty;
                            }
                        }));
             }
@@ -123,13 +160,52 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public RelayCommand ReinitializeCommand
         {
-            get {
+            get
+            {
                 return _reinitializeCommand ?? (_reinitializeCommand = new RelayCommand(() =>
                        {
                            _logger.Info("Reinitializing interpreter.");
                            Initialize();
                        }));
+            }
+        }
+
+        public RelayCommand FilterEventsCommand
+            => _filterEventsCommand ?? (_filterEventsCommand = new RelayCommand(FilterEvents));
+
+        public RelayCommand RaiseEventCommand
+        {
+            get
+            {
+                return _raiseEventCommand ?? (_raiseEventCommand = new RelayCommand(() =>
+                {
+                    try
+                    {
+                        _logger.Debug($"Raising {SelectedEvent} command.");
+
+                        Result result = null;
+                        var code = _interpreter.EvaluateScript($"fsm raise {SelectedEvent}", ref result);
+                        RefreshCurrentVariables();
+
+                        if (code == ReturnCode.Ok)
+                        {
+                            _logger.Info($"{SelectedEvent} event was successfully raised with following result: {result}");
+                        }
+                        else
+                        {
+                            _logger.Warn($"{SelectedEvent} event raised with following code: {code}. Result: {result}");
+                        }
+                        EvaluationResult = result;
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.Error(e, $"Error while raising {SelectedEvent} event.");
+                        EvaluationResult = string.Empty;
+                    }
                 }
+            ,
+            () => CanRaiseEvent));
+            }
         }
 
         #endregion
@@ -137,7 +213,10 @@ namespace IptSimulator.Client.ViewModels.Dockable
         protected sealed override void Initialize()
         {
             base.Initialize();
+
             Variables = new ObservableCollection<WatchVariableViewModel>();
+            EvaluationResult = string.Empty;
+            SetupEvents();
 
             _logger.Info("Initializing TCL Interpreter.");
 
@@ -166,49 +245,33 @@ namespace IptSimulator.Client.ViewModels.Dockable
             try
             {
                 _logger.Debug("Refreshing current variables and their values.");
-                Result infoResult = null;
-                var code = _interpreter.EvaluateScript("info vars", ref infoResult);
-
-                var variables = infoResult.String
-                    .Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
-                    .Where(v => !TclReservedVariables.All.Contains(v));
-
-                var result = new List<VariableWithValue>();
-                foreach (var variable in variables)
-                {
-                    Result tempResult = null;
-                    if (TclUtils.GetVariableValue(_interpreter, ref tempResult, variable, true))
-                    {
-                        if (tempResult != null && 
-                            !string.IsNullOrWhiteSpace(variable) && 
-                            !string.IsNullOrWhiteSpace(tempResult.String))
-                        {
-                            result.Add(new VariableWithValue(variable, tempResult.String));
-                        }
-                    }
-                    else if (TclUtils.GetVariableValue(_interpreter, ref tempResult, variable, false))
-                    {
-                        if (tempResult != null &&
-                            !string.IsNullOrWhiteSpace(variable) &&
-                            !string.IsNullOrWhiteSpace(tempResult.String))
-                        {
-                            result.Add(new VariableWithValue(variable, tempResult.String));
-                        }
-                    }
-                }
 
                 Variables.Clear();
-                foreach (var variableWithValue in result)
+                foreach (var variableWithValue in TclUtils.GetVariableValues(_interpreter))
                 {
-                    Variables.Add(new WatchVariableViewModel(variableWithValue.Variable,variableWithValue.Value));
+                    if (!TclReservedVariables.All.Contains(variableWithValue.Variable))
+                    {
+                        Variables.Add(new WatchVariableViewModel(variableWithValue.Variable, variableWithValue.Value));
+                    }
                 }
-
-                
             }
             catch (Exception e)
             {
                 _logger.Error(e, "Error while refreshing current variables.");
             }
+        }
+
+        private void SetupEvents()
+        {
+            _allEvents = new List<string>(CiscoTclEvents.All.OrderBy(e => e));
+            Events = new ObservableCollection<string>(_allEvents);
+        }
+
+        private void FilterEvents()
+        {
+            Events = string.IsNullOrWhiteSpace(FilterEventsText) ?
+                new ObservableCollection<string>(_allEvents) :
+                new ObservableCollection<string>(_allEvents.Where(e => e.ToUpper().Contains(FilterEventsText.ToUpper())));
         }
     }
 }

@@ -21,8 +21,6 @@ namespace IptSimulator.Client.ViewModels
 
         public DebugWindowViewModel Debug { get; private set; }
 
-        public EventRaisingViewModel EventRaising { get; private set; }
-
         public TclEditorViewModel TclEditor { get; private set; }
 
         #endregion
@@ -33,7 +31,6 @@ namespace IptSimulator.Client.ViewModels
             Debug = new DebugWindowViewModel();
             DockManager = new DockManagerViewModel();
             Menu = new MenuViewModel(DockManager.Documents);
-            EventRaising = new EventRaisingViewModel();
             TclEditor = new TclEditorViewModel();
         }
 

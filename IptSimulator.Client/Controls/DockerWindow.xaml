@@ -27,7 +27,7 @@
                                                      CanClose="False" 
                                                      CanHide="False"
                                                      ContentId="1444b85f1bb3487fb5b72325ea93e3a7">
-                            <local:EventRaisingWindow DataContext="{Binding Source={StaticResource Locator}, Path=EventRaising}"/>
+                            <local:EventRaisingWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
                 </avalonDock:LayoutAnchorablePaneGroup>

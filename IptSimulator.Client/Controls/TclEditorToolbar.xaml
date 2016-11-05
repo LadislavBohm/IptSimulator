@@ -30,6 +30,12 @@
                     </ComboBox>
                 </StackPanel>
             </StatusBarItem>
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                    <TextBlock Text="Evaluation result: "/>
+                    <TextBlock Text="{Binding EvaluationResult}"/>
+                </StackPanel>
+            </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
                     <TextBlock VerticalAlignment="Center" Text="Selected "/>

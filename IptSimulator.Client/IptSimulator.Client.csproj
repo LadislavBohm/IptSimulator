@@ -177,7 +177,6 @@
     <Compile Include="ViewModels\DockerManagerViewModel.cs" />
     <Compile Include="ViewModels\Abstractions\DockWindowViewModel.cs" />
     <Compile Include="ViewModels\Data\LogViewModel.cs" />
-    <Compile Include="ViewModels\Dockable\EventRaisingViewModel.cs" />
     <Compile Include="ViewModels\MenuItems\ToggleDockWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

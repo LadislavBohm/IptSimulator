@@ -98,31 +98,31 @@ namespace IptSimulator.CiscoTcl.Utils
             return code == ReturnCode.Ok;
         }
 
-        //public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Interpreter interpreter)
-        //{
-        //    if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+        public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Interpreter interpreter)
+        {
+            if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
 
-        //    Result result = null;
-        //    var code = interpreter.EvaluateScript("info vars", ref result);
+            Result result = null;
+            var code = interpreter.EvaluateScript("info vars", ref result);
 
-        //    if (code != ReturnCode.Ok)
-        //    {
-        //        return Enumerable.Empty<VariableWithValue>().ToList();
-        //    }
+            if (code != ReturnCode.Ok)
+            {
+                return Enumerable.Empty<VariableWithValue>().ToList();
+            }
 
-        //    var variables = result.String.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-        //    var variablesWithValues = new List<VariableWithValue>();
+            var variables = result.String.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            var variablesWithValues = new List<VariableWithValue>();
 
-        //    foreach (var variable in variables)
-        //    {
-        //        if (GetVariableValue(interpreter, ref result, variable) && !string.IsNullOrWhiteSpace(result))
-        //        {
-        //            variablesWithValues.Add(new VariableWithValue(variable,result.String));
-        //        }
-        //    }
+            foreach (var variable in variables)
+            {
+                if (GetVariableValue(interpreter, ref result, variable, true) && !string.IsNullOrWhiteSpace(result))
+                {
+                    variablesWithValues.Add(new VariableWithValue(variable, result.String));
+                }
+            }
 
-        //    return variablesWithValues;
-        //}
+            return variablesWithValues;
+        }
 
         public static bool VariableExists(Interpreter interpreter, ref Result result, string variableName)
         {
