@@ -36,6 +36,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>tcl icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Eagle, Version=1.0.6120.16902, Culture=neutral, PublicKeyToken=29c6297630be05eb, processorArchitecture=MSIL">
       <HintPath>..\packages\Eagle.1.0.6120.16902\lib\Eagle.dll</HintPath>
@@ -171,7 +174,6 @@
     <Compile Include="ViewModels\Abstractions\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\Data\WatchVariableViewModel.cs" />
     <Compile Include="ViewModels\Dockable\DebugWindowViewModel.cs" />
-    <Compile Include="ViewModels\Dockable\WatchWindowViewModel.cs" />
     <Compile Include="ViewModels\DockerManagerViewModel.cs" />
     <Compile Include="ViewModels\Abstractions\DockWindowViewModel.cs" />
     <Compile Include="ViewModels\Data\LogViewModel.cs" />
@@ -241,6 +243,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="tcl icon.ico" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

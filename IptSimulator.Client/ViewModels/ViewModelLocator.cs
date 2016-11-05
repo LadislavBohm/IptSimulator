@@ -25,8 +25,6 @@ namespace IptSimulator.Client.ViewModels
 
         public TclEditorViewModel TclEditor { get; private set; }
 
-        public WatchWindowViewModel Watch { get; private set; }
-
         #endregion
 
         private void Initialize()
@@ -37,7 +35,6 @@ namespace IptSimulator.Client.ViewModels
             Menu = new MenuViewModel(DockManager.Documents);
             EventRaising = new EventRaisingViewModel();
             TclEditor = new TclEditorViewModel();
-            Watch = new WatchWindowViewModel();
         }
 
         public static void Cleanup()

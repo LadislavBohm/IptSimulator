@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:IptSimulator.Client.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="1300" 
+        Title="IPT Simulator" Height="900" Width="1300" 
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
 

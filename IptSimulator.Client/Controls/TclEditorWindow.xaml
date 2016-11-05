@@ -33,6 +33,10 @@
             <i:Interaction.Behaviors>
                 <behaviors:AvalonEditBehavior ExtractedText="{Binding Script, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
+            <avalonedit:TextEditor.InputBindings>
+                <KeyBinding Modifiers="Control" Key="Enter" Command="{Binding EvaluateCommand}"/>
+                <KeyBinding Modifiers="Control+Shift" Key="Enter" Command="{Binding EvaluateSelectionCommand}"/>
+            </avalonedit:TextEditor.InputBindings>
         </avalonedit:TextEditor> 
         <local:TclEditorToolbar Grid.Row="2"
                                 x:Name="TclEditorToolbar"/>

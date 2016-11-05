@@ -24,10 +24,10 @@ namespace IptSimulator.Client.ViewModels
             this.Documents = new ObservableCollection<DockWindowViewModel>();
             this.Anchorables = new ObservableCollection<object>();
 
-            DiscoverAndAddDockWindows();
-            SetVisibleDocuments();
-            SetActiveDocument();
-            RegisterMessenger();
+            //DiscoverAndAddDockWindows();
+            //SetVisibleDocuments();
+            //SetActiveDocument();
+            //RegisterMessenger();
 
             TclEditor = new TclEditorViewModel();
             DebugWindow = new DebugWindowViewModel();
@@ -89,16 +89,16 @@ namespace IptSimulator.Client.ViewModels
                 .GetTypes()
                 .Where(t => t.IsSubclassOf(typeof(DockWindowViewModel)));
 
-            foreach (var dockWindowType in dockWindows)
-            {
-                _logger.Debug($"Creating instance of {dockWindowType.Name}.");
-                var dockWindowInstance = (DockWindowViewModel)Activator.CreateInstance(dockWindowType);
-                dockWindowInstance.Initialize();
+            //foreach (var dockWindowType in dockWindows)
+            //{
+            //    _logger.Debug($"Creating instance of {dockWindowType.Name}.");
+            //    var dockWindowInstance = (DockWindowViewModel)Activator.CreateInstance(dockWindowType);
+            //    dockWindowInstance.Initialize();
 
-                _logger.Debug($"Adding {dockWindowType.Name}.");
-                _allDockWindows.Add(dockWindowInstance);
-                HandleIsClosed(dockWindowInstance);
-            }
+            //    _logger.Debug($"Adding {dockWindowType.Name}.");
+            //    _allDockWindows.Add(dockWindowInstance);
+            //    HandleIsClosed(dockWindowInstance);
+            //}
 
             _logger.Debug($"Successfully added {_allDockWindows.Count} windows, visible windows: {Documents.Count}");
         }

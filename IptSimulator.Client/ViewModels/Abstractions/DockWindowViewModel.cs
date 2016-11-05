@@ -83,7 +83,7 @@ namespace IptSimulator.Client.ViewModels.Abstractions
 
         #endregion
 
-        public virtual void Initialize()
+        protected virtual void Initialize()
         {
             //let overrides do necessary initialization
         }

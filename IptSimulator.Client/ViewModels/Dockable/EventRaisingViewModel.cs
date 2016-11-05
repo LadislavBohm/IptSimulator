@@ -47,7 +47,10 @@ namespace IptSimulator.Client.ViewModels.Dockable
         public RelayCommand FilterEventsCommand => _filterEventsCommand ?? (_filterEventsCommand = new RelayCommand(FilterEvents));
 
         public RelayCommand RaiseEventCommand => _raiseEventCommand ?? 
-            (_raiseEventCommand = new RelayCommand(() => { }, () => CanRaiseEvent));
+            (_raiseEventCommand = new RelayCommand(() =>
+            {
+                
+            }, () => CanRaiseEvent));
 
         #endregion
 

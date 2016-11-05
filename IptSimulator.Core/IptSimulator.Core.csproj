@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tcl\TclKeywords.cs" />
+    <Compile Include="Tcl\TclReservedVariables.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

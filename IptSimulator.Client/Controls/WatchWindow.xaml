@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:IptSimulator.Client.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="600" d:DataContext="{Binding Source={StaticResource Locator}, Path=Watch}">
+             d:DesignHeight="300" d:DesignWidth="600" d:DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}">
     <Grid>
         <DataGrid ItemsSource="{Binding Variables}"
                   AutoGenerateColumns="False"

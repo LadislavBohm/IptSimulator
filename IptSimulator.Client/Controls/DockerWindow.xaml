@@ -59,7 +59,7 @@
                                                      CanClose="False"
                                                      CanHide="False"
                                                      ContentId="f9d4cfc95ad14ff8b6ec0114227d4de2">
-                            <local:WatchWindow DataContext="{Binding Source={StaticResource Locator}, Path=Watch}"/>
+                            <local:WatchWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorGroup>
                     <avalonDock:LayoutAnchorGroup x:Name="BottomLeftAnchorGroup">

@@ -27,7 +27,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public override string Title { get; set; } = "Debug window";
 
-        public bool Debug { get; set; } = true;
+        public bool Debug { get; set; } = false;
 
         public bool Info { get; set; } = true;
 
@@ -64,7 +64,8 @@ namespace IptSimulator.Client.ViewModels.Dockable
                 e.LogEventInfo.Level.ToString().ToUpper(),
                 DateTime.Now.ToString("HH:mm:ss.fff"),
                 e.LogEventInfo.LoggerName.Split(new[] { "." }, StringSplitOptions.None).Last(),
-                e.LogEventInfo.FormattedMessage);
+                e.LogEventInfo.FormattedMessage,
+                e.LogEventInfo.Exception?.ToString());
 
             _allLogs.Add(log);
             if (CanAdd(e.LogEventInfo))

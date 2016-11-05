@@ -7,14 +7,15 @@
              mc:Ignorable="d" 
              d:DesignHeight="34" d:DesignWidth="600"
              d:DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}">
-    <Grid>
-        <WrapPanel Orientation="Horizontal" Margin="5">
+    <Grid Margin="5">
+        <StackPanel Orientation="Horizontal">
             <Button Background="WhiteSmoke" 
                     Width="80" 
                     Height="29"
                     Margin="0,0,10,0"
                     HorizontalContentAlignment="Left"
-                    Command="{Binding EvaluateCommand}">
+                    Command="{Binding EvaluateCommand}"
+                    ToolTip="Evaluates whole script. Ctrl+Enter">
                 <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
                     <iconPacks:PackIconMaterial Kind="Play" Foreground="Green"/>
                     <TextBlock Text="Evaluate" VerticalAlignment="Center" Margin="5,0,0,0"/>
@@ -25,12 +26,27 @@
                     Height="29"
                     Margin="0,0,10,0"
                     HorizontalContentAlignment="Left"
-                    Command="{Binding EvaluateSelectionCommand}">
+                    Command="{Binding EvaluateSelectionCommand}"
+                    ToolTip="Evaluates selected part of script. Ctrl+Shift+Enter">
                 <StackPanel Orientation="Horizontal"  Margin="5,0,0,0">
                     <iconPacks:PackIconMaterial Kind="Play" Foreground="Green"/>
                     <TextBlock Text="Evaluate selection" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
             </Button>
-        </WrapPanel>
+        </StackPanel>
+        
+        <Button Background="WhiteSmoke" 
+                HorizontalAlignment="Right"
+                Width="90" 
+                Height="29"
+                Margin="0,0,10,0"
+                HorizontalContentAlignment="Left"
+                Command="{Binding ReinitializeCommand}"
+                ToolTip="Reinitializes the interpreter and cleares all cached data.">
+            <StackPanel Orientation="Horizontal"  Margin="5,0,0,0">
+                <iconPacks:PackIconMaterial Kind="BackupRestore" Foreground="Black"/>
+                <TextBlock Text="Reinitialize" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </StackPanel>
+        </Button>
     </Grid>
 </UserControl>

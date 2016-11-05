@@ -85,6 +85,7 @@
                     </GridViewColumn>
                     <GridViewColumn Header="Logger" Width="150" DisplayMemberBinding="{Binding Logger}"/>
                     <GridViewColumn Header="Message" Width="400" DisplayMemberBinding="{Binding Message}"/>
+                    <GridViewColumn Header="Exception" Width="400" DisplayMemberBinding="{Binding Exception}"/>
                 </GridView>
             </ListView.View>
             <ListView.Resources>
