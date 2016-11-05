@@ -8,6 +8,6 @@ namespace IptSimulator.Client.ViewModels.Dockable
     {
         public override string Title { get; set; } = "TCL editor";
 
-        public override bool CanClose { get; } = false;
+        public override int Order => 1;
     }
 }

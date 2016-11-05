@@ -13,17 +13,24 @@
             <Style TargetType="{x:Type dockctrl:LayoutItem}" x:Key="LayoutItemStyle">
                 <Setter Property="Title" Value="{Binding Model.Title}"/>
                 <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}" />
+                <Setter Property="CloseAllButThisCommand" Value="{Binding Model.CloseAllButThisCommand}" />
+                <Setter Property="CloseAllCommand" Value="{Binding ElementName=MainDockingManager, Path=DataContext.CloseAllCommand}"/>
                 <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     
     <dockctrl:DockingManager
+        Name="MainDockingManager"
         DataContext="{Binding Source={StaticResource Locator}, Path=DockManager}"
         DocumentsSource="{Binding Documents}"
         AnchorablesSource="{Binding Anchorables}"
+        ActiveContent="{Binding ActiveDocument, Mode=TwoWay}"
         LayoutItemContainerStyle="{StaticResource LayoutItemStyle}"
         AllowMixedOrientation="True">
+        <dockctrl:DockingManager.Theme>
+            <dockctrl:AeroTheme />
+        </dockctrl:DockingManager.Theme>
         
         <dockctrl:DockingManager.Resources>
             <DataTemplate DataType="{x:Type docks:TclEditorViewModel}">

@@ -16,12 +16,13 @@ namespace IptSimulator.Client.ViewModels.MenuItems
     public class ToggleDockWindowViewModel : MenuItemViewModel
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        private readonly Type _dockViewModelType;
+        private readonly DockWindowViewModel _dockWindow;
         private RelayCommand _executeCommand;
 
-        public ToggleDockWindowViewModel(string header, Type dockViewModelType) : base(header)
+        public ToggleDockWindowViewModel(string header, DockWindowViewModel dockWindow) : base(header)
         {
-            _dockViewModelType = dockViewModelType;
+            _dockWindow = dockWindow;
+            _dockWindow.IsClosedChanged += (sender, isClosed) => IsChecked = !isClosed;
         }
 
         public override RelayCommand ExecuteCommand
@@ -30,10 +31,10 @@ namespace IptSimulator.Client.ViewModels.MenuItems
             {
                 return _executeCommand ?? (_executeCommand = new RelayCommand(() =>
                        {
-                           _logger.Info($"Sending toggle message for window of type {_dockViewModelType.Name}");
-                           MessengerInstance.Send(new ToggleIsClosedMessage(_dockViewModelType));
-                           IsChecked = !IsChecked;
-                       }));
+                           _logger.Info($"Toggling visibility of {_dockWindow.Title} dock window.");
+
+                           _dockWindow.IsClosed = !_dockWindow.IsClosed;
+                       }, () => _dockWindow.CanClose));
             }
         }
     }

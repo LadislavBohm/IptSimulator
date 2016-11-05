@@ -134,7 +134,7 @@
     </Compile>
     <Compile Include="Converters\IntegerToFontSizeConverter.cs" />
     <Compile Include="Converters\LogLevelToColorConverter.cs" />
-    <Compile Include="DTO\ToggleIsClosedMessage.cs" />
+    <Compile Include="DTO\CloseAllButThisMessage.cs" />
     <Compile Include="Exceptions\TclSyntaxNotFoundException.cs" />
     <Compile Include="DTO\EventWithDescription.cs" />
     <Compile Include="Model\CompletionResult.cs" />

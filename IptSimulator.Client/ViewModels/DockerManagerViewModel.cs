@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using IptSimulator.Client.DTO;
 using IptSimulator.Client.ViewModels.Abstractions;
+using IptSimulator.Client.ViewModels.Dockable;
 using NLog;
 using PropertyChanged;
 
@@ -15,10 +17,7 @@ namespace IptSimulator.Client.ViewModels
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private readonly IList<DockWindowViewModel> _allDockWindows = new List<DockWindowViewModel>();
-        
-        public ObservableCollection<DockWindowViewModel> Documents { get; set; }
-
-        public ObservableCollection<object> Anchorables { get; private set; }
+        private RelayCommand _closeAllCommand;
 
         public DockManagerViewModel()
         {
@@ -26,24 +25,53 @@ namespace IptSimulator.Client.ViewModels
             this.Anchorables = new ObservableCollection<object>();
 
             DiscoverAndAddDockWindows();
+            SetVisibleDocuments();
+            SetActiveDocument();
             RegisterMessenger();
         }
 
+        #region Properties
+
+        public ObservableCollection<DockWindowViewModel> Documents { get; set; }
+
+        public ObservableCollection<object> Anchorables { get; private set; }
+
+        public DockWindowViewModel ActiveDocument { get; set; }
+
+        #endregion
+
+        public RelayCommand CloseAllCommand
+        {
+            get {
+                return _closeAllCommand ?? (_closeAllCommand = new RelayCommand(() =>
+                       {
+                           foreach (var document in Documents)
+                           {
+                               if (document.CanClose)
+                               {
+                                   document.CloseCommand.Execute(null);
+                               }
+                           }
+                       }));
+                }
+        }
+
+
+        #region Private methods
+
         private void RegisterMessenger()
         {
-            MessengerInstance.Register<ToggleIsClosedMessage>(this, m =>
+            MessengerInstance.Register<CloseAllButThisMessage>(this, m =>
             {
-                _logger.Debug($"Looking for window of type {m.DockViewModelType.Name} to toggle it's IsClosed property.");
-                var foundWindow = _allDockWindows.FirstOrDefault(w => w.GetType() == m.DockViewModelType);
+                _logger.Debug($"Received request to close all windows but this one: {m.NotThis.Title}.");
 
-                if (foundWindow == null)
+                foreach (var dockWindow in _allDockWindows)
                 {
-                    _logger.Warn($"Could not find window of type {m.DockViewModelType.Name}. " +
-                                 $"Available windows: {string.Join(",",_allDockWindows.Select(w => w.GetType().Name))}");
-                    return;
+                    if (dockWindow != m.NotThis && dockWindow.CanClose)
+                    {
+                        dockWindow.CloseCommand.Execute(this);
+                    }
                 }
-
-                foundWindow.IsClosed = !foundWindow.IsClosed;
             });
         }
 
@@ -63,14 +91,41 @@ namespace IptSimulator.Client.ViewModels
 
                 _logger.Debug($"Adding {dockWindowType.Name}.");
                 _allDockWindows.Add(dockWindowInstance);
-                if (!dockWindowInstance.IsClosed)
-                {
-                    Documents.Add(dockWindowInstance);
-                }
                 HandleIsClosed(dockWindowInstance);
             }
 
             _logger.Debug($"Successfully added {_allDockWindows.Count} windows, visible windows: {Documents.Count}");
+        }
+
+        private void SetVisibleDocuments()
+        {
+            foreach (var dockWindow in _allDockWindows.OrderBy(d => d.Order))
+            {
+                if (!dockWindow.IsClosed)
+                {
+                    Documents.Add(dockWindow);
+                }
+            }
+        }
+
+        private void SetActiveDocument()
+        {
+            var editorWindow = Documents.FirstOrDefault(d => d.GetType() == typeof(TclEditorViewModel));
+
+            if (editorWindow == null)
+            {
+                _logger.Warn("Could not find TCL editor window in visible documents.");
+
+                var another = Documents.FirstOrDefault();
+
+                _logger.Info($"Setting {another} as active document.");
+                ActiveDocument = another;
+            }
+            else
+            {
+                _logger.Info("Setting TCL editor as active dock window.");
+                ActiveDocument = editorWindow;
+            }
         }
 
         private void HandleIsClosed(DockWindowViewModel dockWindow)
@@ -93,5 +148,7 @@ namespace IptSimulator.Client.ViewModels
                 }
             };
         }
+
+        #endregion
     }
 }

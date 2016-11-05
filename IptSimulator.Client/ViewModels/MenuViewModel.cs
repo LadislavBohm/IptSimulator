@@ -41,7 +41,7 @@ namespace IptSimulator.Client.ViewModels
             ViewItems = new ObservableCollection<MenuItemViewModel>();
             foreach (var window in windows)
             {
-                ViewItems.Add(new ToggleDockWindowViewModel(window.Title, window.GetType())
+                ViewItems.Add(new ToggleDockWindowViewModel(window.Title, window)
                 {
                     IsCheckable = window.CanClose,
                     IsChecked = !window.IsClosed

@@ -1,7 +1,9 @@
 ﻿using System;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using IptSimulator.Client.DTO;
 using IptSimulator.Client.Model.Interfaces;
+using NLog;
 using PropertyChanged;
 
 namespace IptSimulator.Client.ViewModels.Abstractions
@@ -9,9 +11,12 @@ namespace IptSimulator.Client.ViewModels.Abstractions
     [ImplementPropertyChanged]
     public abstract class DockWindowViewModel : ViewModelBase
     {
+        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+
         private RelayCommand _closeCommand;
         private RelayCommand _openCommand;
         private bool _isClosed;
+        private RelayCommand _closeAllButThisCommand;
 
         #region Properties
 
@@ -29,6 +34,8 @@ namespace IptSimulator.Client.ViewModels.Abstractions
                 RaiseIsClosedChangedEvent();
             }
         }
+
+        public virtual int Order { get; } = int.MaxValue;
 
         #endregion
 
@@ -59,7 +66,19 @@ namespace IptSimulator.Client.ViewModels.Abstractions
                        }));
             }
         }
-        
+
+        public RelayCommand CloseAllButThisCommand
+        {
+            get
+            {
+                return _closeAllButThisCommand ?? (_closeAllButThisCommand = new RelayCommand(() =>
+                       {
+                           _logger.Debug($"Sending request to close all windows but this one: {Title}");
+                           MessengerInstance.Send(new CloseAllButThisMessage(this));
+                       }));
+            }
+        }
+
         #endregion
 
         public virtual void Initialize()
