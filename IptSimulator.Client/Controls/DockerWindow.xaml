@@ -21,7 +21,7 @@
 
         <avalonDock:LayoutRoot>
             <avalonDock:LayoutPanel Orientation="Horizontal">
-                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="260">
+                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="160">
                     <avalonDock:LayoutAnchorablePane>
                         <avalonDock:LayoutAnchorable Title="Event raising" 
                                                      CanClose="False" 
@@ -31,7 +31,7 @@
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
                 </avalonDock:LayoutAnchorablePaneGroup>
-                <avalonDock:LayoutDocumentPaneGroup Orientation="Horizontal" DockMinWidth="500" DockMinHeight="600">
+                <avalonDock:LayoutDocumentPaneGroup Orientation="Horizontal" DockMinWidth="200" DockMinHeight="600">
                     <avalonDock:LayoutDocumentPane>
                         <avalonDock:LayoutDocument Title="TCL editor"
                                                    CanClose="False"
@@ -40,13 +40,13 @@
                         </avalonDock:LayoutDocument>
                     </avalonDock:LayoutDocumentPane>
                 </avalonDock:LayoutDocumentPaneGroup>
-                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="200">
+                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="160">
                     <avalonDock:LayoutAnchorablePane>
                         <avalonDock:LayoutAnchorable Title="Something else" 
                                                      CanClose="False" 
                                                      CanHide="False"
                                                      ContentId="621ff620795a4759a65f6ebc088231e8">
-                            <TextBlock Text="TBD"/>
+                            <local:EventRaisingWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
                 </avalonDock:LayoutAnchorablePaneGroup>

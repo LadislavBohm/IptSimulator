@@ -55,7 +55,7 @@
                      SelectionMode="Single">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Grid Height="30">
+                        <Grid Height="25">
                             <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="10,0,0,0"/>
                         </Grid>
                     </DataTemplate>

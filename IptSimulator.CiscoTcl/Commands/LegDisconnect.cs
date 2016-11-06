@@ -3,39 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Eagle._Commands;
 using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
+using NLog;
 
 namespace IptSimulator.CiscoTcl.Commands
 {
-    /// <summary>
-    /// The leg disconnect command disconnects one or more call legs that are not part of any connection.
-    /// When the command finishes, the script receives an ev_disconnect_done event.
-    /// </summary>
-    public class LegDisconnect : CiscoTclCommand
+    public class LegDisconnect : ILegCommand
     {
-        public LegDisconnect() : base(
-            new CommandData("leg disconnect", null, null, null, typeof(LegDisconnect).FullName,CommandFlags.None, null, 0))
-        {
-        }
+        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public LegDisconnect(ICommandData commandData) : base(commandData)
+        public bool ValidateArguments(ArgumentList arguments, ref Result result)
         {
-        }
-
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
-        {
-            if ((arguments == null) || (arguments.Count != 3))
+            if (arguments.Count < 3)
             {
-                result =  Utility.WrongNumberOfArguments(this, 1, arguments, "legID");
+                var invalidNumberOfArgs = $"Invalid number of arguments. Should be at least 3, but is {arguments.Count}";
 
-                return ReturnCode.Error;
+                _logger.Error(invalidNumberOfArgs);
+                result = invalidNumberOfArgs;
+                return false;
             }
 
-            result = $"Disconnecting call with leg ID {arguments[2]}";
+            return true;
+        }
+
+        public ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        {
+            result = "Executing log disconnect.";
+            _logger.Info(result.String);
+
             return ReturnCode.Ok;
         }
     }

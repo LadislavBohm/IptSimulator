@@ -3,37 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Eagle._Commands;
 using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
+using NLog;
 
 namespace IptSimulator.CiscoTcl.Commands
 {
-    /// <summary>
-    /// The leg connect command sends a signaling level CONNECT message to the incoming call leg.
-    /// </summary>
-    public class LegConnect : CiscoTclCommand
+    public class LegConnect : ILegCommand
     {
-        public LegConnect() : base(new CommandData("leg connect", null, null, null, typeof(LegConnect).FullName,CommandFlags.None, null,0))
-        {
-        }
+        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public LegConnect(ICommandData commandData) : base(commandData)
+        public bool ValidateArguments(ArgumentList arguments, ref Result result)
         {
-        }
-
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
-        {
-            if ((arguments == null) || (arguments.Count != 3))
+            if (arguments.Count != 3)
             {
-                result = Utility.WrongNumberOfArguments(this, 1, arguments, "legID");
+                var invalidNumberOfArgs = $"Invalid number of arguments. Should be 3, but is {arguments.Count}";
 
-                return ReturnCode.Error;
+                _logger.Error(invalidNumberOfArgs);
+                result = invalidNumberOfArgs;
+                return false;
             }
 
-            result = $"Connecting call with leg ID {arguments[2]}";
+            return true;
+        }
+
+        public ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        {
+            result = "Executing log connect.";
+            _logger.Info(result.String);
+
             return ReturnCode.Ok;
         }
     }

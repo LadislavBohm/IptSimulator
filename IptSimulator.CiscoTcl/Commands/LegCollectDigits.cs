@@ -3,39 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Eagle._Commands;
 using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
+using NLog;
 
 namespace IptSimulator.CiscoTcl.Commands
 {
-    /// <summary>
-    /// The leg collectdigits command instructs the system to collect digits on a specified call leg against a dial
-    /// plan, a list of patterns, or both.
-    /// </summary>
-    public class LegCollectDigits : CiscoTclCommand
+    public class LegCollectDigits : ILegCommand
     {
-        public LegCollectDigits() : base(
-            new CommandData("leg collectdigits", null, null, null, typeof(LegCollectDigits).FullName,CommandFlags.None, null,0))
-        {
-        }
+        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public LegCollectDigits(ICommandData commandData) : base(commandData)
+        public bool ValidateArguments(ArgumentList arguments, ref Result result)
         {
-        }
-
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
-        {
-            if ((arguments == null) || (arguments.Count < 3))
+            if (arguments.Count < 4)
             {
-                result = Utility.WrongNumberOfArguments(this, 1, arguments, "legID");
+                var invalidNumberOfArgs = $"Invalid number of arguments. Should be 4, but is {arguments.Count}";
 
-                return ReturnCode.Error;
+                _logger.Error(invalidNumberOfArgs);
+                result = invalidNumberOfArgs;
+                return false;
             }
 
-            result = $"Collecting digits for params: {string.Join(",", arguments.Skip(2))}";
+            return true;
+        }
+
+        public ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        {
+            result = "Executing log collectdigits.";
+            _logger.Info(result.String);
+
             return ReturnCode.Ok;
         }
     }
