@@ -62,11 +62,10 @@ namespace IptSimulator.CiscoTcl.Test
                 code = interpreter.EvaluateScript(script, ref result, ref errorLine);
 
                 Assert.Equal(ReturnCode.Ok, code);
-                Assert.NotNull(result);
             }
         }
 
-        protected void EvaluateAndExpectSuccess(string script, string resultShouldContain, params Default[] commands)
+        protected void EvaluateAndExpectSuccess(string script, Func<bool> finalAssert, params Default[] commands)
         {
             Result result = null;
             int errorLine = 0;
@@ -84,9 +83,7 @@ namespace IptSimulator.CiscoTcl.Test
                 code = interpreter.EvaluateScript(script, ref result, ref errorLine);
 
                 Assert.Equal(ReturnCode.Ok, code);
-                Assert.NotNull(result);
-                Assert.Equal(ResultFlags.String, result.Flags);
-                Assert.Contains(resultShouldContain, result.String);
+                Assert.True(finalAssert());
             }
         }
     }

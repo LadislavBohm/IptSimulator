@@ -11,7 +11,9 @@ namespace IptSimulator.CiscoTcl.Commands.Abstractions
 {
     public abstract class CiscoTclCommand : Default
     {
-        protected readonly ILogger BaseLogger = LogManager.GetCurrentClassLogger();
+        protected readonly ILogger ResultLogger = LogManager.GetLogger(typeof(CiscoTclCommand).FullName + ".Result");
+        protected readonly ILogger InternalLogger = LogManager.GetLogger(typeof(CiscoTclCommand).FullName);
+        protected readonly ILogger ErrorLogger = LogManager.GetLogger(typeof(CiscoTclCommand).FullName + ".Error");
 
         protected CiscoTclCommand(ICommandData commandData) : base(commandData)
         {

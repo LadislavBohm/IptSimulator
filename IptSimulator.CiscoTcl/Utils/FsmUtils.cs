@@ -46,28 +46,13 @@ namespace IptSimulator.CiscoTcl.Utils
             return isPresent;
         }
 
-        //public static FsmTransition GetFsmTransition(Interpreter interpreter, ref Result result, string fsmArray,
-        //    string stateName)
-        //{
-        //    if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
-        //    if (result == null) throw new ArgumentNullException(nameof(result));
-        //    if (string.IsNullOrWhiteSpace(fsmArray))
-        //        throw new ArgumentException("Value cannot be null or whitespace.", nameof(fsmArray));
-        //    if (string.IsNullOrWhiteSpace(stateName))
-        //        throw new ArgumentException("Value cannot be null or whitespace.", nameof(stateName));
-
-        //    Logger.Debug($"Retrieving FSM transition defined by state {stateName} from {fsmArray} array");
-
-
-        //}
-
-        public static bool TryGetFsmTransitions(Interpreter interpreter, string fsmArray, out IEnumerable<FsmTransition> transitions)
+        public static bool TryGetFsmTransitions(Interpreter interpreter, string fsmArray, out IReadOnlyList<FsmTransition> transitions)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(fsmArray))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(fsmArray));
 
-            transitions = Enumerable.Empty<FsmTransition>();
+            transitions = new List<FsmTransition>();
             Result result = null;
 
             var code = interpreter.EvaluateScript($"array get {fsmArray}", ref result);

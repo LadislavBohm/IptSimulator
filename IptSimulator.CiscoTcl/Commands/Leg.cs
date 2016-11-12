@@ -38,13 +38,13 @@ namespace IptSimulator.CiscoTcl.Commands
             ILegCommand legCommand = null;
             if (!ResolveLegCommand(arguments, ref legCommand, ref result))
             {
-                BaseLogger.Error(result.String);
+                ErrorLogger.Error(result.String);
                 return ReturnCode.Error;
             }
 
             if (!legCommand.ValidateArguments(arguments, ref result))
             {
-                BaseLogger.Error(result);
+                ErrorLogger.Error(result);
                 return ReturnCode.Error;
             }
 

@@ -11,14 +11,15 @@ namespace IptSimulator.CiscoTcl.Test.CommandTests
         #region DefineFsm tests
 
         [Theory,
-         InlineData("set fsm(CALL_INIT,ev_setup_indication) \"act_Setup, same_state\"\n" +
+         InlineData("set fsm(CALL_INIT,ev_setup_indication) \"act_Setup,same_state\"\n" +
                     "fsm define fsm CALL_INIT", "CALL_INIT"),
-         InlineData("set fsm(CALL_INIT,ev_setup_indication) \"act_Setup, same_state\"\n" +
-                    "set fsm(any_state,ev_disconnected)  \"act_Cleanup,same_state\"\n" +
+         InlineData("set fsm(CALL_INIT,ev_setup_indication) \"act_Setup,same_state\"\n" +
+                    "set fsm(any_state,ev_disconnected) \"act_Cleanup,same_state\"\n" +
                     "fsm define fsm any_state", "any_state")]
-        public void DefineFsm_ValidArguments_ReturnOk(string script, string expectedResult)
+        public void DefineFsm_ValidArguments_ReturnOk(string script, string expectedState)
         {
-            EvaluateAndExpectSuccess(script, expectedResult, new Fsm());
+            var fsm = new Fsm();
+            EvaluateAndExpectSuccess(script, () => fsm.CurrentState == expectedState, fsm);
         }
 
         [Theory,
@@ -75,23 +76,23 @@ namespace IptSimulator.CiscoTcl.Test.CommandTests
         }
 
         [Theory,
-         InlineData("set test(CALL_INIT,ev_setup_indication) \"act_Setup, same_state\"\n" +
+         InlineData("set test(CALL_INIT,ev_setup_indication) \"act_Setup,same_state\"\n" +
                     "set test(CALL_WAITING,ev_named_timer) \"act_TimerExpired,IN_CALL\"\n" +
                     "fsm define test CALL_INIT\n" +
-                    "fsm setstate CALL_WAITING", "CALL_WAITING")]
-        public void SetStateFsm_ValidArguments_ReturnOk(string script, string expectedResult)
+                    "fsm setstate CALL_WAITING")]
+        public void SetStateFsm_ValidArguments_ReturnOk(string script)
         {
-            EvaluateAndExpectSuccess(script,expectedResult, new Fsm());
+            EvaluateAndExpectSuccess(script, new Fsm());
         }
 
         [Theory,
-         InlineData("set test(CALL_INIT,ev_setup_indication) \"act_Setup, same_state\"\n" +
+         InlineData("set test(CALL_INIT,ev_setup_indication) \"act_Setup,same_state\"\n" +
                     "set test(CALL_WAITING,ev_named_timer) \"act_TimerExpired,IN_CALL\"\n" +
                     "fsm define test CALL_WAITING\n" +
-                    "fsm setstate CALL_WAITING", "CALL_WAITING")]
-        public void SetStateFsm_SetSameStateAsInit_ReturnOk(string script, string expectedResult)
+                    "fsm setstate CALL_WAITING")]
+        public void SetStateFsm_SetSameStateAsInit_ReturnOk(string script)
         {
-            EvaluateAndExpectSuccess(script, expectedResult, new Fsm());
+            EvaluateAndExpectSuccess(script, new Fsm());
         }
 
         [Theory,
@@ -185,13 +186,15 @@ namespace IptSimulator.CiscoTcl.Test.CommandTests
         [Fact]
         public void ChangingFsmState_FromScript_FourthState()
         {
-            EvaluateAndExpectSuccess(ScriptProvider.FsmStateChanging,"FOURTH_STATE", new Fsm());
+            var fsm = new Fsm();
+            EvaluateAndExpectSuccess(ScriptProvider.FsmStateChanging, () => fsm.CurrentState == "FOURTH_STATE", fsm);
         }
 
         [Fact]
         public void RaiseFsmStateWithSetState_FromScript_ThirdState()
         {
-            EvaluateAndExpectSuccess(ScriptProvider.FsmRaiseEvent, "THIRD_STATE", new Fsm());
+            var fsm = new Fsm();
+            EvaluateAndExpectSuccess(ScriptProvider.FsmRaiseEvent, () => fsm.CurrentState == "THIRD_STATE", fsm);
         }
 
         #endregion

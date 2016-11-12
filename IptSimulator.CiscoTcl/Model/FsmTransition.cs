@@ -12,7 +12,7 @@ namespace IptSimulator.CiscoTcl.Model
     /// </summary>
     public class FsmTransition
     {
-        private static ILogger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
         public FsmTransition(string sourceState, string @event, string targetState, string procedure)
         {
@@ -66,11 +66,11 @@ namespace IptSimulator.CiscoTcl.Model
 
             if (specialState == FsmSpecialStates.SameState)
             {
-                _logger.Debug($"Target state is: {TargetState}, calculated actual target state from special state {specialState} is {SourceState}.");
+                Logger.Debug($"Target state is: {TargetState}, calculated actual target state from special state {specialState} is {SourceState}.");
                 return SourceState;
             }
 
-            _logger.Warn($"Unsupported TargetState special state: {specialState}, TargetState: {TargetState}");
+            Logger.Warn($"Unsupported TargetState special state: {specialState}, TargetState: {TargetState}");
             return TargetState;
         }
 
