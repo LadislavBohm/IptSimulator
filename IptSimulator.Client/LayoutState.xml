@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LayoutRoot xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RootPanel Orientation="Vertical">
+    <LayoutPanel Orientation="Horizontal">
+      <LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="240" DocMinWidth="160">
+        <LayoutAnchorablePane DockWidth="240">
+          <LayoutAnchorable CanHide="False" AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Event raising" IsSelected="True" ContentId="1444b85f1bb3487fb5b72325ea93e3a7" CanClose="False" />
+        </LayoutAnchorablePane>
+      </LayoutAnchorablePaneGroup>
+      <LayoutDocumentPaneGroup Orientation="Horizontal" DockWidth="0.916666666666667*" DocMinWidth="200">
+        <LayoutDocumentPane>
+          <LayoutDocument Title="TCL editor" IsSelected="True" IsLastFocusedDocument="True" ContentId="7818d6eef886408ead8bec1b981bccc4" CanClose="False" LastActivationTimeStamp="11/12/2016 21:56:05" />
+        </LayoutDocumentPane>
+      </LayoutDocumentPaneGroup>
+      <LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="212" DocMinWidth="160">
+        <LayoutAnchorablePane DockWidth="212">
+          <LayoutAnchorable CanHide="False" AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Something else" IsSelected="True" ContentId="621ff620795a4759a65f6ebc088231e8" CanClose="False" />
+        </LayoutAnchorablePane>
+      </LayoutAnchorablePaneGroup>
+    </LayoutPanel>
+    <LayoutAnchorablePaneGroup Orientation="Horizontal" DockHeight="265.52">
+      <LayoutAnchorablePane DockHeight="265.52">
+        <LayoutAnchorable CanHide="False" AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Watch" IsSelected="True" ContentId="f9d4cfc95ad14ff8b6ec0114227d4de2" CanClose="False" />
+      </LayoutAnchorablePane>
+      <LayoutAnchorablePaneGroup Orientation="Horizontal" DockHeight="100" DockMinHeight="100" FloatingWidth="136" FloatingHeight="39" FloatingLeft="931" FloatingTop="902">
+        <LayoutAnchorablePane DockHeight="100" DockMinHeight="100" FloatingWidth="136" FloatingHeight="39" FloatingLeft="931" FloatingTop="902">
+          <LayoutAnchorable CanHide="False" AutoHideHeight="200" AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Debug window" IsSelected="True" ContentId="a37da6c4bcfb4c12a29fec8e519c795d" FloatingLeft="931" FloatingTop="902" FloatingWidth="136" FloatingHeight="39" CanClose="False" LastActivationTimeStamp="11/12/2016 21:55:55" />
+        </LayoutAnchorablePane>
+      </LayoutAnchorablePaneGroup>
+    </LayoutAnchorablePaneGroup>
+  </RootPanel>
+  <TopSide />
+  <RightSide />
+  <LeftSide />
+  <BottomSide />
+  <FloatingWindows />
+  <Hidden />
+</LayoutRoot>
