@@ -41,7 +41,13 @@ namespace IptSimulator.Client.Controls
         public int EditorFontSize
         {
             get { return (int) GetValue(EditorFontSizeProperty); }
-            set { SetValue(EditorFontSizeProperty, value); }
+            set
+            {
+                if (value > FontSizeUpDown.Minimum && value < FontSizeUpDown.Maximum)
+                {
+                    SetValue(EditorFontSizeProperty, value);
+                }
+            }
         }
 
         public static readonly DependencyProperty EditorFontFamilyProperty = DependencyProperty.Register(

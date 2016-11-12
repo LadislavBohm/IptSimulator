@@ -103,6 +103,7 @@ namespace IptSimulator.Client.Controls
 
             MainTextEditor.TextArea.TextEntered += MainEditor_TextEntered;
             MainTextEditor.TextArea.TextEntering += MainEditor_TextEntering;
+            MainTextEditor.TextArea.MouseWheel += MainTextEditor_OnMouseWheel;
 
             _logger.Debug("Editor completion handling is successfully set.");
         }
@@ -112,6 +113,23 @@ namespace IptSimulator.Client.Controls
             if (e.Text == " " || (Keyboard.IsKeyDown(Key.Space) && Keyboard.IsKeyDown(Key.LeftCtrl)))
             {
                 ShowCompletionWindow();
+            }
+        }
+
+        private void MainTextEditor_OnMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (e.Delta > 0)
+                {
+                    //wheel up
+                    TclEditorToolbar.EditorFontSize++;
+                }
+                else
+                {
+                    //wheel down
+                    TclEditorToolbar.EditorFontSize--;
+                }
             }
         }
 

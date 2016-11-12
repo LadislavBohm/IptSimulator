@@ -135,6 +135,7 @@
     <Compile Include="Behaviors\AutoScrollToLastItemBehavior.cs" />
     <Compile Include="Behaviors\AvalonDockLayoutSerializer.cs" />
     <Compile Include="Behaviors\AvalonEditBehavior.cs" />
+    <Compile Include="Behaviors\MouseWheelGesture.cs" />
     <Compile Include="Controls\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
@@ -247,6 +248,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="LayoutState.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
