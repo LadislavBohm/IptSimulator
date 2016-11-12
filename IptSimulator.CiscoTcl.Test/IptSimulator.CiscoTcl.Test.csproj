@@ -83,6 +83,12 @@
     <EmbeddedResource Include="Scripts\fsm_event_raise_with_setstate.tcl" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="Scripts\call_wait.tcl" />
     <EmbeddedResource Include="Scripts\fsm_state_changing.tcl" />
