@@ -21,7 +21,7 @@
             <RowDefinition Height="28"/>
         </Grid.RowDefinitions>
         
-        <local:TclEditorActionBar Grid.Row="0" Height="40"/>
+        <local:TclEditorActionBar Grid.Row="0" Height="34"/>
         
         <avalonedit:TextEditor Grid.Row="1"
                                ShowLineNumbers="True"

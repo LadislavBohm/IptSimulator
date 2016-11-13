@@ -16,6 +16,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
     {
         private readonly IList<LogViewModel> _allLogs = new List<LogViewModel>();
         private RelayCommand _filterLogsCommand;
+        private RelayCommand _clearLogsCommand;
 
         public DebugWindowViewModel()
         {
@@ -35,7 +36,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public bool Error { get; set; } = true;
 
-        public string LoggerFilter { get; set; } = string.Empty;
+        public string LoggerFilter { get; set; } = "Result";
 
         public string MessageFilter { get; set; } = string.Empty;
 
@@ -52,6 +53,18 @@ namespace IptSimulator.Client.ViewModels.Dockable
                 return _filterLogsCommand ?? (_filterLogsCommand = new RelayCommand(() =>
                        {
                            Logs = new ObservableCollection<LogViewModel>(_allLogs.Where(CanAdd));
+                       }));
+            }
+        }
+
+        public RelayCommand ClearLogsCommand
+        {
+            get
+            {
+                return _clearLogsCommand ?? (_clearLogsCommand = new RelayCommand(() =>
+                       {
+                           _allLogs.Clear();
+                           Logs.Clear();
                        }));
             }
         }
@@ -76,6 +89,11 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         private bool CanAdd(LogEventInfo eventInfo)
         {
+            if(!string.IsNullOrWhiteSpace(LoggerFilter) &&
+               !eventInfo.LoggerName.ToUpper().Contains(LoggerFilter.ToUpper()))
+            {
+                return false;
+            }
             if (eventInfo.Level == LogLevel.Debug)
             {
                 return Debug;
