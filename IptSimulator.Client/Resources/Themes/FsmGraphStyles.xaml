@@ -1,0 +1,165 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:graphx="http://schemas.panthernet.ru/graphx/">
+
+    <Style x:Key="StateNameText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    <Style x:Key="StateOtherText" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
+    </Style>
+    <Style x:Key="EdgeTooltipLabelText" TargetType="Run">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    <Style x:Key="EdgeTooltipValueText" TargetType="Run" BasedOn="{StaticResource EdgeTooltipLabelText}">
+        <Setter Property="FontWeight" Value="Normal"/>
+    </Style>
+    
+    <SolidColorBrush x:Key="HighlightedEdgeColor" Color="Black"/>
+    <SolidColorBrush x:Key="EdgeColor" Color="#535151"/>
+    <SolidColorBrush x:Key="HighlightedVertexColor" Color="Black"/>
+    <SolidColorBrush x:Key="VertexColor" Color="#535151"/>
+
+    <Style TargetType="{x:Type graphx:VertexControl}">
+        <Setter Property="Background" Value="WhiteSmoke"/>
+        <Setter Property="Padding" Value="10,5,10,5"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type graphx:VertexControl}">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="HoverOn">
+                            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="HoverContentBorder" Storyboard.TargetProperty="Opacity" To="1" />
+                            <DoubleAnimation Duration="00:00:00.0000000" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="0" />
+                        </Storyboard>
+                        <Storyboard x:Key="HoverOff">
+                            <DoubleAnimation Duration="00:00:00.3000000" Storyboard.TargetName="ContentBorder" Storyboard.TargetProperty="Opacity" To="1" />
+                            <DoubleAnimation Duration="00:00:00.0000000" Storyboard.TargetName="HoverContentBorder" Storyboard.TargetProperty="Opacity" To="0" />
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+
+                    <Grid x:Name="ContentGrid"
+                          Cursor="{x:Static Cursors.SizeAll}">
+                        <Border x:Name="ContentBorder"
+                                BorderThickness="2"
+                                BorderBrush="{StaticResource VertexColor}"
+                                Background="WhiteSmoke"
+                                Opacity="1"
+                                CornerRadius="4"/>
+                        <Border x:Name="HoverContentBorder"
+                                BorderThickness="3"
+                                BorderBrush="{StaticResource HighlightedVertexColor}"
+                                Background="WhiteSmoke"
+                                Padding="1"
+                                Opacity="0"
+                                CornerRadius="4"/>
+                        <StackPanel Orientation="Vertical" Margin="10">
+                            <TextBlock Style="{StaticResource StateNameText}" Text="{Binding Name}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource StateOtherText}" Text="Is initial: "/>
+                                <TextBlock Style="{StaticResource StateOtherText}" Text="{Binding IsInitial}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource StateOtherText}" Text="Is current: "/>
+                                <TextBlock Style="{StaticResource StateOtherText}" Text="{Binding IsCurrent}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOff}" x:Name="HoverOff_BeginStoryboard" />
+                            </Trigger.ExitActions>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource HoverOn}" />
+                            </Trigger.EnterActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="graphx:DragBehaviour.IsDragEnabled" Value="True" />
+        <Setter Property="graphx:DragBehaviour.UpdateEdgesOnMove" Value="True" />
+    </Style>
+
+    <Style TargetType="{x:Type graphx:EdgeControl}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type graphx:EdgeControl}">
+                    <Grid>
+                        <Path x:Name="PART_edgePath"
+                              Stroke="{TemplateBinding Foreground}"
+                              StrokeThickness="{TemplateBinding StrokeThickness}" 
+                              MinWidth="1" 
+                              MinHeight="1"
+                              ToolTip="{TemplateBinding ToolTip}"/>
+                        <graphx:DefaultEdgePointer NeedRotation="true" x:Name="PART_EdgePointerForTarget" >
+                            <Path Data="M0,0.5 L1,1 1,0" Fill="{Binding Path=Foreground, RelativeSource={RelativeSource TemplatedParent}}" Stretch="Uniform" Width="15" Height="15"/>
+                        </graphx:DefaultEdgePointer>
+                        <graphx:EdgeLabelControl x:Name="PART_edgeLabel" 
+                                                 Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource TemplatedParent}}" 
+                                                 Content="{Binding Edge.Event, RelativeSource={RelativeSource TemplatedParent}}">
+                            <graphx:EdgeLabelControl.ContentTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="LabelBorder"
+                                            BorderThickness="{Binding Path=StrokeThickness, RelativeSource={RelativeSource AncestorType={x:Type graphx:EdgeControl}}}"
+                                            BorderBrush="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type graphx:EdgeLabelControl}}}"
+                                            CornerRadius="4"
+                                            Background="White"
+                                            UseLayoutRounding="True"
+                                            SnapsToDevicePixels="True">
+                                        <Grid Margin="4,1,4,1">
+                                            <TextBlock Foreground="Black" 
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="11"
+                                                       Text="{TemplateBinding Content}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </graphx:EdgeLabelControl.ContentTemplate>
+                        </graphx:EdgeLabelControl>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="MinWidth" Value="1" />
+        <Setter Property="MinHeight" Value="1" />
+        <Setter Property="Background" Value="Red" />
+        <Setter Property="Foreground" Value="{StaticResource EdgeColor}" />
+        <Setter Property="Opacity" Value="1" />
+        <Setter Property="StrokeThickness" Value="2"></Setter>
+        <Setter Property="graphx:HighlightBehaviour.IsHighlightEnabled" Value="True"/>
+        <Setter Property="ToolTipService.InitialShowDelay" Value="1"/>
+        <Setter Property="ToolTip">
+            <Setter.Value>
+                <Border BorderBrush="Black" BorderThickness="2" CornerRadius="2" Background="WhiteSmoke" UseLayoutRounding="True">
+                    <StackPanel Orientation="Vertical" Margin="4">
+                        <TextBlock FontWeight="Bold" Text="Transition" FontSize="18" HorizontalAlignment="Center"/>
+                        <TextBlock>
+                            <Run Text="Event: " Style="{StaticResource EdgeTooltipLabelText}"/>
+                            <Run Text="{Binding Path=Event, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="Procedure: " Style="{StaticResource EdgeTooltipLabelText}"/>
+                            <Run Text="{Binding Path=Procedure, Mode=OneWay}"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="graphx:HighlightBehaviour.Highlighted" Value="True">
+                <Setter Property="StrokeThickness" Value="3"/>
+                <Setter Property="Foreground" Value="{StaticResource HighlightedEdgeColor}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary> 

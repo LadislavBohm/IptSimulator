@@ -14,7 +14,7 @@
       </LayoutDocumentPaneGroup>
       <LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="212" DocMinWidth="160">
         <LayoutAnchorablePane DockWidth="212">
-          <LayoutAnchorable CanHide="False" AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Something else" IsSelected="True" ContentId="621ff620795a4759a65f6ebc088231e8" CanClose="False" />
+          <LayoutAnchorable CanHide="False" AutoHideMinWidth="100" AutoHideMinHeight="100" Title="Configuration" IsSelected="True" ContentId="621ff620795a4759a65f6ebc088231e8" CanClose="False" />
         </LayoutAnchorablePane>
       </LayoutAnchorablePaneGroup>
     </LayoutPanel>

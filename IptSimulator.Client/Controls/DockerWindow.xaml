@@ -42,11 +42,11 @@
                 </avalonDock:LayoutDocumentPaneGroup>
                 <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="160">
                     <avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorable Title="Something else" 
+                        <avalonDock:LayoutAnchorable Title="Configuration" 
                                                      CanClose="False" 
                                                      CanHide="False"
                                                      ContentId="621ff620795a4759a65f6ebc088231e8">
-                            <local:EventRaisingWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
+                            <local:ConfigurationWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor.Configuration}"/>
                         </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
                 </avalonDock:LayoutAnchorablePaneGroup>

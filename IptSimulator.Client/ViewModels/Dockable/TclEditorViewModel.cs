@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Eagle._Components.Public;
 using GalaSoft.MvvmLight.Command;
 using IptSimulator.CiscoTcl.Events;
@@ -65,6 +66,8 @@ namespace IptSimulator.Client.ViewModels.Dockable
         public string FilterEventsText { get; set; }
 
         public string EvaluationResult { get; set; } = string.Empty;
+
+        public ConfigurationViewModel Configuration { get; private set; }
 
         #endregion
 
@@ -237,6 +240,9 @@ namespace IptSimulator.Client.ViewModels.Dockable
                     _logger.Warn($"Failed to add {customCommand.Name} command. Error: {result}");
                 }
             }
+
+            _logger.Info("Initializing configuration");
+            Configuration = new ConfigurationViewModel();
         }
 
 
