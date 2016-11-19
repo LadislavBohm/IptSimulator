@@ -19,13 +19,13 @@
 		</Style>
         
         <Storyboard x:Key="SlideAndFadeIn" >
-			<ThicknessAnimation Duration="0:0:.75" Storyboard.TargetProperty="Margin" From="600,0,-600,0" To="0" DecelerationRatio=".8" />
-			<DoubleAnimation Duration="0:0:.25" Storyboard.TargetProperty="Opacity" From="0" To="1" />
+			<ThicknessAnimation Duration="0:0:.45" Storyboard.TargetProperty="Margin" From="1500,0,-1500,0" To="0" DecelerationRatio=".9" />
+			<DoubleAnimation Duration="0:0:.15" Storyboard.TargetProperty="Opacity" From="0" To="1" />
 		</Storyboard>
 
 		<Storyboard x:Key="SlideAndFadeOut">
-			<ThicknessAnimation Duration="0:0:.5" Storyboard.TargetProperty="Margin" To="-600,0,600,0" AccelerationRatio=".8"/>
-			<DoubleAnimation Duration="0:0:.5" Storyboard.TargetProperty="Opacity" To="0" />
+			<ThicknessAnimation Duration="0:0:.35" Storyboard.TargetProperty="Margin" To="-1500,0,1500,0" AccelerationRatio=".9"/>
+			<DoubleAnimation Duration="0:0:.2" Storyboard.TargetProperty="Opacity" To="0" />
 		</Storyboard>
     </UserControl.Resources>
     

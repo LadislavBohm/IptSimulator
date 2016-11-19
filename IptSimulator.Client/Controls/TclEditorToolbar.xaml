@@ -8,11 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="24" d:DesignWidth="800" d:DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}">
     <Grid>
-        <Grid.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="Foreground" Value="White"/>
-            </Style>
-        </Grid.Resources>
         <StatusBar>
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">

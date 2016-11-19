@@ -7,7 +7,7 @@ using NLog;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 using Path = System.IO.Path;
 
-namespace IptSimulator.Client.Controls.Dockable
+namespace IptSimulator.Client.Controls
 {
     /// <summary>
     /// Interaction logic for DockerWindow.xaml

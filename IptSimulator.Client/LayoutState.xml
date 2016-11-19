@@ -10,6 +10,7 @@
       <LayoutDocumentPaneGroup Orientation="Horizontal" DockWidth="0.916666666666667*" DocMinWidth="200">
         <LayoutDocumentPane>
           <LayoutDocument Title="TCL editor" IsSelected="True" IsLastFocusedDocument="True" ContentId="7818d6eef886408ead8bec1b981bccc4" CanClose="False" LastActivationTimeStamp="11/12/2016 21:56:05" />
+          <LayoutDocument Title="FSM graph" IsSelected="False" IsLastFocusedDocument="False" ContentId="06d813ada10c4d8d9757fad385959335" CanClose="False" LastActivationTimeStamp="10/11/2016 21:56:05" />
         </LayoutDocumentPane>
       </LayoutDocumentPaneGroup>
       <LayoutAnchorablePaneGroup Orientation="Horizontal" DockWidth="212" DocMinWidth="160">

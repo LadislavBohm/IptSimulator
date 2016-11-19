@@ -9,46 +9,23 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="1100">
-    <!--<UserControl.RenderTransform>
-        <TranslateTransform/>
-    </UserControl.RenderTransform>
-    <UserControl.Triggers>
-        <EventTrigger RoutedEvent="UserControl.Loaded">
-            <BeginStoryboard>
-                <Storyboard >
-                    <DoubleAnimation Duration="0:0:.8" Storyboard.TargetProperty="Left" From="1920" To="0" AccelerationRatio=".1"/>
-                </Storyboard>
-            </BeginStoryboard>
-        </EventTrigger>
-    </UserControl.Triggers>-->
-     <Grid>
+    <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="../Resources/Themes/FsmGraphStyles.xaml"/>
         </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="3"/>
-            <ColumnDefinition Width="300" MinWidth="300"/>
-        </Grid.ColumnDefinitions>
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Save as img..."
+                          Click="SaveAsImgMenuItem_OnClick"/>
+                <MenuItem Header="Print"
+                          Click="PrintMenuItem_OnClick"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
 
-        
         <graphx:ZoomControl x:Name="GraphZoomControl"
-                            Grid.Column="0"
-                            AnimationLength="00:00:00.200">
-            <fsmGraph:FsmGraphArea x:Name="GraphArea"/> 
+                            AnimationLength="00:00:00.200"
+                            ZoomSensitivity="28">
+            <fsmGraph:FsmGraphArea x:Name="GraphArea"/>
         </graphx:ZoomControl>
-
-        <GridSplitter Grid.Column="1"
-                      HorizontalAlignment="Stretch"
-                      Background="Gray"/>
-        
-        <xctk:PropertyGrid Name="GraphPropertyGrid"
-                           Grid.Column="2"
-                           IsCategorized="True"
-                           ShowAdvancedOptions="True"
-                           ShowSearchBox="False">
-            
-        </xctk:PropertyGrid>
-        
     </Grid>
 </UserControl>

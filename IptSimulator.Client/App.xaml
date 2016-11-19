@@ -7,7 +7,6 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Fluent;Component/Themes/Office2013/Generic.xaml" />
                 <ResourceDictionary>
                     <viewModels:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
                 </ResourceDictionary>

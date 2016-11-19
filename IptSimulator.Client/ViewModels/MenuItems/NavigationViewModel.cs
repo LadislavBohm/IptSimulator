@@ -24,14 +24,14 @@ namespace IptSimulator.Client.ViewModels.MenuItems
             {
                 return _openFsmGraphCommand ?? (_openFsmGraphCommand = new RelayCommand(() =>
                        {
-                           if (_fsmGraphWindow == null)
-                           {
-                               _fsmGraphWindow = new FsmVisualizationWindow();
-                           }
+                           //if (_fsmGraphWindow == null)
+                           //{
+                           //    _fsmGraphWindow = new FsmVisualizationWindow();
+                           //}
 
-                           var dialogResult = _fsmGraphWindow.ShowDialog();
+                           //var dialogResult = _fsmGraphWindow.ShowDialog();
 
-                           _fsmGraphWindow = null;
+                           //_fsmGraphWindow = null;
                        }));
             }
         }

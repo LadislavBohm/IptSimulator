@@ -12,6 +12,12 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+            <Style TargetType="CheckBox">
+                <Setter Property="Foreground" Value="White"></Setter>
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="White"></Setter>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
@@ -74,7 +80,7 @@
                     ToolTip="Clears all cached logs.">
                 <StackPanel Orientation="Horizontal"  Margin="5,0,0,0">
                     <iconPacks:PackIconMaterial Kind="Delete" Foreground="Black" Height="12" Margin="0,2,0,0"/>
-                    <TextBlock Text="Clear logs" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                    <TextBlock Text="Clear logs" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="Black"/>
                 </StackPanel>
             </Button>
         </WrapPanel>
