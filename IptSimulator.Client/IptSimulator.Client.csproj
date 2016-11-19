@@ -172,31 +172,31 @@
     <Compile Include="Behaviors\AvalonDockLayoutSerializer.cs" />
     <Compile Include="Behaviors\AvalonEditBehavior.cs" />
     <Compile Include="Behaviors\MouseWheelGesture.cs" />
-    <Compile Include="Controls\ConfigurationWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\ConfigurationWindow.xaml.cs">
       <DependentUpon>ConfigurationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DebugWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DockerMenu.xaml.cs">
       <DependentUpon>DockerMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DockerWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\DockerWindow.xaml.cs">
       <DependentUpon>DockerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\EventRaisingWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\EventRaisingWindow.xaml.cs">
       <DependentUpon>EventRaisingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TclEditorActionBar.xaml.cs">
       <DependentUpon>TclEditorActionBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TclEditorWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\TclEditorWindow.xaml.cs">
       <DependentUpon>TclEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TclEditorToolbar.xaml.cs">
       <DependentUpon>TclEditorToolbar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\WatchWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\WatchWindow.xaml.cs">
       <DependentUpon>WatchWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\IntegerToFontSizeConverter.cs" />
@@ -233,11 +233,11 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Dockable\TclEditorViewModel.cs" />
     <Compile Include="ViewModels\MenuItems\OpenScriptViewModel.cs" />
-    <Page Include="Controls\ConfigurationWindow.xaml">
+    <Page Include="Controls\Dockable\ConfigurationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\DebugWindow.xaml">
+    <Page Include="Controls\Dockable\DebugWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -245,11 +245,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\DockerWindow.xaml">
+    <Page Include="Controls\Dockable\DockerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\EventRaisingWindow.xaml">
+    <Page Include="Controls\Dockable\EventRaisingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -257,7 +257,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TclEditorWindow.xaml">
+    <Page Include="Controls\Dockable\TclEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -265,7 +265,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\WatchWindow.xaml">
+    <Page Include="Controls\Dockable\WatchWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -22,8 +22,8 @@ namespace IptSimulator.Client.Model.FsmGraph
         private OverlapRemovalAlgorithmTypeEnum _overlapRemoval = OverlapRemovalAlgorithmTypeEnum.FSA;
         private OverlapRemovalParameters _overlapParameters = new OverlapRemovalParameters()
         {
-            HorizontalGap = 200,
-            VerticalGap = 200
+            HorizontalGap = 160,
+            VerticalGap = 160
         };
         private bool _curveEdges = true;
         private bool _alignEdgeLabels = true;

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:IptSimulator.Client.Controls"
         xmlns:fluent="urn:fluent-ribbon"
+        xmlns:dockable="clr-namespace:IptSimulator.Client.Controls.Dockable"
         mc:Ignorable="d"
         Title="IPT Simulator" Height="900" Width="1300" 
         WindowStartupLocation="CenterScreen"
@@ -44,7 +45,7 @@
             </fluent:RibbonTabItem>
 
         </fluent:Ribbon>
-        <controls:DockerWindow Grid.Row="1"/>
+        <dockable:DockerWindow Grid.Row="1"/>
     </Grid>
 
 </fluent:RibbonWindow>

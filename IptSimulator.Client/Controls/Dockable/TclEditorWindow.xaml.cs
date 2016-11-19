@@ -1,35 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml;
-using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
-using IptSimulator.Client.Exceptions;
 using IptSimulator.Client.Model.Interfaces;
 using IptSimulator.Client.ViewModels.Dockable;
-using IptSimulator.Client.Views;
-using IptSimulator.Core;
 using NLog;
 using TclCompletionManager = IptSimulator.Client.Model.TclCompletionManager;
 
-namespace IptSimulator.Client.Controls
+namespace IptSimulator.Client.Controls.Dockable
 {
     /// <summary>
     /// Interaction logic for TclEditorWindow.xaml
