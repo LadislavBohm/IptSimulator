@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="IptSimulator.Client.Controls.FsmGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IptSimulator.Client.Controls"
+             xmlns:graphx="http://schemas.panthernet.ru/graphx/"
+             xmlns:fsmGraph="clr-namespace:IptSimulator.Client.Model.FsmGraph"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1100">
+    <!--<UserControl.RenderTransform>
+        <TranslateTransform/>
+    </UserControl.RenderTransform>
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="UserControl.Loaded">
+            <BeginStoryboard>
+                <Storyboard >
+                    <DoubleAnimation Duration="0:0:.8" Storyboard.TargetProperty="Left" From="1920" To="0" AccelerationRatio=".1"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>-->
+     <Grid>
+        <Grid.Resources>
+            <ResourceDictionary Source="../Resources/Themes/FsmGraphStyles.xaml"/>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="300" MinWidth="300"/>
+        </Grid.ColumnDefinitions>
+
+        
+        <graphx:ZoomControl x:Name="GraphZoomControl"
+                            Grid.Column="0"
+                            AnimationLength="00:00:00.200">
+            <fsmGraph:FsmGraphArea x:Name="GraphArea"/> 
+        </graphx:ZoomControl>
+
+        <GridSplitter Grid.Column="1"
+                      HorizontalAlignment="Stretch"
+                      Background="Gray"/>
+        
+        <xctk:PropertyGrid Name="GraphPropertyGrid"
+                           Grid.Column="2"
+                           IsCategorized="True"
+                           ShowAdvancedOptions="True"
+                           ShowSearchBox="False">
+            
+        </xctk:PropertyGrid>
+        
+    </Grid>
+</UserControl>

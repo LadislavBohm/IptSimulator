@@ -37,30 +37,14 @@
                                    Icon="../Resources/Images/graph-icon-small.png"
                                    LargeIcon="../Resources/Images/graph-icon-large.png"
                                    UseLayoutRounding="True"
-                                   Command="{Binding OpenFsmGraphCommand}"
-                                   CommandParameter="{Binding Source={StaticResource Locator}, Path=FsmVisualization}">
-                        
-                    </fluent:Button>
+                                   Click="FsmGraphButton_OnClick"/>
                 </fluent:RibbonGroupBox>
             </fluent:RibbonTabItem>
 
         </fluent:Ribbon>
-        <dockable:DockerWindow Grid.Row="1"/>
+
+        <controls:PageTransition x:Name="PageTransitionControl"
+                                 Grid.Row="1"/>
     </Grid>
 
 </fluent:RibbonWindow>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

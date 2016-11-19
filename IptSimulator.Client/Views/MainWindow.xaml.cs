@@ -21,6 +21,8 @@ using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Search;
+using IptSimulator.Client.Controls;
+using IptSimulator.Client.Controls.Dockable;
 using IptSimulator.Client.ViewModels;
 
 namespace IptSimulator.Client.Views
@@ -30,9 +32,28 @@ namespace IptSimulator.Client.Views
     /// </summary>
     public partial class MainWindow : RibbonWindow
     {
+        private readonly DockerWindow _dockerWindow = new DockerWindow();
+        private readonly FsmGraph _fsmGraph = new FsmGraph();
+        private bool _graphVisible;
+
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += (sender, args) => PageTransitionControl.ShowPage(_dockerWindow);
+        }
+
+        private void FsmGraphButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_graphVisible)
+            {
+                PageTransitionControl.ShowPage(_dockerWindow);
+            }
+            else
+            {
+                PageTransitionControl.ShowPage(_fsmGraph);
+            }
+
+            _graphVisible = !_graphVisible;
         }
     }
 }
