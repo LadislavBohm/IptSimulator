@@ -8,6 +8,6 @@ namespace IptSimulator.CiscoTcl.Interpreter
 {
     public interface ICommand
     {
-        void Evaluate();
+        void Evaluate(TclVoiceInterpreter interpreter);
     }
 }

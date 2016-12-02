@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IptSimulator.CiscoTcl.Interpreter.Commands
 {
-    public class EvaluteScriptCommand : ICommand
+    public class EvaluteScriptCommand : InterpreterCommandBase
     {
         private readonly string _scriptToEvalute;
 
@@ -14,10 +14,9 @@ namespace IptSimulator.CiscoTcl.Interpreter.Commands
         {
             _scriptToEvalute = scriptToEvalute;
         }
-
-        public void Evaluate()
+        protected override void EvaluateInternal(TclVoiceInterpreter interpreter)
         {
-            
+            interpreter.EvaluateScript(_scriptToEvalute);
         }
     }
 }
