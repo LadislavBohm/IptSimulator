@@ -29,6 +29,12 @@
                                                      ContentId="1444b85f1bb3487fb5b72325ea93e3a7">
                             <dockable:EventRaisingWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
                         </avalonDock:LayoutAnchorable>
+                        <avalonDock:LayoutAnchorable Title="Endpoint terminal"
+                                                     CanClose="False"
+                                                     CanHide="False"
+                                                     ContentId="a166a5c0e6554a059c719c2640cd85ad">
+                            <dockable:EndpointTerminal DataContext="{Binding Source={StaticResource Locator}, Path=EndpointTerminal}"/>
+                        </avalonDock:LayoutAnchorable>
                     </avalonDock:LayoutAnchorablePane>
                 </avalonDock:LayoutAnchorablePaneGroup>
                 <avalonDock:LayoutDocumentPaneGroup Orientation="Horizontal" DockMinWidth="200" DockMinHeight="600">

@@ -67,21 +67,21 @@ namespace IptSimulator.Client.Controls
         {
             try
             {
-                _logger.Info("Restoring previous layout.");
+                //_logger.Info("Restoring previous layout.");
 
-                if (!File.Exists(_layoutFilePath))
-                {
-                    _logger.Info("Previous layout state file does not exist.");
-                    return;
-                }
+                //if (!File.Exists(_layoutFilePath))
+                //{
+                //    _logger.Info("Previous layout state file does not exist.");
+                //    return;
+                //}
 
-                var serializer = new XmlLayoutSerializer(MainDockingManager);
-                using (var stream = new StreamReader(_layoutFilePath))
-                {
-                    serializer.Deserialize(stream);
-                }
+                //var serializer = new XmlLayoutSerializer(MainDockingManager);
+                //using (var stream = new StreamReader(_layoutFilePath))
+                //{
+                //    serializer.Deserialize(stream);
+                //}
 
-                _logger.Info("Previous layout successfully restored.");
+                //_logger.Info("Previous layout successfully restored.");
             }
             catch (Exception e)
             {
