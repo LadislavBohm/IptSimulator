@@ -171,6 +171,9 @@
     <Compile Include="Controls\Dockable\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Dockable\EndpointTerminal.xaml.cs">
+      <DependentUpon>EndpointTerminal.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\DockerMenu.xaml.cs">
       <DependentUpon>DockerMenu.xaml</DependentUpon>
     </Compile>
@@ -207,6 +210,7 @@
     <Compile Include="Exceptions\TclSyntaxNotFoundException.cs" />
     <Compile Include="DTO\EventWithDescription.cs" />
     <Compile Include="Model\CompletionResult.cs" />
+    <Compile Include="Model\Eagle\WpfInterpreterHost.cs" />
     <Compile Include="Model\FsmGraph\FsmGraph.cs" />
     <Compile Include="Model\FsmGraph\FsmGraphArea.cs" />
     <Compile Include="Model\FsmGraph\FsmGraphLogic.cs" />
@@ -217,13 +221,16 @@
     <Compile Include="Model\Interfaces\ICompletionManager.cs" />
     <Compile Include="Model\Interfaces\ICompletionResult.cs" />
     <Compile Include="Model\AvalonDockLayoutInitializer.cs" />
+    <Compile Include="Model\InterpreterManager.cs" />
     <Compile Include="Model\NLog\NLogDebugWindowTarget.cs" />
     <Compile Include="Model\NLog\NLogWriteEventArgs.cs" />
     <Compile Include="Model\TclCompletionManager.cs" />
+    <Compile Include="Model\TerminalEndpointType.cs" />
     <Compile Include="ViewModels\Abstractions\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\Dockable\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\Data\WatchVariableViewModel.cs" />
     <Compile Include="ViewModels\Dockable\DebugWindowViewModel.cs" />
+    <Compile Include="ViewModels\Dockable\EndpointTerminalViewModel.cs" />
     <Compile Include="ViewModels\DockerManagerViewModel.cs" />
     <Compile Include="ViewModels\Abstractions\DockWindowViewModel.cs" />
     <Compile Include="ViewModels\Data\LogViewModel.cs" />
@@ -238,6 +245,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Dockable\DebugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dockable\EndpointTerminal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

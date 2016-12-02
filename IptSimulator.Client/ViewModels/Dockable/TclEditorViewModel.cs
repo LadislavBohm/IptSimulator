@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Eagle._Components.Public;
+using Eagle._Components.Public.Delegates;
+using Eagle._Containers.Public;
+using Eagle._Interfaces.Public;
 using GalaSoft.MvvmLight.Command;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
@@ -11,6 +15,7 @@ using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.ViewModels.Abstractions;
 using IptSimulator.Client.ViewModels.Data;
 using IptSimulator.Core.Tcl;
+using Newtonsoft.Json;
 using NLog;
 using PropertyChanged;
 
@@ -88,7 +93,6 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                }
 
                                _logger.Debug("Evaluating whole script");
-
                                Result result = null;
                                var code = _interpreter.EvaluateScript(Script, ref result);
                                RefreshCurrentVariables();
@@ -96,9 +100,9 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                if (code == ReturnCode.Ok)
                                {
                                    _logger.Info("Script successfully evaluated with " +
-                                                (string.IsNullOrWhiteSpace(result.String)
-                                                    ? "no result"
-                                                    : $"following result: {result}"));
+                                               (string.IsNullOrWhiteSpace(result.String)
+                                                   ? "no result"
+                                                   : $"following result: {result}"));
                                }
                                else
                                {
@@ -224,7 +228,18 @@ namespace IptSimulator.Client.ViewModels.Dockable
             _logger.Info("Initializing TCL Interpreter.");
 
             Result result = null;
-            _interpreter = Interpreter.Create(null, CreateFlags.None, ref result);
+            _interpreter = Interpreter.Create(
+                null,
+                CreateFlags.Debug | CreateFlags.Debugger | CreateFlags.DebuggerInterpreter | CreateFlags.DebuggerUse,
+                InitializeFlags.Default,
+                ScriptFlags.Interactive | ScriptFlags.User,
+                InterpreterFlags.Default,
+                null, null, null, null, new ExecuteCallbackDictionary(new List<ExecuteCallback>()),
+                null, null, null, null, ref result);
+
+            _interpreter.Interactive = true;
+            _interpreter.Debug = true;
+            
             _logger.Debug("TCL Interpreter created.");
 
             var customCommands = TclCommandProvider.GetCustomCommands();
@@ -245,6 +260,20 @@ namespace IptSimulator.Client.ViewModels.Dockable
             Configuration = new ConfigurationViewModel();
         }
 
+        private ReturnCode InteractiveLoopCallback(Interpreter interpreter, InteractiveLoopData loopData, ref Result result)
+        {
+            if (loopData.BreakpointType == BreakpointType.Demand)
+            {
+                //Result result3 = null;
+                //var code2 = interpreter.EvaluateScript("suspend", ref result3);
+                //return code2;
+                //var code = interpreter.CancelAnyEvaluate(result, CancelFlags.DebugHalt, ref result);
+                //var code = Interpreter.InteractiveLoop(_interpreter, new[] { "#go" }, ref result);
+                //return code;
+                return ReturnCode.Ok;
+            }
+            return ReturnCode.Ok;
+        }
 
         private void RefreshCurrentVariables()
         {

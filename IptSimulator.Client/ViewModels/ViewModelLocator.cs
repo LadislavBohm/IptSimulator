@@ -26,6 +26,8 @@ namespace IptSimulator.Client.ViewModels
 
         public NavigationViewModel Navigation { get; private set; }
 
+        public EndpointTerminalViewModel EndpointTerminal { get; private set; }
+
         #endregion
 
         private void Initialize()
@@ -36,6 +38,7 @@ namespace IptSimulator.Client.ViewModels
             Menu = new MenuViewModel(DockManager.Documents);
             TclEditor = new TclEditorViewModel();
             Navigation = new NavigationViewModel();
+            EndpointTerminal = new EndpointTerminalViewModel();
         }
 
         public static void Cleanup()
