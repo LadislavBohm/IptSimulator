@@ -23,7 +23,8 @@
         </Grid.ContextMenu>
 
         <graphx:ZoomControl x:Name="GraphZoomControl"
-                            AnimationLength="00:00:00.200"
+                            AnimationLength="00:00:00.300"
+                            IsAnimationEnabled="False"
                             ZoomSensitivity="28">
             <fsmGraph:FsmGraphArea x:Name="GraphArea"/>
         </graphx:ZoomControl>

@@ -37,12 +37,9 @@ namespace IptSimulator.Client.Controls
             ZoomControl.SetViewFinderVisibility(GraphZoomControl, Visibility.Collapsed);
 
             Loaded += Window_OnLoaded;
+            //GotFocus += Window_OnLoaded;
+            
             _graphManager.GraphPropertyChanged += GraphManagerOnGraphPropertyChanged;
-
-            if (ViewModelBase.IsInDesignModeStatic)
-            {
-                GenerateGraph();
-            }
         }
 
         private void GraphManagerOnGraphPropertyChanged(object sender, EventArgs eventArgs)
@@ -83,8 +80,8 @@ namespace IptSimulator.Client.Controls
 
                 GraphZoomControl.ZoomToFill();
                 //enlarge current zoom
-                GraphZoomControl.ZoomToContent(EnlargeBy(GraphZoomControl.Viewport));
-                
+                GraphZoomControl.ZoomToContent(EnlargeBy(GraphZoomControl.Viewport, 50));
+
                 _logger.Info("Graph successfully generated and displayed.");
             }
             catch (Exception e)
