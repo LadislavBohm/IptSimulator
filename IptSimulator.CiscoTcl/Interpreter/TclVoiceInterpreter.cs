@@ -36,7 +36,13 @@ namespace IptSimulator.CiscoTcl.Interpreter
             Logger.Info("Creating TCL interpreter.");
 
             Result result = null;
-            var interpreter = new TclVoiceInterpreter(Eagle._Components.Public.Interpreter.Create(null, ref result));
+            var tclInterpreter = Eagle._Components.Public.Interpreter.Create(null, 
+                CreateFlags.Debug | CreateFlags.Debugger | CreateFlags.DebuggerInterpreter | CreateFlags.DebuggerUse, 
+                ref result);
+            tclInterpreter.Interactive = true;
+            tclInterpreter.Debug = true;
+
+            var interpreter = new TclVoiceInterpreter(tclInterpreter);
             
             interpreter.StartAsync(cancellationToken);
 
@@ -90,7 +96,7 @@ namespace IptSimulator.CiscoTcl.Interpreter
             }
             else
             {
-                Logger.Error($"Evaluation result: {result}");
+                Logger.Error($"Error line: {errorLine}, error message: {result}");
             }
         }
 

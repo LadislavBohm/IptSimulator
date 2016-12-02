@@ -60,6 +60,7 @@
     <Compile Include="Interpreter\Commands\EvaluteScriptCommand.cs" />
     <Compile Include="Interpreter\DebugModeEventArgs.cs" />
     <Compile Include="Interpreter\ICommand.cs" />
+    <Compile Include="Interpreter\InterpreterCommandBase.cs" />
     <Compile Include="Interpreter\TclVoiceInterpreter.cs" />
     <Compile Include="Model\FsmTransition.cs" />
     <Compile Include="Commands\Leg.cs" />
