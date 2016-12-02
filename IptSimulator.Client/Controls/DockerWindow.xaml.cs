@@ -1,21 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using NLog;
-using Xceed.Wpf.AvalonDock.Controls;
-using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 using Path = System.IO.Path;
 
@@ -79,21 +67,21 @@ namespace IptSimulator.Client.Controls
         {
             try
             {
-                _logger.Info("Restoring previous layout.");
+                //_logger.Info("Restoring previous layout.");
 
-                if (!File.Exists(_layoutFilePath))
-                {
-                    _logger.Info("Previous layout state file does not exist.");
-                    return;
-                }
+                //if (!File.Exists(_layoutFilePath))
+                //{
+                //    _logger.Info("Previous layout state file does not exist.");
+                //    return;
+                //}
 
-                var serializer = new XmlLayoutSerializer(MainDockingManager);
-                using (var stream = new StreamReader(_layoutFilePath))
-                {
-                    serializer.Deserialize(stream);
-                }
+                //var serializer = new XmlLayoutSerializer(MainDockingManager);
+                //using (var stream = new StreamReader(_layoutFilePath))
+                //{
+                //    serializer.Deserialize(stream);
+                //}
 
-                _logger.Info("Previous layout successfully restored.");
+                //_logger.Info("Previous layout successfully restored.");
             }
             catch (Exception e)
             {

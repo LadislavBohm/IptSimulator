@@ -8,31 +8,13 @@
         Title="IPT Simulator" Height="900" Width="1300" 
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
-
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <!--<controls:DockerMenu Grid.Row="0"/>-->
-        
-        <controls:DockerWindow Grid.Row="1"/>
+        <controls:DockerWindow Grid.Row="0"/>
     </Grid>
 
 </Window>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

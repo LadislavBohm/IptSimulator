@@ -1,6 +1,7 @@
 
 using IptSimulator.Client.ViewModels.Data;
 using IptSimulator.Client.ViewModels.Dockable;
+using IptSimulator.Client.ViewModels.MenuItems;
 
 namespace IptSimulator.Client.ViewModels
 {
@@ -23,6 +24,10 @@ namespace IptSimulator.Client.ViewModels
 
         public TclEditorViewModel TclEditor { get; private set; }
 
+        public NavigationViewModel Navigation { get; private set; }
+
+        public EndpointTerminalViewModel EndpointTerminal { get; private set; }
+
         #endregion
 
         private void Initialize()
@@ -32,6 +37,8 @@ namespace IptSimulator.Client.ViewModels
             DockManager = new DockManagerViewModel();
             Menu = new MenuViewModel(DockManager.Documents);
             TclEditor = new TclEditorViewModel();
+            Navigation = new NavigationViewModel();
+            EndpointTerminal = new EndpointTerminalViewModel();
         }
 
         public static void Cleanup()

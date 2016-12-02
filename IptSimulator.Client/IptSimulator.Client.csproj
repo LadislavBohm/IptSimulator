@@ -44,6 +44,10 @@
       <HintPath>..\packages\Eagle.1.0.6120.16902\lib\Eagle.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FirstFloor.ModernUI, Version=1.0.9.0, Culture=neutral, PublicKeyToken=bc9b0c37bf06c6a9, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernUI.WPF.1.0.9\lib\net45\FirstFloor.ModernUI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
       <Private>True</Private>
@@ -54,6 +58,18 @@
     </Reference>
     <Reference Include="GalaSoft.MvvmLight.Platform, Version=5.3.0.19032, Culture=neutral, PublicKeyToken=5f873c45e98af8a1, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GraphX.PCL.Common, Version=2.3.6.0, Culture=neutral, PublicKeyToken=a6cdb671d651b60a, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphX.2.3.6.0\lib\net40-client\GraphX.PCL.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GraphX.PCL.Logic, Version=2.3.6.0, Culture=neutral, PublicKeyToken=3b65ef85075e278f, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphX.2.3.6.0\lib\net40-client\GraphX.PCL.Logic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GraphX.WPF.Controls, Version=2.3.6.0, Culture=neutral, PublicKeyToken=bab23663f80c9e76, processorArchitecture=MSIL">
+      <HintPath>..\packages\GraphX.2.3.6.0\lib\net40-client\GraphX.WPF.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
@@ -84,12 +100,25 @@
       <HintPath>..\packages\PropertyChanged.Fody.1.52.1\lib\netstandard10\PropertyChanged.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Expression.Interaction.3.0.40218.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="QuickGraph.Data, Version=3.6.61114.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Graphviz.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuickGraphPCL.3.6.61114.2\lib\net40-client\QuickGraph.Serialization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -135,8 +164,15 @@
     <Compile Include="Behaviors\AutoScrollToLastItemBehavior.cs" />
     <Compile Include="Behaviors\AvalonDockLayoutSerializer.cs" />
     <Compile Include="Behaviors\AvalonEditBehavior.cs" />
-    <Compile Include="Controls\DebugWindow.xaml.cs">
+    <Compile Include="Behaviors\MouseWheelGesture.cs" />
+    <Compile Include="Controls\Dockable\ConfigurationWindow.xaml.cs">
+      <DependentUpon>ConfigurationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dockable\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Dockable\EndpointTerminal.xaml.cs">
+      <DependentUpon>EndpointTerminal.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DockerMenu.xaml.cs">
       <DependentUpon>DockerMenu.xaml</DependentUpon>
@@ -144,45 +180,75 @@
     <Compile Include="Controls\DockerWindow.xaml.cs">
       <DependentUpon>DockerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\EventRaisingWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\EventRaisingWindow.xaml.cs">
       <DependentUpon>EventRaisingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\FsmGraph.xaml.cs">
+      <DependentUpon>FsmGraph.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PageTransition.xaml.cs">
+      <DependentUpon>PageTransition.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TclEditorActionBar.xaml.cs">
       <DependentUpon>TclEditorActionBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TclEditorWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\TclEditorWindow.xaml.cs">
       <DependentUpon>TclEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TclEditorToolbar.xaml.cs">
       <DependentUpon>TclEditorToolbar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\WatchWindow.xaml.cs">
+    <Compile Include="Controls\Dockable\WatchWindow.xaml.cs">
       <DependentUpon>WatchWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\CenterConverter.cs" />
     <Compile Include="Converters\IntegerToFontSizeConverter.cs" />
+    <Compile Include="Converters\IsCurrentToColorConverter.cs" />
+    <Compile Include="Converters\IsInitialToColorConverter.cs" />
     <Compile Include="Converters\LogLevelToColorConverter.cs" />
     <Compile Include="DTO\CloseAllButThisMessage.cs" />
     <Compile Include="Exceptions\TclSyntaxNotFoundException.cs" />
     <Compile Include="DTO\EventWithDescription.cs" />
     <Compile Include="Model\CompletionResult.cs" />
+    <Compile Include="Model\Eagle\WpfInterpreterHost.cs" />
+    <Compile Include="Model\FsmGraph\FsmGraph.cs" />
+    <Compile Include="Model\FsmGraph\FsmGraphArea.cs" />
+    <Compile Include="Model\FsmGraph\FsmGraphLogic.cs" />
+    <Compile Include="Model\FsmGraph\FsmGraphManager.cs" />
+    <Compile Include="Model\FsmGraph\FsmState.cs" />
+    <Compile Include="Model\FsmGraph\FsmTransition.cs" />
+    <Compile Include="Model\FsmGraph\IFsmGraphManager.cs" />
     <Compile Include="Model\Interfaces\ICompletionManager.cs" />
     <Compile Include="Model\Interfaces\ICompletionResult.cs" />
     <Compile Include="Model\AvalonDockLayoutInitializer.cs" />
+    <Compile Include="Model\InterpreterManager.cs" />
     <Compile Include="Model\NLog\NLogDebugWindowTarget.cs" />
     <Compile Include="Model\NLog\NLogWriteEventArgs.cs" />
     <Compile Include="Model\TclCompletionManager.cs" />
+    <Compile Include="Model\TerminalEndpointType.cs" />
     <Compile Include="ViewModels\Abstractions\MenuItemViewModel.cs" />
+    <Compile Include="ViewModels\Dockable\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\Data\WatchVariableViewModel.cs" />
     <Compile Include="ViewModels\Dockable\DebugWindowViewModel.cs" />
+    <Compile Include="ViewModels\Dockable\EndpointTerminalViewModel.cs" />
     <Compile Include="ViewModels\DockerManagerViewModel.cs" />
     <Compile Include="ViewModels\Abstractions\DockWindowViewModel.cs" />
     <Compile Include="ViewModels\Data\LogViewModel.cs" />
+    <Compile Include="ViewModels\MenuItems\NavigationViewModel.cs" />
     <Compile Include="ViewModels\MenuItems\ToggleDockWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\Dockable\TclEditorViewModel.cs" />
     <Compile Include="ViewModels\MenuItems\OpenScriptViewModel.cs" />
-    <Page Include="Controls\DebugWindow.xaml">
+    <Page Include="Controls\Dockable\ConfigurationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dockable\DebugWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Dockable\EndpointTerminal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -194,7 +260,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\EventRaisingWindow.xaml">
+    <Page Include="Controls\Dockable\EventRaisingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FsmGraph.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PageTransition.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -202,7 +276,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\TclEditorWindow.xaml">
+    <Page Include="Controls\Dockable\TclEditorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,7 +284,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\WatchWindow.xaml">
+    <Page Include="Controls\Dockable\WatchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Themes\FsmGraphStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -242,11 +320,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="Resources\Images\graph-icon-large.png" />
+    <Resource Include="Resources\Images\graph-icon-small.png" />
     <Resource Include="tcl icon.ico" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="LayoutState.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

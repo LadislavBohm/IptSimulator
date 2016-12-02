@@ -12,7 +12,7 @@
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Font size: " VerticalAlignment="Center"/>
-                    <xctk:IntegerUpDown Text="Font size" Width="50" Height="20" Maximum="24" Minimum="6" 
+                    <xctk:IntegerUpDown Text="Font size" Width="50" Height="20" Maximum="24" Minimum="6" Name="FontSizeUpDown"
                                         Value="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=EditorFontSize}"/>
                 </StackPanel>
             </StatusBarItem>
@@ -32,8 +32,8 @@
             </StatusBarItem>
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
-                    <TextBlock Text="Evaluation result: "/>
-                    <TextBlock Text="{Binding EvaluationResult}"/>
+                    <TextBlock Text="Evaluation result: " VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding EvaluationResult}" VerticalAlignment="Center"/>
                 </StackPanel>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
