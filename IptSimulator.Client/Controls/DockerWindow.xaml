@@ -1,0 +1,122 @@
+﻿<UserControl x:Class="IptSimulator.Client.Controls.DockerWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+             xmlns:model="clr-namespace:IptSimulator.Client.Model"
+             xmlns:dockable="clr-namespace:IptSimulator.Client.Controls.Dockable"
+             xmlns:controls="clr-namespace:IptSimulator.Client.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1000">
+    <avalonDock:DockingManager Name="MainDockingManager" 
+                               AllowMixedOrientation="True"
+                               Loaded="MainDockingManager_OnLoaded">
+        <avalonDock:DockingManager.Theme>
+            <avalonDock:VS2010Theme/>
+        </avalonDock:DockingManager.Theme>
+        <avalonDock:DockingManager.LayoutUpdateStrategy>
+            <model:AvalonDockLayoutInitializer/>
+        </avalonDock:DockingManager.LayoutUpdateStrategy>
+
+        <avalonDock:LayoutRoot>
+            <avalonDock:LayoutPanel Orientation="Horizontal">
+                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="160">
+                    <avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorable Title="Event raising" 
+                                                     CanClose="False" 
+                                                     CanHide="False"
+                                                     ContentId="1444b85f1bb3487fb5b72325ea93e3a7">
+                            <dockable:EventRaisingWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
+                        </avalonDock:LayoutAnchorable>
+                        <avalonDock:LayoutAnchorable Title="Endpoint terminal"
+                                                     CanClose="False"
+                                                     CanHide="False"
+                                                     ContentId="a166a5c0e6554a059c719c2640cd85ad">
+                            <dockable:EndpointTerminal DataContext="{Binding Source={StaticResource Locator}, Path=EndpointTerminal}"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorablePane>
+                </avalonDock:LayoutAnchorablePaneGroup>
+                <avalonDock:LayoutDocumentPaneGroup Orientation="Horizontal" DockMinWidth="200" DockMinHeight="600">
+                    <avalonDock:LayoutDocumentPane>
+                        <avalonDock:LayoutDocument Title="TCL editor"
+                                                   CanClose="False"
+                                                   ContentId="7818d6eef886408ead8bec1b981bccc4">
+                            <dockable:TclEditorWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
+                        </avalonDock:LayoutDocument>
+                        <avalonDock:LayoutDocument Title="FSM graph"
+                                                   CanClose="False"
+                                                   ContentId="06d813ada10c4d8d9757fad385959335">
+                            <controls:FsmGraph/>
+                        </avalonDock:LayoutDocument>
+                    </avalonDock:LayoutDocumentPane>
+                </avalonDock:LayoutDocumentPaneGroup>
+                <avalonDock:LayoutAnchorablePaneGroup Orientation="Horizontal" DockMinWidth="160">
+                    <avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorable Title="Configuration" 
+                                                     CanClose="False" 
+                                                     CanHide="False"
+                                                     ContentId="621ff620795a4759a65f6ebc088231e8">
+                            <dockable:ConfigurationWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor.Configuration}"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorablePane>
+                </avalonDock:LayoutAnchorablePaneGroup>
+            </avalonDock:LayoutPanel>
+            <avalonDock:LayoutRoot.BottomSide>
+                <avalonDock:LayoutAnchorSide>
+                    <avalonDock:LayoutAnchorGroup x:Name="BottomRightAnchorGroup">
+                        <avalonDock:LayoutAnchorable x:Name="WatchWindowAnchor"
+                                                     Title="Watch"
+                                                     CanClose="False"
+                                                     CanHide="False"
+                                                     ContentId="f9d4cfc95ad14ff8b6ec0114227d4de2">
+                            <dockable:WatchWindow DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorGroup>
+                    <avalonDock:LayoutAnchorGroup x:Name="BottomLeftAnchorGroup">
+                        <avalonDock:LayoutAnchorable x:Name="DebugWindowAnchor"
+                                                     Title="Debug window"
+                                                     AutoHideHeight="200"
+                                                     CanClose="False"
+                                                     CanHide="False"
+                                                     ContentId="a37da6c4bcfb4c12a29fec8e519c795d">
+                            <dockable:DebugWindow DataContext="{Binding Source={StaticResource Locator}, Path=Debug}"/>
+                        </avalonDock:LayoutAnchorable>
+                    </avalonDock:LayoutAnchorGroup>
+                </avalonDock:LayoutAnchorSide>
+            </avalonDock:LayoutRoot.BottomSide>
+        </avalonDock:LayoutRoot>
+
+    </avalonDock:DockingManager>
+</UserControl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

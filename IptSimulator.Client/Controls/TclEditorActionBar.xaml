@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="IptSimulator.Client.Controls.TclEditorActionBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="34" d:DesignWidth="600"
+             d:DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}">
+    <Grid Margin="5">
+        <StackPanel Orientation="Horizontal">
+            <Button Background="WhiteSmoke" 
+                    Width="80" 
+                    Height="24"
+                    Margin="0,0,10,0"
+                    HorizontalContentAlignment="Left"
+                    Command="{Binding EvaluateCommand}"
+                    ToolTip="Evaluates whole script. Ctrl+Enter">
+                <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                    <iconPacks:PackIconMaterial Kind="Play" Foreground="Green" Height="12" Margin="0,2,0,0"/>
+                    <TextBlock Text="Evaluate" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            <Button Background="WhiteSmoke" 
+                    Width="130" 
+                    Height="24"
+                    Margin="0,0,10,0"
+                    HorizontalContentAlignment="Left"
+                    Command="{Binding EvaluateSelectionCommand}"
+                    ToolTip="Evaluates selected part of script. Ctrl+Shift+Enter">
+                <StackPanel Orientation="Horizontal"  Margin="5,0,0,0">
+                    <iconPacks:PackIconMaterial Kind="Play" Foreground="Green" Height="12" Margin="0,2,0,0"/>
+                    <TextBlock Text="Evaluate selection" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        
+        <Button Background="WhiteSmoke" 
+                HorizontalAlignment="Right"
+                Width="90" 
+                Height="24"
+                Margin="0,0,10,0"
+                HorizontalContentAlignment="Left"
+                Command="{Binding ReinitializeCommand}"
+                ToolTip="Reinitializes the interpreter and cleares all cached data.">
+            <StackPanel Orientation="Horizontal"  Margin="5,0,0,0">
+                <iconPacks:PackIconMaterial Kind="BackupRestore" Foreground="Black" Height="12" Margin="0,2,0,0"/>
+                <TextBlock Text="Reinitialize" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </StackPanel>
+        </Button>
+    </Grid>
+</UserControl>

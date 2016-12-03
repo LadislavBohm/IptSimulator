@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="IptSimulator.Client.Controls.PageTransition"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IptSimulator.Client.Controls"
+             xmlns:converters="clr-namespace:IptSimulator.Client.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:CenterConverter x:Key="CenterConverter"/>
+        
+		<Style TargetType="{x:Type ContentPresenter}">
+			<Setter Property="LayoutTransform">
+				<Setter.Value>
+					<ScaleTransform />
+				</Setter.Value>
+			</Setter>
+		</Style>
+        
+        <Storyboard x:Key="SlideAndFadeIn" >
+			<ThicknessAnimation Duration="0:0:.45" Storyboard.TargetProperty="Margin" From="1500,0,-1500,0" To="0" DecelerationRatio=".9" />
+			<DoubleAnimation Duration="0:0:.15" Storyboard.TargetProperty="Opacity" From="0" To="1" />
+		</Storyboard>
+
+		<Storyboard x:Key="SlideAndFadeOut">
+			<ThicknessAnimation Duration="0:0:.35" Storyboard.TargetProperty="Margin" To="-1500,0,1500,0" AccelerationRatio=".9"/>
+			<DoubleAnimation Duration="0:0:.2" Storyboard.TargetProperty="Opacity" To="0" />
+		</Storyboard>
+    </UserControl.Resources>
+    
+    	<Grid Name="PageGrid">
+
+		<ContentControl Name="ContentPresenter">
+			<ContentControl.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleX="1" ScaleY="1"
+									CenterX="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=ActualWidth, Converter={StaticResource CenterConverter}}" 
+									CenterY="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=ActualHeight, Converter={StaticResource CenterConverter}}" />
+					<SkewTransform AngleX="0" AngleY="0" 
+								   CenterX="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=ActualWidth, Converter={StaticResource CenterConverter}}" 
+								   CenterY="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=ActualHeight, Converter={StaticResource CenterConverter}}" />
+					<RotateTransform Angle="0" 
+									 CenterX="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=ActualWidth, Converter={StaticResource CenterConverter}}" 
+									 CenterY="{Binding RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}, Path=ActualHeight, Converter={StaticResource CenterConverter}}" />
+					<TranslateTransform X="0" Y="0" />
+				</TransformGroup>
+			</ContentControl.RenderTransform>			
+		</ContentControl>
+
+	</Grid>
+</UserControl>
