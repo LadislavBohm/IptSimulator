@@ -86,12 +86,5 @@ namespace IptSimulator.Client.Model.TclEditor
                 }
             }
         }
-
-        private void RaiseBreakpointsMouseLeftButtonUpEvent(MouseButtonEventArgs e)
-        {
-            BreakpointsMouseLeftButtonUp?.Invoke(this,e);
-        }
-
-        public event EventHandler<MouseButtonEventArgs> BreakpointsMouseLeftButtonUp;
     }
 }
