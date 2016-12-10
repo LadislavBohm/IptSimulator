@@ -8,6 +8,6 @@ namespace IptSimulator.CiscoTcl.Commands.Abstractions
     {
         bool ValidateArguments(ArgumentList arguments, ref Result result);
 
-        ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result);
+        ReturnCode Execute(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result);
     }
 }

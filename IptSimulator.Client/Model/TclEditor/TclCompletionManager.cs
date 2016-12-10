@@ -4,11 +4,10 @@ using System.Linq;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.Model.Interfaces;
-using IptSimulator.Core;
 using IptSimulator.Core.Tcl;
 using NLog;
 
-namespace IptSimulator.Client.Model
+namespace IptSimulator.Client.Model.TclEditor
 {
     public class TclCompletionManager : ICompletionManager
     {

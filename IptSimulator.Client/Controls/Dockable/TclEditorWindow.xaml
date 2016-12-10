@@ -8,6 +8,8 @@
              xmlns:converters="clr-namespace:IptSimulator.Client.Converters"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:behaviors="clr-namespace:IptSimulator.Client.Behaviors"
+             xmlns:model="clr-namespace:IptSimulator.Client.Model"
+             xmlns:tclEditor="clr-namespace:IptSimulator.Client.Model.TclEditor"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800"
              d:DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}">
@@ -23,22 +25,25 @@
         
         <local:TclEditorActionBar Grid.Row="0" Height="34"/>
         
-        <avalonedit:TextEditor Grid.Row="1"
+        <tclEditor:TclAvalonEditor Grid.Row="1"
                                ShowLineNumbers="True"
                                SyntaxHighlighting="TCL"
-                               Name="MainTextEditor"
+                               x:Name="MainTextEditor"
                                WordWrap="True"
                                FontFamily="{Binding ElementName=TclEditorToolbar, Path=EditorFontFamily}"
                                FontSize="{Binding ElementName=TclEditorToolbar, Path=EditorFontSize, Converter={StaticResource IntegerToFontSizeConverter}}">
             <i:Interaction.Behaviors>
                 <behaviors:AvalonEditBehavior ExtractedText="{Binding Script, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
-            <avalonedit:TextEditor.InputBindings>
+            <tclEditor:TclAvalonEditor.InputBindings>
                 <KeyBinding Modifiers="Control" Key="Enter" Command="{Binding EvaluateCommand}"/>
                 <KeyBinding Modifiers="Control+Shift" Key="Enter" Command="{Binding EvaluateSelectionCommand}"/>
-            </avalonedit:TextEditor.InputBindings>
-        </avalonedit:TextEditor> 
+            </tclEditor:TclAvalonEditor.InputBindings>
+        </tclEditor:TclAvalonEditor> 
         <local:TclEditorToolbar Grid.Row="2"
                                 x:Name="TclEditorToolbar"/>
     </Grid>
 </UserControl>
+
+
+

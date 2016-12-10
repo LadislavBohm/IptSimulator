@@ -34,7 +34,7 @@ namespace IptSimulator.CiscoTcl.Commands
 
         public string CurrentState { get; private set; }
 
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+        public override ReturnCode Execute(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
             ref Result result)
         {
             try
@@ -68,7 +68,7 @@ namespace IptSimulator.CiscoTcl.Commands
             }
         }
 
-        private ReturnCode ExecuteRaiseEvent(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+        private ReturnCode ExecuteRaiseEvent(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
             ref Result result)
         {
             var raisedEvent = arguments[2];
@@ -134,7 +134,7 @@ namespace IptSimulator.CiscoTcl.Commands
             return ReturnCode.Ok;
         }
 
-        private ReturnCode ExecuteDefine(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+        private ReturnCode ExecuteDefine(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
             ref Result result)
         {
             var fsmArray = arguments[2];
@@ -185,7 +185,7 @@ namespace IptSimulator.CiscoTcl.Commands
             return ReturnCode.Ok;
         }
 
-        private ReturnCode ExecuteSetState(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+        private ReturnCode ExecuteSetState(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
             ref Result result)
         {
             var fsmState = arguments[2];

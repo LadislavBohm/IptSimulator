@@ -210,7 +210,6 @@
     <Compile Include="Exceptions\TclSyntaxNotFoundException.cs" />
     <Compile Include="DTO\EventWithDescription.cs" />
     <Compile Include="Model\CompletionResult.cs" />
-    <Compile Include="Model\Eagle\WpfInterpreterHost.cs" />
     <Compile Include="Model\FsmGraph\FsmGraph.cs" />
     <Compile Include="Model\FsmGraph\FsmGraphArea.cs" />
     <Compile Include="Model\FsmGraph\FsmGraphLogic.cs" />
@@ -221,10 +220,11 @@
     <Compile Include="Model\Interfaces\ICompletionManager.cs" />
     <Compile Include="Model\Interfaces\ICompletionResult.cs" />
     <Compile Include="Model\AvalonDockLayoutInitializer.cs" />
-    <Compile Include="Model\InterpreterManager.cs" />
     <Compile Include="Model\NLog\NLogDebugWindowTarget.cs" />
     <Compile Include="Model\NLog\NLogWriteEventArgs.cs" />
-    <Compile Include="Model\TclCompletionManager.cs" />
+    <Compile Include="Model\TclEditor\BreakpointBarMargin.cs" />
+    <Compile Include="Model\TclEditor\TclAvalonEditor.cs" />
+    <Compile Include="Model\TclEditor\TclCompletionManager.cs" />
     <Compile Include="Model\TerminalEndpointType.cs" />
     <Compile Include="ViewModels\Abstractions\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\Dockable\ConfigurationViewModel.cs" />

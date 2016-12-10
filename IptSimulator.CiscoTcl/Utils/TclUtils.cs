@@ -4,12 +4,13 @@ using System.Linq;
 using Eagle._Components.Public;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.Core.Tcl;
 
 namespace IptSimulator.CiscoTcl.Utils
 {
     public class TclUtils
     {
-        public static bool ArrayExists(Interpreter interpreter, string arrayName)
+        public static bool ArrayExists(Eagle._Components.Public.Interpreter interpreter, string arrayName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrEmpty(arrayName))
@@ -26,7 +27,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return (bool)result.Value;
         }
 
-        public static bool ProcedureExists(Interpreter interpreter, string procedureName)
+        public static bool ProcedureExists(Eagle._Components.Public.Interpreter interpreter, string procedureName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrEmpty(procedureName))
@@ -42,7 +43,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return !string.IsNullOrEmpty(result.String);
         }
 
-        public static bool ArrayKeyExists(Interpreter interpreter, string arrayName, string key)
+        public static bool ArrayKeyExists(Eagle._Components.Public.Interpreter interpreter, string arrayName, string key)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(key))
@@ -61,7 +62,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return result.String == "1";
         }
 
-        public static bool SetVariable(Interpreter interpreter, ref Result result, string variableName, string value, bool global)
+        public static bool SetVariable(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName, string value, bool global)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
@@ -76,7 +77,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return code == ReturnCode.Ok;
         }
 
-        public static bool UnsetVariable(Interpreter interpreter, ref Result result, string variableName)
+        public static bool UnsetVariable(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
@@ -87,7 +88,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return code == ReturnCode.Ok;
         }
 
-        public static bool GetVariableValue(Interpreter interpreter, ref Result result, string variableName, bool global)
+        public static bool GetVariableValue(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName, bool global)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
@@ -98,7 +99,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return code == ReturnCode.Ok;
         }
 
-        public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Interpreter interpreter)
+        public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Eagle._Components.Public.Interpreter interpreter, bool excludeReserved)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
 
@@ -115,6 +116,11 @@ namespace IptSimulator.CiscoTcl.Utils
 
             foreach (var variable in variables)
             {
+                if (excludeReserved && TclReservedVariables.All.Contains(variable))
+                {
+                    //exclude reserved variable
+                    continue;
+                }
                 if (GetVariableValue(interpreter, ref result, variable, true) && !string.IsNullOrWhiteSpace(result))
                 {
                     variablesWithValues.Add(new VariableWithValue(variable, result.String));
@@ -124,7 +130,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return variablesWithValues;
         }
 
-        public static bool VariableExists(Interpreter interpreter, ref Result result, string variableName)
+        public static bool VariableExists(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))

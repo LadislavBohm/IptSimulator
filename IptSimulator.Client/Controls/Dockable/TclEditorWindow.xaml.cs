@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
@@ -11,7 +12,7 @@ using ICSharpCode.AvalonEdit.Search;
 using IptSimulator.Client.Model.Interfaces;
 using IptSimulator.Client.ViewModels.Dockable;
 using NLog;
-using TclCompletionManager = IptSimulator.Client.Model.TclCompletionManager;
+using TclCompletionManager = IptSimulator.Client.Model.TclEditor.TclCompletionManager;
 
 namespace IptSimulator.Client.Controls.Dockable
 {
@@ -40,6 +41,7 @@ namespace IptSimulator.Client.Controls.Dockable
                 SetSearchPanel();
                 SetCompletionHandling();
                 SetSelectionHandling();
+                
 
                 _logger.Info("TCL editor successfully initialized.");
             }
@@ -181,4 +183,5 @@ namespace IptSimulator.Client.Controls.Dockable
             public double Priority { get; }
         }
     }
+    
 }

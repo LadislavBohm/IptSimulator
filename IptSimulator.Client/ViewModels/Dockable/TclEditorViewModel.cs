@@ -11,6 +11,7 @@ using Eagle._Interfaces.Public;
 using GalaSoft.MvvmLight.Command;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.CiscoTcl.TclInterpreter;
 using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.ViewModels.Abstractions;
 using IptSimulator.Client.ViewModels.Data;
@@ -30,9 +31,10 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private RelayCommand _reinitializeCommand;
         private RelayCommand _filterEventsCommand;
         private RelayCommand _raiseEventCommand;
-        private Interpreter _interpreter;
+        private TclVoiceInterpreter _interpreter;
         private IList<string> _allEvents;
         private string _selectedEvent;
+        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public TclEditorViewModel()
         {
@@ -93,22 +95,8 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                }
 
                                _logger.Debug("Evaluating whole script");
-                               Result result = null;
-                               var code = _interpreter.EvaluateScript(Script, ref result);
-                               RefreshCurrentVariables();
 
-                               if (code == ReturnCode.Ok)
-                               {
-                                   _logger.Info("Script successfully evaluated with " +
-                                               (string.IsNullOrWhiteSpace(result.String)
-                                                   ? "no result"
-                                                   : $"following result: {result}"));
-                               }
-                               else
-                               {
-                                   _logger.Warn($"Script evaluated following code: {code}. Result: {result}");
-                               }
-                               EvaluationResult = result;
+                               _interpreter.Evaluate(Script);
                            }
                            catch (Exception e)
                            {
@@ -135,26 +123,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
                                _logger.Debug($"Evaluating selection: {SelectedScript}");
 
-                               Result result = null;
-                               var code = _interpreter.EvaluateScript(SelectedScript, ref result);
-                               RefreshCurrentVariables();
-
-                               if (code == ReturnCode.Ok)
-                               {
-                                   _logger.Info(
-                                       $"Selected script successfully evaluated with " +
-                                            (string.IsNullOrWhiteSpace(result.String)
-                                                ? "o result"
-                                                : $"following result: {result}"));
-                               }
-                               else
-                               {
-                                   _logger.Warn($"Selected script evaluated following code: {code}. " +
-                                                (string.IsNullOrWhiteSpace(result.String)
-                                                    ? "No result"
-                                                    : $"Result: {result}"));
-                               }
-                               EvaluationResult = result;
+                               _interpreter.Evaluate(SelectedScript);
                            }
                            catch (Exception e)
                            {
@@ -190,19 +159,19 @@ namespace IptSimulator.Client.ViewModels.Dockable
                     {
                         _logger.Debug($"Raising {SelectedEvent} command.");
 
-                        Result result = null;
-                        var code = _interpreter.EvaluateScript($"fsm raise {SelectedEvent}", ref result);
-                        RefreshCurrentVariables();
+                        //Result result = null;
+                        //var code = _interpreter.EvaluateScript($"fsm raise {SelectedEvent}", ref result);
+                        //RefreshCurrentVariables();
 
-                        if (code == ReturnCode.Ok)
-                        {
-                            _logger.Info($"{SelectedEvent} event was successfully raised with following result: {result}");
-                        }
-                        else
-                        {
-                            _logger.Warn($"{SelectedEvent} event raised with following code: {code}. Result: {result}");
-                        }
-                        EvaluationResult = result;
+                        //if (code == ReturnCode.Ok)
+                        //{
+                        //    _logger.Info($"{SelectedEvent} event was successfully raised with following result: {result}");
+                        //}
+                        //else
+                        //{
+                        //    _logger.Warn($"{SelectedEvent} event raised with following code: {code}. Result: {result}");
+                        //}
+                        //EvaluationResult = result;
                     }
                     catch (Exception e)
                     {
@@ -227,73 +196,19 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
             _logger.Info("Initializing TCL Interpreter.");
 
-            Result result = null;
-            _interpreter = Interpreter.Create(
-                null,
-                CreateFlags.Debug | CreateFlags.Debugger | CreateFlags.DebuggerInterpreter | CreateFlags.DebuggerUse,
-                InitializeFlags.Default,
-                ScriptFlags.Interactive | ScriptFlags.User,
-                InterpreterFlags.Default,
-                null, null, null, null, new ExecuteCallbackDictionary(new List<ExecuteCallback>()),
-                null, null, null, null, ref result);
-
-            _interpreter.Interactive = true;
-            _interpreter.Debug = true;
-            
-            _logger.Debug("TCL Interpreter created.");
-
-            var customCommands = TclCommandProvider.GetCustomCommands();
-            _logger.Info("Adding custom TCL commands.");
-            foreach (var customCommand in customCommands)
+            _interpreter = TclVoiceInterpreter.Create(_cancellationTokenSource);
+            _interpreter.EvaluateCompleted += (sender, args) =>
             {
-                long token = 0;
-                _logger.Debug($"Adding {customCommand.Name} command.");
-                var code = _interpreter.AddCommand(customCommand, null, ref token, ref result);
-
-                if (code != ReturnCode.Ok)
-                {
-                    _logger.Warn($"Failed to add {customCommand.Name} command. Error: {result}");
-                }
-            }
+                EvaluationResult = args.Result;
+            };
+            _interpreter.WatchVariablesChanged += (sender, args) =>
+            {
+                Variables = new ObservableCollection<WatchVariableViewModel>(
+                    _interpreter.WatchVariables.Select(vw => new WatchVariableViewModel(vw.Variable, vw.Value)));
+            };
 
             _logger.Info("Initializing configuration");
             Configuration = new ConfigurationViewModel();
-        }
-
-        private ReturnCode InteractiveLoopCallback(Interpreter interpreter, InteractiveLoopData loopData, ref Result result)
-        {
-            if (loopData.BreakpointType == BreakpointType.Demand)
-            {
-                //Result result3 = null;
-                //var code2 = interpreter.EvaluateScript("suspend", ref result3);
-                //return code2;
-                //var code = interpreter.CancelAnyEvaluate(result, CancelFlags.DebugHalt, ref result);
-                //var code = Interpreter.InteractiveLoop(_interpreter, new[] { "#go" }, ref result);
-                //return code;
-                return ReturnCode.Ok;
-            }
-            return ReturnCode.Ok;
-        }
-
-        private void RefreshCurrentVariables()
-        {
-            try
-            {
-                _logger.Debug("Refreshing current variables and their values.");
-
-                Variables.Clear();
-                foreach (var variableWithValue in TclUtils.GetVariableValues(_interpreter))
-                {
-                    if (!TclReservedVariables.All.Contains(variableWithValue.Variable))
-                    {
-                        Variables.Add(new WatchVariableViewModel(variableWithValue.Variable, variableWithValue.Value));
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.Error(e, "Error while refreshing current variables.");
-            }
         }
 
         private void SetupEvents()

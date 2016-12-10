@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using GalaSoft.MvvmLight.Command;
 using IptSimulator.Client.Model.NLog;
 using IptSimulator.Client.ViewModels.Abstractions;
@@ -83,7 +84,10 @@ namespace IptSimulator.Client.ViewModels.Dockable
             _allLogs.Add(log);
             if (CanAdd(e.LogEventInfo))
             {
-                Logs.Add(log);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Logs.Add(log);
+                });
             }
         }
 
