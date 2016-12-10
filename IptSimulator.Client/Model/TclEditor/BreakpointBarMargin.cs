@@ -30,18 +30,18 @@ namespace IptSimulator.Client.Model.TclEditor
             if (alreadyActive)
             {
                 _breakpointLineNumbers.Remove(lineNumber);
-                AdjustBreakpoints(lineNumber, -1); //move up by one line
+                //AdjustBreakpoints(lineNumber, -1); //move up by one line
             }
             else
             {
                 _breakpointLineNumbers.Add(lineNumber);
-                AdjustBreakpoints(lineNumber, 1); //move down by one line
+                //AdjustBreakpoints(lineNumber, 1); //move down by one line
             }
 
             OnRedrawRequested(this, EventArgs.Empty);
             return !alreadyActive;
         }
-
+        
         private void AdjustBreakpoints(int breakpointsUnder, int adjustBy)
         {
             for (int i = 0; i < _breakpointLineNumbers.Count; i++)

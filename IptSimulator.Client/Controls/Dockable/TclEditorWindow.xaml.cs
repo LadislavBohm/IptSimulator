@@ -10,6 +10,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Search;
 using IptSimulator.Client.Model.Interfaces;
+using IptSimulator.Client.Model.TclEditor;
 using IptSimulator.Client.ViewModels.Dockable;
 using NLog;
 using TclCompletionManager = IptSimulator.Client.Model.TclEditor.TclCompletionManager;
@@ -90,8 +91,18 @@ namespace IptSimulator.Client.Controls.Dockable
             MainTextEditor.TextArea.TextEntered += MainEditor_TextEntered;
             MainTextEditor.TextArea.TextEntering += MainEditor_TextEntering;
             MainTextEditor.TextArea.MouseWheel += MainTextEditor_OnMouseWheel;
+            MainTextEditor.TextArea.KeyDown += MainTextEditor_KeyDown;
 
             _logger.Debug("Editor completion handling is successfully set.");
+        }
+
+        private void MainTextEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+            //CTRL + B pressed => toggle breakpoint on current line
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.B))
+            {
+                MainTextEditor.ToggleBreakpoint();
+            }
         }
 
         private void MainEditor_TextEntered(object sender, TextCompositionEventArgs e)

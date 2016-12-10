@@ -163,7 +163,7 @@
     </ApplicationDefinition>
     <Compile Include="Behaviors\AutoScrollToLastItemBehavior.cs" />
     <Compile Include="Behaviors\AvalonDockLayoutSerializer.cs" />
-    <Compile Include="Behaviors\AvalonEditBehavior.cs" />
+    <Compile Include="Behaviors\TclAvalonEditBehavior.cs" />
     <Compile Include="Behaviors\MouseWheelGesture.cs" />
     <Compile Include="Controls\Dockable\ConfigurationWindow.xaml.cs">
       <DependentUpon>ConfigurationWindow.xaml</DependentUpon>
@@ -201,6 +201,9 @@
     <Compile Include="Controls\Dockable\WatchWindow.xaml.cs">
       <DependentUpon>WatchWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BreakpointLineToBooleanConverter.cs" />
+    <Compile Include="Converters\BreakpointLineToReverseBooleanConverter.cs" />
+    <Compile Include="Converters\BreakpointLineToVisibilityConverter.cs" />
     <Compile Include="Converters\CenterConverter.cs" />
     <Compile Include="Converters\IntegerToFontSizeConverter.cs" />
     <Compile Include="Converters\IsCurrentToColorConverter.cs" />
@@ -222,6 +225,7 @@
     <Compile Include="Model\AvalonDockLayoutInitializer.cs" />
     <Compile Include="Model\NLog\NLogDebugWindowTarget.cs" />
     <Compile Include="Model\NLog\NLogWriteEventArgs.cs" />
+    <Compile Include="Model\TclEditor\BreakpointBackgroundRenderer.cs" />
     <Compile Include="Model\TclEditor\BreakpointBarMargin.cs" />
     <Compile Include="Model\TclEditor\TclAvalonEditor.cs" />
     <Compile Include="Model\TclEditor\TclCompletionManager.cs" />
