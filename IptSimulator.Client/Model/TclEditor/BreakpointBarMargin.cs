@@ -14,19 +14,43 @@ namespace IptSimulator.Client.Model.TclEditor
 {
     public class BreakpointBarMargin : AbstractMargin
     {
-        private readonly HashSet<int> _breakpointLineNumbers = new HashSet<int>();
+        private readonly IList<int> _breakpointLineNumbers = new List<int>();
 
-        public void ToggleBreakpoint(int lineNumber)
+        public bool HasBreakpointAt(int lineNumber)
         {
-            if (_breakpointLineNumbers.Contains(lineNumber))
+            return _breakpointLineNumbers.Contains(lineNumber);
+        }
+
+        public IReadOnlyList<int> Breakpoints => (IReadOnlyList<int>)_breakpointLineNumbers;
+
+        public bool ToggleBreakpoint(int lineNumber)
+        {
+            var alreadyActive = HasBreakpointAt(lineNumber);
+
+            if (alreadyActive)
             {
                 _breakpointLineNumbers.Remove(lineNumber);
+                AdjustBreakpoints(lineNumber, -1); //move up by one line
             }
             else
             {
                 _breakpointLineNumbers.Add(lineNumber);
+                AdjustBreakpoints(lineNumber, 1); //move down by one line
             }
-            OnRedrawRequested(this,EventArgs.Empty);
+
+            OnRedrawRequested(this, EventArgs.Empty);
+            return !alreadyActive;
+        }
+
+        private void AdjustBreakpoints(int breakpointsUnder, int adjustBy)
+        {
+            for (int i = 0; i < _breakpointLineNumbers.Count; i++)
+            {
+                if (_breakpointLineNumbers[i] > breakpointsUnder)
+                {
+                    _breakpointLineNumbers[i] += adjustBy;
+                }
+            }
         }
 
         protected override void OnTextViewChanged(TextView oldTextView, TextView newTextView)
