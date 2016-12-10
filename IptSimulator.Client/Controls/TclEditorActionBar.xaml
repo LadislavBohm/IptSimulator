@@ -8,12 +8,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="34" d:DesignWidth="600"
              d:DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor}">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <converters:BreakpointLineToReverseBooleanConverter x:Key="BreakpointToBoolean"/>
-            <converters:BreakpointLineToVisibilityConverter x:Key="BreakpointLineToVisibilityConverter"/>
-        </ResourceDictionary>
-    </UserControl.Resources>
     <Grid Margin="5">
         <StackPanel Orientation="Horizontal">
             <Button Background="WhiteSmoke" 
@@ -21,7 +15,7 @@
                     Height="24"
                     Margin="0,0,10,0"
                     HorizontalContentAlignment="Left"
-                    IsEnabled="{Binding CurrentBreakpointLine, Converter={StaticResource BreakpointToBoolean}}"
+                    IsEnabled="{Binding CurrentBreakpointLine, Converter={StaticResource BreakpointLineToReverseBooleanConverter}}"
                     Command="{Binding EvaluateCommand}"
                     ToolTip="Evaluates whole script. Ctrl+Enter">
                 <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
@@ -34,7 +28,7 @@
                     Height="24"
                     Margin="0,0,10,0"
                     HorizontalContentAlignment="Left"
-                    IsEnabled="{Binding CurrentBreakpointLine, Converter={StaticResource BreakpointToBoolean}}"
+                    IsEnabled="{Binding CurrentBreakpointLine, Converter={StaticResource BreakpointLineToReverseBooleanConverter}}"
                     Command="{Binding EvaluateSelectionCommand}"
                     ToolTip="Evaluates selected part of script. Ctrl+Shift+Enter">
                 <StackPanel Orientation="Horizontal"  Margin="5,0,0,0">

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Eagle._Components.Public;
 using Eagle._Components.Public.Delegates;
 using Eagle._Containers.Public;
@@ -40,6 +41,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private string _selectedEvent;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private RelayCommand _continueEvaluationCommand;
+        private int? _currentBreakpointLine;
 
         public TclEditorViewModel()
         {
@@ -58,7 +60,20 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public string Script { get; set; }
 
-        public int? CurrentBreakpointLine { get; set; }
+        public int? CurrentBreakpointLine
+        {
+            get { return _currentBreakpointLine; }
+            set
+            {
+                _currentBreakpointLine = value;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    EvaluateCommand.RaiseCanExecuteChanged();
+                    EvaluateSelectionCommand.RaiseCanExecuteChanged();
+                    ContinueEvaluationCommand.RaiseCanExecuteChanged();
+                });
+            }
+        }
 
         public ObservableCollection<WatchVariableViewModel> Variables { get; set; }
 
@@ -114,7 +129,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                _logger.Error(e, "Script evaluation has thrown an exception.");
                                EvaluationResult = string.Empty;
                            }
-                       }));
+                       }, () => !CurrentBreakpointLine.HasValue));
             }
         }
 
@@ -143,7 +158,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                _logger.Error(e, "Script evaluation has thrown an exception.");
                                EvaluationResult = string.Empty;
                            }
-                       }));
+                       }, () => !CurrentBreakpointLine.HasValue));
             }
         }
 
@@ -155,7 +170,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                        {
                            _logger.Info($"Continuing evaluation from breakpoint at line {CurrentBreakpointLine}");
                            _interpreter.Continue();
-                       }));
+                       }, () => CurrentBreakpointLine.HasValue));
             }
         }
 

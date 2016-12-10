@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
@@ -27,7 +26,7 @@ namespace IptSimulator.Client.Model.TclEditor
             TextArea.PreviewMouseLeftButtonUp += OnMouseLeftButtonUp;
             TextArea.LeftMargins.Add(_breakpointBarMarginMargin);
             TextArea.TextView.VisualLinesChanged += (sender, args) => HideInvalidBreakpoints();
-            TextArea.TextView.BackgroundRenderers.Add(new CustomBackgroundRendered(this));
+            TextArea.TextView.BackgroundRenderers.Add(new BreakpointBackgroundRenderer(this));
         }
 
         #region Properties
@@ -117,35 +116,5 @@ namespace IptSimulator.Client.Model.TclEditor
         }
 
         #endregion
-    }
-
-    public class CustomBackgroundRendered : IBackgroundRenderer
-    {
-        private readonly TclAvalonEditor _editor;
-        private readonly Brush _background = new SolidColorBrush(Color.FromArgb(148, 251, 237, 126));
-
-        public CustomBackgroundRendered(TclAvalonEditor editor)
-        {
-            _editor = editor;
-        }
-
-        public void Draw(TextView textView, DrawingContext drawingContext)
-        {
-            if (_editor.HighlightedBreakpointLine.HasValue)
-            {
-                textView.EnsureVisualLines();
-
-                var line = _editor.Document.GetLineByNumber(_editor.HighlightedBreakpointLine.Value);
-                var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, line);
-
-                foreach (var rect in rects)
-                {
-                    drawingContext.DrawRectangle(_background, new Pen(_background, 1),
-                        new Rect(rect.Location, new Size(textView.ActualWidth - 32, rect.Height)));
-                }
-            }
-        }
-
-        public KnownLayer Layer => KnownLayer.Background;
     }
 }
