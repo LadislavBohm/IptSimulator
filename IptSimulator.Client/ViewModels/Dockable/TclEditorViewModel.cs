@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Eagle._Components.Public;
@@ -12,10 +14,12 @@ using GalaSoft.MvvmLight.Command;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
 using IptSimulator.CiscoTcl.TclInterpreter;
+using IptSimulator.CiscoTcl.TclInterpreter.EventArgs;
 using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.ViewModels.Abstractions;
 using IptSimulator.Client.ViewModels.Data;
 using IptSimulator.Core.Tcl;
+using IptSimulator.Core.Utils;
 using Newtonsoft.Json;
 using NLog;
 using PropertyChanged;
@@ -35,6 +39,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private IList<string> _allEvents;
         private string _selectedEvent;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private RelayCommand _continueEvaluationCommand;
 
         public TclEditorViewModel()
         {
@@ -53,9 +58,13 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public string Script { get; set; }
 
+        public int? CurrentBreakpointLine { get; set; }
+
         public ObservableCollection<WatchVariableViewModel> Variables { get; set; }
 
         public ObservableCollection<string> Events { get; set; }
+
+        public IEnumerable<int> Breakpoints { get; set; }
 
         public string SelectedEvent
         {
@@ -93,10 +102,12 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                    _logger.Info("No script to evaluate.");
                                    return;
                                }
+                               _logger.Debug("Inserting breakpoints to script");
+                               var script = InsertBreakpoints(Script, new HashSet<int>(Breakpoints));
 
                                _logger.Debug("Evaluating whole script");
-
-                               _interpreter.Evaluate(Script);
+                               
+                               _interpreter.Evaluate(script);
                            }
                            catch (Exception e)
                            {
@@ -120,16 +131,30 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                    _logger.Info("No selected script to evaluate.");
                                    return;
                                }
+                               _logger.Debug("Inserting breakpoints to script");
+                               var script = InsertBreakpoints(SelectedScript, new HashSet<int>(Breakpoints));
 
                                _logger.Debug($"Evaluating selection: {SelectedScript}");
 
-                               _interpreter.Evaluate(SelectedScript);
+                               _interpreter.Evaluate(script);
                            }
                            catch (Exception e)
                            {
                                _logger.Error(e, "Script evaluation has thrown an exception.");
                                EvaluationResult = string.Empty;
                            }
+                       }));
+            }
+        }
+
+        public RelayCommand ContinueEvaluationCommand
+        {
+            get
+            {
+                return _continueEvaluationCommand ?? (_continueEvaluationCommand = new RelayCommand(() =>
+                       {
+                           _logger.Info($"Continuing evaluation from breakpoint at line {CurrentBreakpointLine}");
+                           _interpreter.Continue();
                        }));
             }
         }
@@ -159,6 +184,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                     {
                         _logger.Debug($"Raising {SelectedEvent} command.");
 
+                        _interpreter.Continue();
                         //Result result = null;
                         //var code = _interpreter.EvaluateScript($"fsm raise {SelectedEvent}", ref result);
                         //RefreshCurrentVariables();
@@ -197,15 +223,12 @@ namespace IptSimulator.Client.ViewModels.Dockable
             _logger.Info("Initializing TCL Interpreter.");
 
             _interpreter = TclVoiceInterpreter.Create(_cancellationTokenSource);
-            _interpreter.EvaluateCompleted += (sender, args) =>
-            {
-                EvaluationResult = args.Result;
-            };
-            _interpreter.WatchVariablesChanged += (sender, args) =>
-            {
-                Variables = new ObservableCollection<WatchVariableViewModel>(
-                    _interpreter.WatchVariables.Select(vw => new WatchVariableViewModel(vw.Variable, vw.Value)));
-            };
+
+            //add event handlers
+            _interpreter.EvaluateCompleted += (sender, args) => EvaluationResult = args.Result;
+            _interpreter.WatchVariablesChanged += (sender, args) => Variables =  new ObservableCollection<WatchVariableViewModel>(
+                _interpreter.WatchVariables.Select(vw => new WatchVariableViewModel(vw.Variable, vw.Value)));
+            _interpreter.BreakpointHitChanged += OnBreakpointHitChanged;
 
             _logger.Info("Initializing configuration");
             Configuration = new ConfigurationViewModel();
@@ -217,11 +240,46 @@ namespace IptSimulator.Client.ViewModels.Dockable
             Events = new ObservableCollection<string>(_allEvents);
         }
 
+        private void OnBreakpointHitChanged(object sender, DebugModeEventArgs e)
+        {
+            if (e.IsBreakpointHit && e.LineNumber.HasValue)
+            {
+                CurrentBreakpointLine = e.LineNumber.Value;
+            }
+            else
+            {
+                CurrentBreakpointLine = null;
+            }
+        }
+
         private void FilterEvents()
         {
             Events = string.IsNullOrWhiteSpace(FilterEventsText) ?
                 new ObservableCollection<string>(_allEvents) :
                 new ObservableCollection<string>(_allEvents.Where(e => e.ToUpper().Contains(FilterEventsText.ToUpper())));
+        }
+
+        private string InsertBreakpoints(string text, HashSet<int> breakpoints)
+        {
+            var sb = new StringBuilder(text.Length + breakpoints.Count * 20);
+            int lineNumber = 1;
+            foreach (string line in new LineReader(() => new StringReader(text)))
+            {
+                if (breakpoints.Contains(lineNumber))
+                {
+                    sb.AppendLine(CreateBeakpointText(lineNumber));
+                }
+
+                sb.AppendLine(line);
+                lineNumber++;
+            }
+
+            return sb.ToString();
+        }
+
+        private string CreateBeakpointText(int lineNumber)
+        {
+            return "breakpoint " + lineNumber + Environment.NewLine;
         }
     }
 }

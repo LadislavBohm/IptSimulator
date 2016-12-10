@@ -16,7 +16,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
     public sealed class TclVoiceInterpreter
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly Eagle._Components.Public.Interpreter _interpreter;
+        private readonly Interpreter _interpreter;
         private readonly TimeSpan _commandEvaluateTimeout = TimeSpan.FromMilliseconds(100);
         private readonly ConcurrentQueue<ICommand> _commandStack = new ConcurrentQueue<ICommand>();
         private readonly object _lockRoot = new object();
@@ -25,9 +25,11 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
         private string _currentState;
         private string _currentEvent;
 
+        private int? _breakpointLineNumber = null;
+
         #region Creation
 
-        private TclVoiceInterpreter(Eagle._Components.Public.Interpreter interpreter)
+        private TclVoiceInterpreter(Interpreter interpreter)
         {
             _interpreter = interpreter;
             Result result = null;
@@ -61,7 +63,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
             Logger.Info("Creating TCL interpreter.");
 
             Result result = null;
-            var tclInterpreter = Eagle._Components.Public.Interpreter.Create(null, CreateFlags.Default, ref result);
+            var tclInterpreter = Interpreter.Create(null, CreateFlags.Default, ref result);
 
             Logger.Debug("TCL Interpreter created.");
 
@@ -94,7 +96,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
                 {
                     _pauseOnBreakpoint = value;
                 }
-                RaiseDebugModeChangedEvent(value);
+                RaiseDebugModeChangedEvent(value, _breakpointLineNumber);
             }
         }
 
@@ -165,6 +167,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
         public void Continue()
         {
             PauseOnBreakpoint = false;
+            _breakpointLineNumber = null;
         }
 
         #endregion
@@ -222,11 +225,12 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
             }
         }
 
-        private void OnBreakpointHit(object sender, System.EventArgs eventArgs)
+        private void OnBreakpointHit(object sender, BreakpointHitEventArgs eventArgs)
         {
             //breakpoint hit, stop here
+            _breakpointLineNumber = eventArgs.LineNumber;
             PauseOnBreakpoint = true;
-
+            
             Logger.Info("Stopping at breakpoint.");
 
             RefreshCurrentVariables();
@@ -245,9 +249,9 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         #region Events
 
-        private void RaiseDebugModeChangedEvent(bool isBreakpointHit)
+        private void RaiseDebugModeChangedEvent(bool isBreakpointHit, int? lineNumber)
         {
-            DebugModeChanged?.Invoke(this, new DebugModeEventArgs(isBreakpointHit));
+            BreakpointHitChanged?.Invoke(this, new DebugModeEventArgs(isBreakpointHit, lineNumber));
         }
 
         private void RaiseWatchVariablesChangedEvent()
@@ -260,7 +264,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
             EvaluateCompleted?.Invoke(this, new EvaluteResultEventArgs(result, returnCode, errorLine));
         }
 
-        public event EventHandler<DebugModeEventArgs> DebugModeChanged;
+        public event EventHandler<DebugModeEventArgs> BreakpointHitChanged;
         public event EventHandler<System.EventArgs> WatchVariablesChanged;
         public event EventHandler<EvaluteResultEventArgs> EvaluateCompleted;
 

@@ -22,24 +22,26 @@
             <RowDefinition/>
             <RowDefinition Height="28"/>
         </Grid.RowDefinitions>
-        
+
         <local:TclEditorActionBar Grid.Row="0" Height="34"/>
-        
+
         <tclEditor:TclAvalonEditor Grid.Row="1"
-                               ShowLineNumbers="True"
-                               SyntaxHighlighting="TCL"
-                               x:Name="MainTextEditor"
-                               WordWrap="True"
-                               FontFamily="{Binding ElementName=TclEditorToolbar, Path=EditorFontFamily}"
-                               FontSize="{Binding ElementName=TclEditorToolbar, Path=EditorFontSize, Converter={StaticResource IntegerToFontSizeConverter}}">
+                                   ShowLineNumbers="True"
+                                   SyntaxHighlighting="TCL"
+                                   x:Name="MainTextEditor"
+                                   WordWrap="True"
+                                   Breakpoints="{Binding Breakpoints, Mode=OneWayToSource}"
+                                   HighlightedBreakpointLine="{Binding CurrentBreakpointLine, Mode=TwoWay}"
+                                   FontFamily="{Binding ElementName=TclEditorToolbar, Path=EditorFontFamily}"
+                                   FontSize="{Binding ElementName=TclEditorToolbar, Path=EditorFontSize, Converter={StaticResource IntegerToFontSizeConverter}}">
             <i:Interaction.Behaviors>
-                <behaviors:AvalonEditBehavior ExtractedText="{Binding Script, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <behaviors:TclAvalonEditBehavior ExtractedText="{Binding Script, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             </i:Interaction.Behaviors>
             <tclEditor:TclAvalonEditor.InputBindings>
                 <KeyBinding Modifiers="Control" Key="Enter" Command="{Binding EvaluateCommand}"/>
                 <KeyBinding Modifiers="Control+Shift" Key="Enter" Command="{Binding EvaluateSelectionCommand}"/>
             </tclEditor:TclAvalonEditor.InputBindings>
-        </tclEditor:TclAvalonEditor> 
+        </tclEditor:TclAvalonEditor>
         <local:TclEditorToolbar Grid.Row="2"
                                 x:Name="TclEditorToolbar"/>
     </Grid>

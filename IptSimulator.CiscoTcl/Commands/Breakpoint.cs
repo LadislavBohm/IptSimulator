@@ -17,25 +17,26 @@ namespace IptSimulator.CiscoTcl.Commands
         {
         }
 
-        public override ReturnCode Execute(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
         {
             int lineNumber;
-            if (arguments.Count == 0 && int.TryParse(arguments[1].String, out lineNumber))
+            if (int.TryParse(arguments[1].String, out lineNumber))
             {
                 RaiseBreakpointHitEvent(lineNumber);
             }
             else
             {
                 //line number not available
-                RaiseBreakpointHitEvent(null);
+                result = "Line number argument is missing. Syntax should be 'breakpoint {lineNumber}'";
+                return ReturnCode.Error;
             }
             
             return ReturnCode.Ok;
         }
 
-        private void RaiseBreakpointHitEvent(int? lineNumber)
+        private void RaiseBreakpointHitEvent(int lineNumber)
         {
-            BreakpointHit?.Invoke(this, lineNumber.HasValue ? new BreakpointHitEventArgs(lineNumber.Value) : new BreakpointHitEventArgs());
+            BreakpointHit?.Invoke(this, new BreakpointHitEventArgs(lineNumber));
         }
 
         public event EventHandler<BreakpointHitEventArgs> BreakpointHit;
