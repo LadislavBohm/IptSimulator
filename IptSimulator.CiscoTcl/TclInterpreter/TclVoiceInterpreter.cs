@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Eagle._Components.Public;
@@ -26,6 +27,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
         private string _currentEvent;
 
         private int? _breakpointLineNumber = null;
+        private readonly ConcurrentDictionary<int,int> _activeBreakpoints = new ConcurrentDictionary<int, int>();
 
         #region Creation
 
@@ -159,6 +161,12 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         #region Public methods
 
+        public void Evaluate(string script, IEnumerable<int> breakpoints)
+        {
+            SetBreakpoints(breakpoints.ToArray());
+            _commandStack.Enqueue(new EvaluteScriptCommand(script));
+        }
+
         public void Evaluate(string script)
         {
             _commandStack.Enqueue(new EvaluteScriptCommand(script));
@@ -170,9 +178,48 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
             _breakpointLineNumber = null;
         }
 
+        public void AddBreakpoint(int lineNumber)
+        {
+            if (!_activeBreakpoints.ContainsKey(lineNumber))
+            {
+                _activeBreakpoints.TryAdd(lineNumber, lineNumber);
+            }
+        }
+
+        public void RemoveBreakpoint(int lineNumber)
+        {
+            if (_activeBreakpoints.ContainsKey(lineNumber))
+            {
+                int removed;
+                _activeBreakpoints.TryRemove(lineNumber, out removed);
+            }
+        }
+
+        public void ReplaceBreakpoints(IEnumerable<int> newBreakpoints)
+        {
+            SetBreakpoints(newBreakpoints.ToArray());
+        }
+
+        public void ResetBreakpoints()
+        {
+            _activeBreakpoints.Clear();
+        }
+
         #endregion
 
         #region Private methods
+
+        private void SetBreakpoints(params int[] breakpoints)
+        {
+            _activeBreakpoints.Clear();
+            if (breakpoints != null)
+            {
+                foreach (int breakpoint in breakpoints)
+                {
+                    _activeBreakpoints.TryAdd(breakpoint, breakpoint);
+                }
+            }
+        }
 
         private async Task StartAsync(CancellationTokenSource cancellationToken)
         {
@@ -227,6 +274,12 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         private void OnBreakpointHit(object sender, BreakpointHitEventArgs eventArgs)
         {
+            if (!_activeBreakpoints.ContainsKey(eventArgs.LineNumber))
+            {
+                Logger.Info("Breakpoint is no longer in active breakpoints, continueing execution.");
+                return;
+            }
+
             //breakpoint hit, stop here
             _breakpointLineNumber = eventArgs.LineNumber;
             PauseOnBreakpoint = true;

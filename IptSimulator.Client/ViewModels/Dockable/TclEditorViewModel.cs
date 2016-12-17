@@ -42,6 +42,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private RelayCommand _continueEvaluationCommand;
         private int? _currentBreakpointLine;
+        private IEnumerable<int> _breakpoints;
 
         public TclEditorViewModel()
         {
@@ -79,7 +80,16 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public ObservableCollection<string> Events { get; set; }
 
-        public IEnumerable<int> Breakpoints { get; set; }
+        public IEnumerable<int> Breakpoints
+        {
+            get { return _breakpoints; }
+            set
+            {
+                _breakpoints = value;
+                ResetBreakpoints();
+                RaisePropertyChanged();
+            }
+        }
 
         public string SelectedEvent
         {
@@ -118,11 +128,13 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                    return;
                                }
                                _logger.Debug("Inserting breakpoints to script");
-                               var script = InsertBreakpoints(Script, new HashSet<int>(Breakpoints));
+
+                               var breakpoints = new HashSet<int>(Breakpoints);
+                               var script = InsertBreakpoints(Script, breakpoints);
 
                                _logger.Debug("Evaluating whole script");
                                
-                               _interpreter.Evaluate(script);
+                               _interpreter.Evaluate(script, breakpoints);
                            }
                            catch (Exception e)
                            {
@@ -147,11 +159,13 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                    return;
                                }
                                _logger.Debug("Inserting breakpoints to script");
-                               var script = InsertBreakpoints(SelectedScript, new HashSet<int>(Breakpoints));
+
+                               var breakpoints = new HashSet<int>(Breakpoints);
+                               var script = InsertBreakpoints(SelectedScript, breakpoints);
 
                                _logger.Debug($"Evaluating selection: {SelectedScript}");
 
-                               _interpreter.Evaluate(script);
+                               _interpreter.Evaluate(script, breakpoints);
                            }
                            catch (Exception e)
                            {
@@ -199,11 +213,8 @@ namespace IptSimulator.Client.ViewModels.Dockable
                     {
                         _logger.Debug($"Raising {SelectedEvent} command.");
 
-                        _interpreter.Continue();
-                        //Result result = null;
-                        //var code = _interpreter.EvaluateScript($"fsm raise {SelectedEvent}", ref result);
-                        //RefreshCurrentVariables();
-
+                        _interpreter.Evaluate($"fsm raise {SelectedEvent}");
+                        
                         //if (code == ReturnCode.Ok)
                         //{
                         //    _logger.Info($"{SelectedEvent} event was successfully raised with following result: {result}");
@@ -264,6 +275,15 @@ namespace IptSimulator.Client.ViewModels.Dockable
             else
             {
                 CurrentBreakpointLine = null;
+            }
+        }
+
+        private void ResetBreakpoints()
+        {
+            //don't replace breakpoints when we are not waiting at any breakpoint line
+            if (CurrentBreakpointLine.HasValue)
+            {
+                _interpreter.ReplaceBreakpoints(Breakpoints);
             }
         }
 

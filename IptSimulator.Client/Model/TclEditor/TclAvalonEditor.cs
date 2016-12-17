@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.TextFormatting;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
+using IptSimulator.Client.Annotations;
 using IptSimulator.Client.ViewModels.Dockable;
 
 namespace IptSimulator.Client.Model.TclEditor
@@ -18,9 +21,6 @@ namespace IptSimulator.Client.Model.TclEditor
         public static readonly DependencyProperty HighlightedBreakpointLineProperty = DependencyProperty.Register(
             "HighlightedBreakpointLine", typeof(int?), typeof(TclAvalonEditor), new FrameworkPropertyMetadata(OnHighlightedBreakpointLineChanged));
 
-        public static readonly DependencyProperty BreakpointsProperty = DependencyProperty.Register(
-            "Breakpoints", typeof(IEnumerable<int>), typeof(TclAvalonEditor), new PropertyMetadata(default(IEnumerable<int>)));
-
         public TclAvalonEditor()
         {
             TextArea.PreviewMouseLeftButtonUp += OnMouseLeftButtonUp;
@@ -30,12 +30,6 @@ namespace IptSimulator.Client.Model.TclEditor
         }
 
         #region Properties
-
-        public IEnumerable<int> Breakpoints
-        {
-            get { return (IEnumerable<int>) GetValue(BreakpointsProperty); }
-            set { SetValue(BreakpointsProperty, value); }
-        }
 
         public int? HighlightedBreakpointLine
         {
@@ -62,7 +56,7 @@ namespace IptSimulator.Client.Model.TclEditor
         public void ToggleBreakpoint(int lineNumber)
         {
             _breakpointBarMarginMargin.ToggleBreakpoint(lineNumber);
-            Breakpoints = _breakpointBarMarginMargin.Breakpoints;
+            SetNewBreakpoints(_breakpointBarMarginMargin.Breakpoints);
         }
 
         /// <summary>
@@ -71,7 +65,7 @@ namespace IptSimulator.Client.Model.TclEditor
         public void ToggleBreakpoint()
         {
             _breakpointBarMarginMargin.ToggleBreakpoint(TextArea.Caret.Line);
-            Breakpoints = _breakpointBarMarginMargin.Breakpoints;
+            SetNewBreakpoints(_breakpointBarMarginMargin.Breakpoints);
         }
 
         #endregion
@@ -115,6 +109,15 @@ namespace IptSimulator.Client.Model.TclEditor
             editor?.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
         }
 
+        private void SetNewBreakpoints(IEnumerable<int> breakpoints)
+        {
+            var vm = DataContext as TclEditorViewModel;
+            if (vm == null) return;
+
+            vm.Breakpoints = new List<int>(breakpoints);
+        }
+
         #endregion
+
     }
 }

@@ -230,6 +230,7 @@
     <Compile Include="Model\TclEditor\TclAvalonEditor.cs" />
     <Compile Include="Model\TclEditor\TclCompletionManager.cs" />
     <Compile Include="Model\TerminalEndpointType.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\Abstractions\MenuItemViewModel.cs" />
     <Compile Include="ViewModels\Dockable\ConfigurationViewModel.cs" />
     <Compile Include="ViewModels\Data\WatchVariableViewModel.cs" />

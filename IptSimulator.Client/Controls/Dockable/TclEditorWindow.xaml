@@ -31,7 +31,6 @@
                                    x:Name="MainTextEditor"
                                    WordWrap="True"
                                    IsReadOnly="{Binding CurrentBreakpointLine, Converter={StaticResource BreakpointLineToBooleanConverter}}"
-                                   Breakpoints="{Binding Breakpoints, Mode=OneWayToSource}"
                                    HighlightedBreakpointLine="{Binding CurrentBreakpointLine, Mode=TwoWay}"
                                    FontFamily="{Binding ElementName=TclEditorToolbar, Path=EditorFontFamily}"
                                    FontSize="{Binding ElementName=TclEditorToolbar, Path=EditorFontSize, Converter={StaticResource IntegerToFontSizeConverter}}">
