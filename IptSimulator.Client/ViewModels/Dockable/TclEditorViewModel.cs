@@ -127,15 +127,21 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                    _logger.Info("No script to evaluate.");
                                    return;
                                }
-                               _logger.Debug("Inserting breakpoints to script");
+                               if (Breakpoints != null)
+                               {
+                                   _logger.Debug("Inserting breakpoints to script");
 
-                               var breakpoints = new HashSet<int>(Breakpoints);
-                               var script = InsertBreakpoints(Script, breakpoints);
-
-                               _logger.Debug("Evaluating whole script");
-                               
-                               _interpreter.Evaluate(script, breakpoints);
-                           }
+                                   var breakpoints = new HashSet<int>(Breakpoints);
+                                   var script = InsertBreakpoints(Script, breakpoints);
+                                   _logger.Debug("Evaluating whole script");
+                                   _interpreter.Evaluate(script, breakpoints);
+                               }
+                               else
+                               {
+                                   _logger.Debug("Evaluating whole script");
+                                   _interpreter.Evaluate(Script);
+                               }
+                            }
                            catch (Exception e)
                            {
                                _logger.Error(e, "Script evaluation has thrown an exception.");
