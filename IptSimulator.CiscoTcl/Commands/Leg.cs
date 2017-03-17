@@ -26,7 +26,7 @@ namespace IptSimulator.CiscoTcl.Commands
         {
         }
 
-        public override ReturnCode Execute(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
         {
             if ((arguments == null) || (arguments.Count < 3))
             {

@@ -13,21 +13,15 @@ namespace IptSimulator.CiscoTcl.Test
         private const string ScriptBasePath = "IptSimulator.CiscoTcl.Test.Scripts";
         private static readonly Assembly ThisAssembly = typeof(ScriptDataProvider).Assembly;
 
-        #region Script Properties
+        public string CallWait => ReadEmbeddedResource("call_wait.tcl");
 
-        public string CallWait => ReadScriptFromEmbeddedResources("call_wait.tcl");
+        public string FsmStateChanging => ReadEmbeddedResource("fsm_state_changing.tcl");
 
-        public string Pinovnice => ReadScriptFromEmbeddedResources("pinovnice.tcl");
+        public string FsmRaiseEvent => ReadEmbeddedResource("fsm_event_raise_with_setstate.tcl");
 
-        public string FsmStateChanging => ReadScriptFromEmbeddedResources("fsm_state_changing.tcl");
+        public string Pinovnice => ReadEmbeddedResource("pinovnice.tcl");
 
-        public string FsmRaiseEvent => ReadScriptFromEmbeddedResources("fsm_event_raise_with_setstate.tcl");
-
-        #endregion
-
-        #region Helper methods
-
-        private static string ReadScriptFromEmbeddedResources(string scriptName)
+        private static string ReadEmbeddedResource(string scriptName)
         {
             if (string.IsNullOrEmpty(scriptName))
                 throw new ArgumentException("Value cannot be null or empty.", nameof(scriptName));
@@ -47,12 +41,6 @@ namespace IptSimulator.CiscoTcl.Test
             }
         }
 
-        private static string CreateScriptPath(string scriptName)
-        {
-            return $"{ScriptBasePath}.{scriptName}";
-        }
-
-
-        #endregion
+        private static string CreateScriptPath(string scriptName) => $"{ScriptBasePath}.{scriptName}";
     }
 }

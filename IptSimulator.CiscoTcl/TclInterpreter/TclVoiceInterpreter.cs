@@ -17,18 +17,19 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
     public sealed class TclVoiceInterpreter
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly Interpreter _interpreter;
-        private readonly TimeSpan _commandEvaluateTimeout = TimeSpan.FromMilliseconds(100);
+        private readonly ConcurrentDictionary<int, int> _activeBreakpoints = new ConcurrentDictionary<int, int>();
         private readonly ConcurrentQueue<ICommand> _commandStack = new ConcurrentQueue<ICommand>();
-        private readonly object _lockRoot = new object();
-        private bool _pauseOnBreakpoint;
+        private readonly TimeSpan _commandEvaluateTimeout = TimeSpan.FromMilliseconds(100);
+
         private IEnumerable<VariableWithValue> _watchVariables;
+        private readonly object _lockRoot = new object();
+        private readonly Interpreter _interpreter;
+        private int? _breakpointLineNumber;
+        private bool _pauseOnBreakpoint;
         private string _currentState;
         private string _currentEvent;
 
-        private int? _breakpointLineNumber = null;
-        private readonly ConcurrentDictionary<int,int> _activeBreakpoints = new ConcurrentDictionary<int, int>();
-
+        
         #region Creation
 
         private TclVoiceInterpreter(Interpreter interpreter)

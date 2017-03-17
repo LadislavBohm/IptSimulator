@@ -34,7 +34,7 @@ namespace IptSimulator.CiscoTcl.Commands
 
         public string CurrentState { get; private set; }
 
-        public override ReturnCode Execute(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
             ref Result result)
         {
             try
