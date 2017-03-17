@@ -99,16 +99,27 @@ namespace IptSimulator.Client.Model.TclEditor
             {
                 foreach (var lineNumber in _breakpointLineNumbers)
                 {
-                    if (lineNumber > textView.VisualLines.Count)
+                    if (!IsLineVisible(lineNumber, textView))
                     {
-                        //there is no visual line at this lineNumber (should not happen)
                         continue;
                     }
-                    var line = textView.VisualLines[lineNumber - 1];
+                    var line = textView.GetVisualLine(lineNumber);
+                    if (line == null)
+                    {
+                        continue;
+                    }
                     drawingContext.DrawEllipse(new SolidColorBrush(Colors.Red), new Pen(new SolidColorBrush(Colors.Red), 2),
                         new Point(renderSize.Width - 9, line.VisualTop - textView.VerticalOffset + 9), 4, 4);
                 }
             }
         }
+
+        private bool IsLineVisible(int lineNumber, TextView textView)
+        {
+            return lineNumber < textView.VisualLines.Last().FirstDocumentLine.LineNumber &&
+                   lineNumber > textView.VisualLines.First().LastDocumentLine.LineNumber;
+        }
+
+        
     }
 }
