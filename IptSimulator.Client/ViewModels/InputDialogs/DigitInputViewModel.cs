@@ -15,7 +15,7 @@ namespace IptSimulator.Client.ViewModels.InputDialogs
     [ImplementPropertyChanged]
     public class DigitInputViewModel : BaseInputDialogViewModel
     {
-        private readonly DigitInputDialog _digitInputDialog = new DigitInputDialog();
+        private DigitInputDialog _digitInputDialog;
         private RelayCommand<string> _addCharacterCommand;
         private string _digitString;
 
@@ -25,7 +25,6 @@ namespace IptSimulator.Client.ViewModels.InputDialogs
 
         public DigitInputViewModel()
         {
-            _digitInputDialog.DataContext = this;
             DigitString = string.Empty;
             if (IsInDesignMode)
             {
@@ -41,7 +40,7 @@ namespace IptSimulator.Client.ViewModels.InputDialogs
             get { return _digitString; }
             set
             {
-                if (value == null) return;
+                if (value == null || !value.All(character => AllowedCharacters.Contains(character.ToString()))) return;
                 _digitString = value;
                 RaisePropertyChanged();
                 AddCharacterCommand.RaiseCanExecuteChanged();
@@ -80,6 +79,7 @@ namespace IptSimulator.Client.ViewModels.InputDialogs
         {
             return Application.Current.Dispatcher.Invoke(() =>
             {
+                _digitInputDialog = new DigitInputDialog() { DataContext = this };
                 SourceEvent = sourceEvent ?? UnknownEvent;
                 if (_digitInputDialog.ShowDialog() == true)
                 {
@@ -92,11 +92,15 @@ namespace IptSimulator.Client.ViewModels.InputDialogs
         protected override void ProcessAfterOk()
         {
             _digitInputDialog.DialogResult = true;
+            _digitInputDialog.Close();
+            _digitInputDialog = null;
         }
 
         protected override void ProcessAfterCancel()
         {
-            _digitInputDialog.DialogResult = false;
+            _digitInputDialog.DialogResult = true;
+            _digitInputDialog.Close();
+            _digitInputDialog = null;
         }
     }
 }
