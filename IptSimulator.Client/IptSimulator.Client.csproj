@@ -161,6 +161,7 @@
     </ApplicationDefinition>
     <Compile Include="Behaviors\AutoScrollToLastItemBehavior.cs" />
     <Compile Include="Behaviors\AvalonDockLayoutSerializer.cs" />
+    <Compile Include="Behaviors\HideWindowCloseButton.cs" />
     <Compile Include="Behaviors\TclAvalonEditBehavior.cs" />
     <Compile Include="Behaviors\MouseWheelGesture.cs" />
     <Compile Include="Controls\Dockable\ConfigurationWindow.xaml.cs">
