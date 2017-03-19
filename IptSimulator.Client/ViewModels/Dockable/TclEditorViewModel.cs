@@ -5,30 +5,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using Eagle._Components.Public;
-using Eagle._Components.Public.Delegates;
-using Eagle._Containers.Public;
-using Eagle._Interfaces.Public;
 using GalaSoft.MvvmLight.Command;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.CiscoTcl.Model.InputData;
 using IptSimulator.CiscoTcl.TclInterpreter;
 using IptSimulator.CiscoTcl.TclInterpreter.EventArgs;
-using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.ViewModels.Abstractions;
 using IptSimulator.Client.ViewModels.Data;
-using IptSimulator.Core.Tcl;
+using IptSimulator.Client.ViewModels.InputDialogs;
 using IptSimulator.Core.Utils;
-using Newtonsoft.Json;
 using NLog;
 using PropertyChanged;
 
 namespace IptSimulator.Client.ViewModels.Dockable
 {
     [ImplementPropertyChanged]
-    public class TclEditorViewModel : DockWindowViewModel
+    public class TclEditorViewModel : DockWindowViewModel, IDisposable
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private RelayCommand _evaluateCommand;
@@ -43,6 +37,9 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private RelayCommand _continueEvaluationCommand;
         private int? _currentBreakpointLine;
         private IEnumerable<int> _breakpoints;
+
+        private readonly DigitInputViewModel _digitInputViewModel = new DigitInputViewModel();
+        private bool _isDisposed = false;
 
         public TclEditorViewModel()
         {
@@ -220,16 +217,6 @@ namespace IptSimulator.Client.ViewModels.Dockable
                         _logger.Debug($"Raising {SelectedEvent} command.");
 
                         _interpreter.Evaluate($"fsm raise {SelectedEvent}");
-                        
-                        //if (code == ReturnCode.Ok)
-                        //{
-                        //    _logger.Info($"{SelectedEvent} event was successfully raised with following result: {result}");
-                        //}
-                        //else
-                        //{
-                        //    _logger.Warn($"{SelectedEvent} event raised with following code: {code}. Result: {result}");
-                        //}
-                        //EvaluationResult = result;
                     }
                     catch (Exception e)
                     {
@@ -261,6 +248,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
             _interpreter.WatchVariablesChanged += (sender, args) => Variables =  new ObservableCollection<WatchVariableViewModel>(
                 _interpreter.WatchVariables.Select(vw => new WatchVariableViewModel(vw.Variable, vw.Value)));
             _interpreter.BreakpointHitChanged += OnBreakpointHitChanged;
+            _interpreter.OnInputDigitsRequested += OnInputDigitsRequested;
 
             _logger.Info("Initializing configuration");
             Configuration = new ConfigurationViewModel();
@@ -282,6 +270,13 @@ namespace IptSimulator.Client.ViewModels.Dockable
             {
                 CurrentBreakpointLine = null;
             }
+        }
+
+        private void OnInputDigitsRequested(object sender, InputEventArgs<DigitsInputData> inputEventArgs)
+        {
+            _logger.Info("Request for input digits from interpreter received.");
+            
+            inputEventArgs.SetInputData(new DigitsInputData(_digitInputViewModel.GetDigits(null)));
         }
 
         private void ResetBreakpoints()
@@ -321,6 +316,17 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private string CreateBeakpointText(int lineNumber)
         {
             return "breakpoint " + lineNumber + Environment.NewLine;
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                _interpreter?.Dispose();
+                _cancellationTokenSource?.Cancel();
+                _cancellationTokenSource?.Dispose();
+                _isDisposed = true;
+            }
         }
     }
 }

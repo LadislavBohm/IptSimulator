@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Eagle._Commands;
-using Eagle._Components.Public;
+﻿using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
@@ -17,18 +11,21 @@ namespace IptSimulator.CiscoTcl.Commands
         private const string LegConnect = "connect";
         private const string LegDisconnect = "disconnect";
 
+        private readonly LegConnect _legConnect = new LegConnect();
+        private readonly LegDisconnect _legDisconnect = new LegDisconnect();
+        private readonly LegCollectDigits _legCollectDigits = new LegCollectDigits();
+
         public Leg() : base(
             new CommandData("leg", null, null, null, typeof(Leg).FullName,CommandFlags.None, null,0))
         {
-        }
-
-        public Leg(ICommandData commandData) : base(commandData)
-        {
+            TclSubCommands.Add(_legConnect);
+            TclSubCommands.Add(_legDisconnect);
+            TclSubCommands.Add(_legCollectDigits);
         }
 
         public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
         {
-            if ((arguments == null) || (arguments.Count < 3))
+            if (arguments == null || (arguments.Count < 3))
             {
                 result = Utility.WrongNumberOfArguments(this, 1, arguments, "leg_command command_param");
 
@@ -57,19 +54,19 @@ namespace IptSimulator.CiscoTcl.Commands
 
             if (strCommand == LegConnect)
             {
-                legCommand = new LegConnect();
+                legCommand = _legConnect;
                 return true;
             }
 
             if (strCommand == LegDisconnect)
             {
-                legCommand = new LegDisconnect();
+                legCommand = _legDisconnect;
                 return true;
             }
 
             if (strCommand == LegCollectDigits)
             {
-                legCommand = new LegCollectDigits();
+                legCommand = _legCollectDigits;
                 return true;
             }
 

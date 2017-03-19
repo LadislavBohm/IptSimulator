@@ -1,15 +1,19 @@
 
 using IptSimulator.Client.ViewModels.Data;
 using IptSimulator.Client.ViewModels.Dockable;
+using IptSimulator.Client.ViewModels.InputDialogs;
 using IptSimulator.Client.ViewModels.MenuItems;
 
 namespace IptSimulator.Client.ViewModels
 {
     public class ViewModelLocator
     {
+        private static ViewModelLocator Instance { get; set; }
+
         public ViewModelLocator()
         {
             Initialize();
+            Instance = this;
         }
 
         #region ViewModels
@@ -28,6 +32,8 @@ namespace IptSimulator.Client.ViewModels
 
         public EndpointTerminalViewModel EndpointTerminal { get; private set; }
 
+        public DigitInputViewModel DigitInput { get; private set; }
+
         #endregion
 
         private void Initialize()
@@ -39,10 +45,12 @@ namespace IptSimulator.Client.ViewModels
             TclEditor = new TclEditorViewModel();
             Navigation = new NavigationViewModel();
             EndpointTerminal = new EndpointTerminalViewModel();
+            DigitInput = new DigitInputViewModel();
         }
 
         public static void Cleanup()
         {
+            Instance?.TclEditor?.Dispose();
         }
     }
 }

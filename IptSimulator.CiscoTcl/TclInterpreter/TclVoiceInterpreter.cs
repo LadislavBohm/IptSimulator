@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Eagle._Commands;
 using Eagle._Components.Public;
 using IptSimulator.CiscoTcl.Commands;
+using IptSimulator.CiscoTcl.Commands.Abstractions;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.CiscoTcl.Model.InputData;
 using IptSimulator.CiscoTcl.TclInterpreter.Commands;
 using IptSimulator.CiscoTcl.TclInterpreter.EventArgs;
 using IptSimulator.CiscoTcl.Utils;
@@ -14,7 +17,7 @@ using NLog;
 
 namespace IptSimulator.CiscoTcl.TclInterpreter
 {
-    public sealed class TclVoiceInterpreter
+    public sealed class TclVoiceInterpreter : IDisposable
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly ConcurrentDictionary<int, int> _activeBreakpoints = new ConcurrentDictionary<int, int>();
@@ -50,13 +53,28 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
                     Logger.Warn($"Failed to add {customCommand.Name} command. Error: {result}");
                 }
 
+                SubscribeToInputCommand(customCommand as CiscoTclCommand);
+
                 var breakpoint = customCommand as Breakpoint;
                 if (breakpoint == null) continue;
 
                 breakpoint.BreakpointHit += OnBreakpointHit;
             }
+
+            void SubscribeToInputCommand(CiscoTclCommand command)
+            {
+                if (command == null) return;
+                if (command is IInputRequestingCommand<DigitsInputData> digitInput)
+                {
+                    digitInput.OnInputRequested += DigitInputOnOnInputRequested;
+                }
+                foreach (var subCommand in command.TclSubCommands.OfType<IInputRequestingCommand<DigitsInputData>>())
+                {
+                    subCommand.OnInputRequested += DigitInputOnOnInputRequested;
+                }
+            }
         }
-        
+
         /// <summary>
         /// Factory method to create and properly initialize TCL interpreter. 
         /// </summary>
@@ -298,29 +316,41 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
             Logger.Info("Continuing from breakpoint.");
         }
 
+        private void DigitInputOnOnInputRequested(object sender, InputEventArgs<DigitsInputData> inputEventArgs)
+        {
+            RaiseOnInputDigitsRequestedEvent(inputEventArgs);
+        }
 
         #endregion
 
         #region Events
 
-        private void RaiseDebugModeChangedEvent(bool isBreakpointHit, int? lineNumber)
-        {
+        private void RaiseDebugModeChangedEvent(bool isBreakpointHit, int? lineNumber) => 
             BreakpointHitChanged?.Invoke(this, new DebugModeEventArgs(isBreakpointHit, lineNumber));
-        }
 
-        private void RaiseWatchVariablesChangedEvent()
-        {
-            WatchVariablesChanged?.Invoke(this, System.EventArgs.Empty);
-        }
+        private void RaiseWatchVariablesChangedEvent() => WatchVariablesChanged?.Invoke(this, System.EventArgs.Empty);
 
-        private void RaiseEvaluateCompletedEvent(ReturnCode returnCode, Result result, int errorLine = 0)
-        {
+        private void RaiseEvaluateCompletedEvent(ReturnCode returnCode, Result result, int errorLine = 0) => 
             EvaluateCompleted?.Invoke(this, new EvaluteResultEventArgs(result, returnCode, errorLine));
+
+        private void RaiseOnInputDigitsRequestedEvent(InputEventArgs<DigitsInputData> inputEventArgs)
+        {
+            OnInputDigitsRequested?.Invoke(this, inputEventArgs);
         }
 
         public event EventHandler<DebugModeEventArgs> BreakpointHitChanged;
         public event EventHandler<System.EventArgs> WatchVariablesChanged;
         public event EventHandler<EvaluteResultEventArgs> EvaluateCompleted;
+
+        /// <summary>
+        /// Input digits requested by TCL command. Don't forget to call SetInputData method to pass collected digits.
+        /// </summary>
+        public event EventHandler<InputEventArgs<DigitsInputData>> OnInputDigitsRequested;
+
+        public void Dispose()
+        {
+            _interpreter?.Dispose();
+        }
 
         #endregion
     }
