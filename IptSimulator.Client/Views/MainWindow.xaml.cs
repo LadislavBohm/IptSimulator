@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using IptSimulator.Client.Controls;
+using IptSimulator.Client.ViewModels;
 using DockerWindow = IptSimulator.Client.Controls.DockerWindow;
 
 namespace IptSimulator.Client.Views
@@ -12,6 +14,12 @@ namespace IptSimulator.Client.Views
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            ViewModelLocator.Cleanup();
+            base.OnClosed(e);
         }
     }
 }

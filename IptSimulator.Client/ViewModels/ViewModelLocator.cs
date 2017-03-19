@@ -50,7 +50,7 @@ namespace IptSimulator.Client.ViewModels
 
         public static void Cleanup()
         {
-            Instance?.TclEditor.Dispose();
+            Instance?.TclEditor?.Dispose();
         }
     }
 }

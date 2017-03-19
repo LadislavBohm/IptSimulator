@@ -39,6 +39,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private IEnumerable<int> _breakpoints;
 
         private readonly DigitInputViewModel _digitInputViewModel = new DigitInputViewModel();
+        private bool _isDisposed = false;
 
         public TclEditorViewModel()
         {
@@ -319,9 +320,13 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public void Dispose()
         {
-            _interpreter?.Dispose();
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
+            if (!_isDisposed)
+            {
+                _interpreter?.Dispose();
+                _cancellationTokenSource?.Cancel();
+                _cancellationTokenSource?.Dispose();
+                _isDisposed = true;
+            }
         }
     }
 }
