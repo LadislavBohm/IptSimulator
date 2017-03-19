@@ -14,6 +14,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using IptSimulator.CiscoTcl.Commands;
 using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.Exceptions;
+using IptSimulator.Client.ViewModels;
 using IptSimulator.Client.Views;
 using IptSimulator.Core.Tcl;
 using NLog;
@@ -97,6 +98,12 @@ namespace IptSimulator.Client
             }
 
             _logger.Info("Syntax file successfully updated.");
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            ViewModelLocator.Cleanup();
+            base.OnExit(e);
         }
     }
 }
