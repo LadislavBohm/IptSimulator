@@ -8,10 +8,11 @@ using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
 using NLog;
+using ISubCommand = IptSimulator.CiscoTcl.Commands.Abstractions.ISubCommand;
 
 namespace IptSimulator.CiscoTcl.Commands
 {
-    public class LegDisconnect : ILegCommand
+    public class LegDisconnect : ILegCommand, ISubCommand
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
 

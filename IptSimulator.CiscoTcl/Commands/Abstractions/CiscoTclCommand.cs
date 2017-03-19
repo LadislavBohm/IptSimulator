@@ -15,6 +15,8 @@ namespace IptSimulator.CiscoTcl.Commands.Abstractions
         protected readonly ILogger InternalLogger = LogManager.GetLogger(typeof(CiscoTclCommand).FullName);
         protected readonly ILogger ErrorLogger = LogManager.GetLogger(typeof(CiscoTclCommand).FullName + ".Error");
 
+        public HashSet<ISubCommand> TclSubCommands { get; private set; } = new HashSet<ISubCommand>();
+
         protected CiscoTclCommand(ICommandData commandData) : base(commandData)
         {
         }
