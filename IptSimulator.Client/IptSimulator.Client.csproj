@@ -184,6 +184,9 @@
     <Compile Include="Controls\FsmGraph.xaml.cs">
       <DependentUpon>FsmGraph.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\InputDialogs\DigitInputDialog.xaml.cs">
+      <DependentUpon>DigitInputDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PageTransition.xaml.cs">
       <DependentUpon>PageTransition.xaml</DependentUpon>
     </Compile>
@@ -237,6 +240,8 @@
     <Compile Include="ViewModels\DockerManagerViewModel.cs" />
     <Compile Include="ViewModels\Abstractions\DockWindowViewModel.cs" />
     <Compile Include="ViewModels\Data\LogViewModel.cs" />
+    <Compile Include="ViewModels\InputDialogs\BaseInputDialogViewModel.cs" />
+    <Compile Include="ViewModels\InputDialogs\DigitInputViewModel.cs" />
     <Compile Include="ViewModels\MenuItems\NavigationViewModel.cs" />
     <Compile Include="ViewModels\MenuItems\ToggleDockWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuViewModel.cs" />
@@ -268,6 +273,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\FsmGraph.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\InputDialogs\DigitInputDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
