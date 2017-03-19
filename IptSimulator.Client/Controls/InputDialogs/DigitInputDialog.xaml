@@ -3,10 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:IptSimulator.Client.Controls.InputDialogs"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:behaviors="clr-namespace:IptSimulator.Client.Behaviors"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         d:DataContext="{Binding Source={StaticResource Locator}, Path=DigitInput}"
-        Title="Digit Input" Height="410" Width="370">
+        Title="Digit Input" Height="390" Width="370">
+    <i:Interaction.Behaviors>
+        <behaviors:HideWindowCloseButton/>
+    </i:Interaction.Behaviors>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -36,27 +40,28 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <TextBox Grid.Row="0" 
-                                 Width="100" 
-                                 Height="26" 
-                                 Margin="15 0 0 0"
-                                 VerticalContentAlignment="Center"
-                                 HorizontalAlignment="Left" 
-                                 Text="{Binding DigitString}"/>
-                        
-                        <Button Content="X"
-                                Grid.Row="0"
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox Width="160" 
+                                     Height="26" 
+                                     Margin="10 0 0 0"
+                                     MaxLength="15"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalAlignment="Left" 
+                                     Text="{Binding DigitString, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <Button Content="X"
                                 Height="26"
                                 Width="30"
-                                Margin="0 0 36 0"
+                                Margin="10 0 0 0"
                                 HorizontalAlignment="Right"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 Command="{Binding RemoveCharacterCommand}"/>
+                        </StackPanel>
 
-                        <WrapPanel Margin="5"
+                        <WrapPanel Margin="5 5 25 5"
                                    ItemHeight="50"
-                                   ItemWidth="60"
+                                   ItemWidth="50"
                                    Grid.Row="1">
                             <WrapPanel.Resources>
                                 <Style TargetType="Button">
