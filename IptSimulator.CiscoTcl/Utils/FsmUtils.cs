@@ -14,7 +14,7 @@ namespace IptSimulator.CiscoTcl.Utils
         private static readonly ILogger Logger = LogManager.GetCurrentClassLogger();
 
 
-        public static bool ContainsState(Eagle._Components.Public.Interpreter interpreter, ref Result result, string fsmArray, string state)
+        public static bool ContainsState(Interpreter interpreter, ref Result result, string fsmArray, string state)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(fsmArray))
@@ -46,7 +46,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return isPresent;
         }
 
-        public static bool TryGetFsmTransitions(Eagle._Components.Public.Interpreter interpreter, string fsmArray, out IReadOnlyList<FsmTransition> transitions)
+        public static bool TryGetFsmTransitions(Interpreter interpreter, string fsmArray, out IReadOnlyList<FsmTransition> transitions)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(fsmArray))
