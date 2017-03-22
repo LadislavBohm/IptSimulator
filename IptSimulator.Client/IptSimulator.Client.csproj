@@ -208,6 +208,7 @@
     <Compile Include="Converters\BreakpointLineToVisibilityConverter.cs" />
     <Compile Include="Converters\CenterConverter.cs" />
     <Compile Include="Converters\IntegerToFontSizeConverter.cs" />
+    <Compile Include="Converters\DoubleMinusConstantConverter.cs" />
     <Compile Include="Converters\IsCurrentToColorConverter.cs" />
     <Compile Include="Converters\IsInitialToColorConverter.cs" />
     <Compile Include="Converters\LogLevelToColorConverter.cs" />
@@ -225,6 +226,7 @@
     <Compile Include="Model\Interfaces\ICompletionManager.cs" />
     <Compile Include="Model\Interfaces\ICompletionResult.cs" />
     <Compile Include="Model\AvalonDockLayoutInitializer.cs" />
+    <Compile Include="Model\Mapper.cs" />
     <Compile Include="Model\NLog\NLogDebugWindowTarget.cs" />
     <Compile Include="Model\NLog\NLogWriteEventArgs.cs" />
     <Compile Include="Model\TclEditor\BreakpointBackgroundRenderer.cs" />

@@ -12,6 +12,7 @@ using IptSimulator.CiscoTcl.Model;
 using IptSimulator.CiscoTcl.Model.InputData;
 using IptSimulator.CiscoTcl.TclInterpreter;
 using IptSimulator.CiscoTcl.TclInterpreter.EventArgs;
+using IptSimulator.Client.Model;
 using IptSimulator.Client.ViewModels.Abstractions;
 using IptSimulator.Client.ViewModels.Data;
 using IptSimulator.Client.ViewModels.InputDialogs;
@@ -245,8 +246,8 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
             //add event handlers
             _interpreter.EvaluateCompleted += (sender, args) => EvaluationResult = args.Result;
-            _interpreter.WatchVariablesChanged += (sender, args) => Variables =  new ObservableCollection<WatchVariableViewModel>(
-                _interpreter.WatchVariables.Select(vw => new WatchVariableViewModel(vw.Variable, vw.Value)));
+            _interpreter.WatchVariablesChanged += (sender, args) => Variables =  
+                new ObservableCollection<WatchVariableViewModel>(_interpreter.WatchVariables.Select(Mapper.Map));
             _interpreter.BreakpointHitChanged += OnBreakpointHitChanged;
             _interpreter.OnInputDigitsRequested += OnInputDigitsRequested;
 
