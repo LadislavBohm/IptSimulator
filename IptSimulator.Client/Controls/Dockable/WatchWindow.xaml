@@ -13,14 +13,15 @@
         <converters:DoubleMinusConstantConverter x:Key="IntMinusConstantConverter"/>
         <system:Int32 x:Key="SubValueMargin">10</system:Int32>
     </UserControl.Resources>
-    <Grid>
+    <Grid Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl}}">
         <DataGrid Name="TopVariableGrid" 
-                  ItemsSource="{Binding Variables}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  SelectionUnit="FullRow"
-                  RowDetailsVisibilityMode="VisibleWhenSelected">
+                    ItemsSource="{Binding Variables}"
+                    AutoGenerateColumns="False"
+                    IsReadOnly="True"
+                    SelectionMode="Single"
+                    SelectionUnit="FullRow"
+                    RowDetailsVisibilityMode="VisibleWhenSelected"
+                    ScrollViewer.CanContentScroll="False">
             <DataGrid.ItemContainerStyle>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event="MouseLeftButtonDown" Handler="TopVariableGrid_OnMouseLeftButtonDown"/>
@@ -44,22 +45,24 @@
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <Grid Width="{Binding Path=ActualWidth, 
-                        RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl},
-                        Converter={StaticResource IntMinusConstantConverter}, ConverterParameter={StaticResource SubValueMargin}}">
-                    <DataGrid ItemsSource="{Binding SubValues}" 
-                              Margin="30 0 0 0" 
-                              IsHitTestVisible="False"
-                              HorizontalAlignment="Stretch"
-                              AutoGenerateColumns="False" 
-                              HeadersVisibility="None">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Property" Width="200" Binding="{Binding Name}"/>
-                            <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                                            RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=UserControl},
+                                            Converter={StaticResource IntMinusConstantConverter}, ConverterParameter={StaticResource SubValueMargin}}">
+                        <DataGrid ItemsSource="{Binding SubValues}" 
+                                  Margin="30 0 0 0" 
+                                  VerticalScrollBarVisibility="Disabled"
+                                  IsHitTestVisible="False"
+                                  HorizontalAlignment="Stretch"
+                                  AutoGenerateColumns="False" 
+                                  HeadersVisibility="None">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Property" Width="200" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Value" Width="*" Binding="{Binding Value}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Grid>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>
     </Grid>
+
 </UserControl>
