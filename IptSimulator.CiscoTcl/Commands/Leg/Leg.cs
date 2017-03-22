@@ -3,14 +3,10 @@ using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
 
-namespace IptSimulator.CiscoTcl.Commands
+namespace IptSimulator.CiscoTcl.Commands.Leg
 {
     public class Leg : CiscoTclCommand
     {
-        private const string LegCollectDigits = "collectdigits";
-        private const string LegConnect = "connect";
-        private const string LegDisconnect = "disconnect";
-
         private readonly LegConnect _legConnect = new LegConnect();
         private readonly LegDisconnect _legDisconnect = new LegDisconnect();
         private readonly LegCollectDigits _legCollectDigits = new LegCollectDigits();
@@ -52,19 +48,19 @@ namespace IptSimulator.CiscoTcl.Commands
         {
             var strCommand = arguments[1];
 
-            if (strCommand == LegConnect)
+            if (strCommand == _legConnect.Name)
             {
                 legCommand = _legConnect;
                 return true;
             }
 
-            if (strCommand == LegDisconnect)
+            if (strCommand == _legDisconnect.Name)
             {
                 legCommand = _legDisconnect;
                 return true;
             }
 
-            if (strCommand == LegCollectDigits)
+            if (strCommand == _legCollectDigits.Name)
             {
                 legCommand = _legCollectDigits;
                 return true;

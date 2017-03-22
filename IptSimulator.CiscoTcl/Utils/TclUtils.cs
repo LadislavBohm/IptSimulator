@@ -10,7 +10,7 @@ namespace IptSimulator.CiscoTcl.Utils
 {
     public class TclUtils
     {
-        public static bool ArrayExists(Eagle._Components.Public.Interpreter interpreter, string arrayName)
+        public static bool ArrayExists(Interpreter interpreter, string arrayName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrEmpty(arrayName))
@@ -27,7 +27,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return (bool)result.Value;
         }
 
-        public static bool ProcedureExists(Eagle._Components.Public.Interpreter interpreter, string procedureName)
+        public static bool ProcedureExists(Interpreter interpreter, string procedureName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrEmpty(procedureName))
@@ -43,7 +43,22 @@ namespace IptSimulator.CiscoTcl.Utils
             return !string.IsNullOrEmpty(result.String);
         }
 
-        public static bool ArrayKeyExists(Eagle._Components.Public.Interpreter interpreter, string arrayName, string key)
+        public static bool GetArrayValue(Interpreter interpreter, string arrayName, string key, ref Result result)
+        {
+            if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+            if (arrayName == null) throw new ArgumentNullException(nameof(arrayName));
+            if (key == null) throw new ArgumentNullException(nameof(key));
+
+            const string tempVariableName = "A51947B5F3C9403F81DD0DC286E781E3";
+            ReturnCode code = interpreter.EvaluateScript($"set {tempVariableName} ${arrayName}({key})", ref result);
+
+            Result cleanupResult = null;
+            UnsetVariable(interpreter, ref cleanupResult, tempVariableName);
+
+            return code == ReturnCode.Ok;
+        }
+
+        public static bool ArrayKeyExists(Interpreter interpreter, string arrayName, string key)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(key))
@@ -62,7 +77,33 @@ namespace IptSimulator.CiscoTcl.Utils
             return result.String == "1";
         }
 
-        public static bool SetVariable(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName, string value, bool global)
+        public static bool ReadArray(Interpreter interpreter, ref IDictionary<string, string> result, string arrayName)
+        {
+            if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
+            if (result == null) throw new ArgumentNullException(nameof(result));
+            if (arrayName == null) throw new ArgumentNullException(nameof(arrayName));
+
+            Result tclResult = "";
+            var code = interpreter.EvaluateScript($"array names {arrayName}", ref tclResult);
+
+            if (code != ReturnCode.Ok)
+            {
+                return false;
+            }
+
+            var arrayNames = tclResult.ToString().Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries).ToList();
+            foreach (var name in arrayNames)
+            {
+                if (GetArrayValue(interpreter, arrayName, name, ref tclResult))
+                {
+                    result.Add(name, tclResult);
+                }
+            }
+
+            return true;
+        }
+
+        public static bool SetVariable(Interpreter interpreter, ref Result result, string variableName, string value, bool global)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
@@ -77,7 +118,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return code == ReturnCode.Ok;
         }
 
-        public static bool UnsetVariable(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName)
+        public static bool UnsetVariable(Interpreter interpreter, ref Result result, string variableName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
@@ -88,18 +129,29 @@ namespace IptSimulator.CiscoTcl.Utils
             return code == ReturnCode.Ok;
         }
 
-        public static bool GetVariableValue(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName, bool global)
+        public static bool GetVariableValue(Interpreter interpreter, ref Result result, string variableName, bool global)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(variableName));
 
-            var code = interpreter.EvaluateScript($"set {(global ? "::" : string.Empty)}{variableName}", ref result);
+            var scopedName = $"{(global ? "::" : string.Empty)}{variableName}";
+            ReturnCode code;
+            if (ArrayExists(interpreter, scopedName))
+            {
+                IDictionary<string, string> arrayResult = new Dictionary<string, string>();
+                code = ReadArray(interpreter, ref arrayResult, scopedName) ? ReturnCode.Ok : ReturnCode.Error;
+                result = string.Join(", ", arrayResult.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+            }
+            else
+            {
+                code = interpreter.EvaluateScript($"set {scopedName}", ref result);
+            }
 
             return code == ReturnCode.Ok;
         }
 
-        public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Eagle._Components.Public.Interpreter interpreter, bool excludeReserved)
+        public static IReadOnlyCollection<VariableWithValue> GetVariableValues(Interpreter interpreter, bool excludeReserved)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
 
@@ -130,7 +182,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return variablesWithValues;
         }
 
-        public static bool VariableExists(Eagle._Components.Public.Interpreter interpreter, ref Result result, string variableName)
+        public static bool VariableExists(Interpreter interpreter, ref Result result, string variableName)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))

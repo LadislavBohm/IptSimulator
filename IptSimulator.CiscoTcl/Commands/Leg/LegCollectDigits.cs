@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
-using IptSimulator.CiscoTcl.Model;
 using IptSimulator.CiscoTcl.Model.InputData;
 using NLog;
 using ISubCommand = IptSimulator.CiscoTcl.Commands.Abstractions.ISubCommand;
 
-namespace IptSimulator.CiscoTcl.Commands
+namespace IptSimulator.CiscoTcl.Commands.Leg
 {
     public sealed class LegCollectDigits : InputRequestingCommandBase<DigitsInputData>, ILegCommand, ISubCommand
     {
@@ -24,6 +19,8 @@ namespace IptSimulator.CiscoTcl.Commands
         /// Taken from: http://stackoverflow.com/questions/6478875/regular-expression-matching-e-164-formatted-phone-numbers
         /// </summary>
         private const string E164Regex = @"^\+?[1-9]\d{1,14}$";
+
+        public string Name => "collectdigits";
 
         public bool ValidateArguments(ArgumentList arguments, ref Result result)
         {

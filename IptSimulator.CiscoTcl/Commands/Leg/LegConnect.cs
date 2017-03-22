@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Eagle._Components.Public;
+﻿using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
 using NLog;
 using ISubCommand = IptSimulator.CiscoTcl.Commands.Abstractions.ISubCommand;
 
-namespace IptSimulator.CiscoTcl.Commands
+namespace IptSimulator.CiscoTcl.Commands.Leg
 {
     public class LegConnect : ILegCommand, ISubCommand
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
+
+        public string Name => "connect";
 
         public bool ValidateArguments(ArgumentList arguments, ref Result result)
         {

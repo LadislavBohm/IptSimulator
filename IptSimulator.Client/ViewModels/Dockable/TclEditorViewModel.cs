@@ -128,7 +128,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                {
                                    _logger.Debug("Inserting breakpoints to script");
 
-                                   var breakpoints = new HashSet<int>(Breakpoints);
+                                   var breakpoints = new HashSet<int>(Breakpoints ?? new List<int>());
                                    var script = InsertBreakpoints(Script, breakpoints);
                                    _logger.Debug("Evaluating whole script");
                                    _interpreter.Evaluate(script, breakpoints);
@@ -163,7 +163,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                }
                                _logger.Debug("Inserting breakpoints to script");
 
-                               var breakpoints = new HashSet<int>(Breakpoints);
+                               var breakpoints = new HashSet<int>(Breakpoints ?? new List<int>());
                                var script = InsertBreakpoints(SelectedScript, breakpoints);
 
                                _logger.Debug($"Evaluating selection: {SelectedScript}");
