@@ -12,6 +12,7 @@ using IptSimulator.CiscoTcl.Model;
 using IptSimulator.CiscoTcl.Model.InputData;
 using IptSimulator.CiscoTcl.TclInterpreter;
 using IptSimulator.CiscoTcl.TclInterpreter.EventArgs;
+using IptSimulator.CiscoTcl.Utils;
 using IptSimulator.Client.Model;
 using IptSimulator.Client.ViewModels.Abstractions;
 using IptSimulator.Client.ViewModels.Data;
@@ -41,6 +42,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         private readonly DigitInputViewModel _digitInputViewModel = new DigitInputViewModel();
         private bool _isDisposed = false;
+        private RelayCommand _stepIntoCommand;
 
         public TclEditorViewModel()
         {
@@ -70,6 +72,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                     EvaluateCommand.RaiseCanExecuteChanged();
                     EvaluateSelectionCommand.RaiseCanExecuteChanged();
                     ContinueEvaluationCommand.RaiseCanExecuteChanged();
+                    StepIntoCommand.RaiseCanExecuteChanged();
                 });
             }
         }
@@ -192,6 +195,18 @@ namespace IptSimulator.Client.ViewModels.Dockable
             }
         }
 
+        public RelayCommand StepIntoCommand
+        {
+            get
+            {
+                return _stepIntoCommand ?? (_stepIntoCommand = new RelayCommand(() =>
+                {
+                    _logger.Info($"Stepping into evaluation from breakpoint at line {CurrentBreakpointLine}");
+                    _interpreter.StepInto();
+                }, () => CurrentBreakpointLine.HasValue));
+            }
+        }
+
         public RelayCommand ReinitializeCommand
         {
             get
@@ -302,11 +317,10 @@ namespace IptSimulator.Client.ViewModels.Dockable
             int lineNumber = 1;
             foreach (string line in new LineReader(() => new StringReader(text)))
             {
-                if (breakpoints.Contains(lineNumber))
+                if (!String.IsNullOrWhiteSpace(line) && !TclUtils.IsCommentLine(line))
                 {
                     sb.AppendLine(CreateBeakpointText(lineNumber));
                 }
-
                 sb.AppendLine(line);
                 lineNumber++;
             }

@@ -203,5 +203,10 @@ namespace IptSimulator.CiscoTcl.Utils
 
             return result.String == "1";
         }
+
+        public static bool IsCommentLine(string line)
+        {
+            return line.TrimStart().StartsWith("#");
+        }
     }
 }

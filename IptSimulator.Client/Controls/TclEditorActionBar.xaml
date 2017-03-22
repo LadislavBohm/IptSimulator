@@ -50,6 +50,20 @@
                     <TextBlock Text="Continue" VerticalAlignment="Center" Margin="5,0,0,0"/>
                 </StackPanel>
             </Button>
+            
+            <Button Background="WhiteSmoke" 
+                    Width="85" 
+                    Height="24"
+                    Margin="0,0,10,0"
+                    HorizontalContentAlignment="Left"
+                    Visibility="{Binding CurrentBreakpointLine, Converter={StaticResource BreakpointLineToVisibilityConverter}}"
+                    Command="{Binding StepIntoCommand}"
+                    ToolTip="Steps into the next statement from current position.">
+                <StackPanel Orientation="Horizontal"  Margin="5,0,0,0">
+                    <iconPacks:PackIconMaterial Kind="StepForward" Foreground="DarkBlue" Height="12" Margin="0,2,0,0"/>
+                    <TextBlock Text="Step into" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
         </StackPanel>
         
         <Button Background="WhiteSmoke" 

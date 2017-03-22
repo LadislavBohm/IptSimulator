@@ -29,6 +29,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
         private readonly Interpreter _interpreter;
         private int? _breakpointLineNumber;
         private bool _pauseOnBreakpoint;
+        private bool _pauseOnActiveBreakpoint = true;
         private string _currentState;
         private string _currentEvent;
 
@@ -121,6 +122,24 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
             }
         }
 
+        private bool PauseOnActiveBreakpoint
+        {
+            get
+            {
+                lock (_lockRoot)
+                {
+                    return _pauseOnActiveBreakpoint;
+                }
+            }
+            set
+            {
+                lock (_lockRoot)
+                {
+                    _pauseOnActiveBreakpoint = value;
+                }
+            }
+        }
+
         public IEnumerable<VariableWithValue> WatchVariables
         {
             get
@@ -193,6 +212,14 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         public void Continue()
         {
+            PauseOnActiveBreakpoint = true;
+            PauseOnBreakpoint = false;
+            _breakpointLineNumber = null;
+        }
+
+        public void StepInto()
+        {
+            PauseOnActiveBreakpoint = false;
             PauseOnBreakpoint = false;
             _breakpointLineNumber = null;
         }
@@ -293,9 +320,9 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         private void OnBreakpointHit(object sender, BreakpointHitEventArgs eventArgs)
         {
-            if (!_activeBreakpoints.ContainsKey(eventArgs.LineNumber))
+            if (_pauseOnActiveBreakpoint && !_activeBreakpoints.ContainsKey(eventArgs.LineNumber))
             {
-                Logger.Info("Breakpoint is no longer in active breakpoints, continueing execution.");
+                Logger.Info("Breakpoint is no longer in active breakpoints, continuing execution.");
                 return;
             }
 
