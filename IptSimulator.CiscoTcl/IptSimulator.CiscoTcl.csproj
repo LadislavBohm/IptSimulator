@@ -55,6 +55,13 @@
     <Compile Include="Commands\Infotag\Infotag.cs" />
     <Compile Include="Commands\Infotag\InfotagGet.cs" />
     <Compile Include="Commands\Infotag\InfotagSet.cs" />
+    <Compile Include="Model\Infotag\IInfotagData.cs" />
+    <Compile Include="Model\Infotag\InfotagIdentifier.cs" />
+    <Compile Include="Model\Infotag\InfotagKind.cs" />
+    <Compile Include="Model\Infotag\InfotagMode.cs" />
+    <Compile Include="Model\Infotag\InfotagScope.cs" />
+    <Compile Include="Model\Infotag\InfotagProvider.cs" />
+    <Compile Include="Model\Infotag\InfotagScopeType.cs" />
     <Compile Include="Model\InputData\BaseInputData.cs" />
     <Compile Include="Commands\Abstractions\InputRequestingCommandBase.cs" />
     <Compile Include="Commands\Breakpoint.cs" />

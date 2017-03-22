@@ -4,12 +4,13 @@ using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
+using IptSimulator.CiscoTcl.Model.Infotag;
 
 namespace IptSimulator.CiscoTcl.Commands.Infotag
 {
     public class Infotag: CiscoTclCommand
     {
-        private static readonly Dictionary<string, object> InfoTagDataInternal = new Dictionary<string, object>();
+        private static readonly Dictionary<string, IInfotagData> InfoTagDataInternal = new Dictionary<string, IInfotagData>();
         private readonly InfotagSet _infotagSet = new InfotagSet(InfoTagDataInternal);
         private readonly InfotagGet _infotagGet = new InfotagGet(InfoTagDataInternal);
 
@@ -19,16 +20,16 @@ namespace IptSimulator.CiscoTcl.Commands.Infotag
             TclSubCommands.Add(_infotagSet);
         }
 
-        public static IReadOnlyDictionary<string, object> InfoTagData => InfoTagDataInternal;
+        public static IReadOnlyDictionary<string, IInfotagData> InfoTagData => InfoTagDataInternal;
 
         public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
         {
             InternalLogger.Info("Executing Infotag command.");
             InternalLogger.Debug($"Parameters: {string.Join(", ", arguments.Select(a => $"{a.Name}: {a.Value}"))}");
 
-            if (arguments.Count == 0)
+            if (arguments.Count < 2)
             {
-                result = Utility.WrongNumberOfArguments(this, 0, arguments, string.Empty);
+                result = Utility.WrongNumberOfArguments(this, 2, arguments, string.Empty);
                 ResultLogger.Error($"Incorrect number of arguments: {arguments.Count} for command infotag.");
                 return ReturnCode.Error;
             }
@@ -47,6 +48,5 @@ namespace IptSimulator.CiscoTcl.Commands.Infotag
             result = $"Incorrect subcommand argument: {subCommand}";
             return ReturnCode.Error;
         }
-
     }
 }

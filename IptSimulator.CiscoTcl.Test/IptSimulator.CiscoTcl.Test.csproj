@@ -94,6 +94,7 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="Scripts\call_wait.tcl" />
     <EmbeddedResource Include="Scripts\fsm_state_changing.tcl" />
+    <None Include="Scripts\app_session.tcl" />
     <None Include="Scripts\pinovnice.tcl" />
   </ItemGroup>
   <ItemGroup>

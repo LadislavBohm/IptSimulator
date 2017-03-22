@@ -43,15 +43,15 @@ namespace IptSimulator.CiscoTcl.Commands
 
                 if (arguments[1] == DefineCommand)
                 {
-                    return ExecuteDefine(interpreter, clientData, arguments, ref result);
+                    return ExecuteDefine(interpreter, arguments, ref result);
                 }
                 if (arguments[1] == SetStateCommand)
                 {
-                    return ExecuteSetState(interpreter, clientData, arguments, ref result);
+                    return ExecuteSetState(arguments, ref result);
                 }
                 if (arguments[1] == RaiseEventCommand)
                 {
-                    return ExecuteRaiseEvent(interpreter, clientData, arguments, ref result);
+                    return ExecuteRaiseEvent(interpreter, arguments, ref result);
                 }
 
                 var invalidArgs = $"Invalid argument {arguments[1]} in FSM command.";
@@ -68,8 +68,7 @@ namespace IptSimulator.CiscoTcl.Commands
             }
         }
 
-        private ReturnCode ExecuteRaiseEvent(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
-            ref Result result)
+        private ReturnCode ExecuteRaiseEvent(Interpreter interpreter, ArgumentList arguments, ref Result result)
         {
             var raisedEvent = arguments[2];
 
@@ -134,7 +133,7 @@ namespace IptSimulator.CiscoTcl.Commands
             return ReturnCode.Ok;
         }
 
-        private ReturnCode ExecuteDefine(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+        private ReturnCode ExecuteDefine(Interpreter interpreter, ArgumentList arguments,
             ref Result result)
         {
             var fsmArray = arguments[2];
@@ -185,8 +184,7 @@ namespace IptSimulator.CiscoTcl.Commands
             return ReturnCode.Ok;
         }
 
-        private ReturnCode ExecuteSetState(Eagle._Components.Public.Interpreter interpreter, IClientData clientData, ArgumentList arguments,
-            ref Result result)
+        private ReturnCode ExecuteSetState(ArgumentList arguments, ref Result result)
         {
             var fsmState = arguments[2];
 
