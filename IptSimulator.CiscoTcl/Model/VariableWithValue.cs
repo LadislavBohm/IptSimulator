@@ -12,9 +12,20 @@ namespace IptSimulator.CiscoTcl.Model
         {
             Variable = variable;
             Value = value;
+            HasSubValues = false;
+        }
+
+        public VariableWithValue(string variable, string value, IEnumerable<VariableWithValue> subValues)
+        {
+            Variable = variable;
+            Value = value;
+            SubValues = subValues;
+            HasSubValues = subValues != null;
         }
 
         public string Variable { get; }
         public string Value { get; }
+        public IEnumerable<VariableWithValue> SubValues { get; }
+        public bool HasSubValues { get; }
     }
 }

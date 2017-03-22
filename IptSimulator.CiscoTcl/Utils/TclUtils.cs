@@ -129,7 +129,7 @@ namespace IptSimulator.CiscoTcl.Utils
             return code == ReturnCode.Ok;
         }
 
-        public static bool GetVariableValue(Interpreter interpreter, ref Result result, string variableName, bool global)
+        public static bool GetVariableValue(Interpreter interpreter, string variableName, bool global, ref VariableWithValue result)
         {
             if (interpreter == null) throw new ArgumentNullException(nameof(interpreter));
             if (string.IsNullOrWhiteSpace(variableName))
@@ -137,15 +137,18 @@ namespace IptSimulator.CiscoTcl.Utils
 
             var scopedName = $"{(global ? "::" : string.Empty)}{variableName}";
             ReturnCode code;
+            Result tclResult = null;
             if (ArrayExists(interpreter, scopedName))
             {
                 IDictionary<string, string> arrayResult = new Dictionary<string, string>();
                 code = ReadArray(interpreter, ref arrayResult, scopedName) ? ReturnCode.Ok : ReturnCode.Error;
-                result = string.Join(", ", arrayResult.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+                var singleResult = string.Join(", ", arrayResult.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+                result = new VariableWithValue(variableName, singleResult, arrayResult.Select(kvp => new VariableWithValue(kvp.Key, kvp.Value)));
             }
             else
             {
-                code = interpreter.EvaluateScript($"set {scopedName}", ref result);
+                code = interpreter.EvaluateScript($"set {scopedName}", ref tclResult);
+                result = new VariableWithValue(variableName, tclResult);
             }
 
             return code == ReturnCode.Ok;
@@ -173,9 +176,11 @@ namespace IptSimulator.CiscoTcl.Utils
                     //exclude reserved variable
                     continue;
                 }
-                if (GetVariableValue(interpreter, ref result, variable, true) && !string.IsNullOrWhiteSpace(result))
+                VariableWithValue variableWithValue = null;
+                if (GetVariableValue(interpreter, variable, true, ref variableWithValue) &&
+                    !string.IsNullOrWhiteSpace(variableWithValue.Value))
                 {
-                    variablesWithValues.Add(new VariableWithValue(variable, result.String));
+                    variablesWithValues.Add(variableWithValue);
                 }
             }
 
