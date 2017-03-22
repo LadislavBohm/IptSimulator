@@ -20,11 +20,11 @@
                   IsReadOnly="True"
                   SelectionMode="Single"
                   SelectionUnit="FullRow"
-                  RowDetailsVisibilityMode="VisibleWhenSelected"
-                  >
+                  RowDetailsVisibilityMode="VisibleWhenSelected">
             <DataGrid.ItemContainerStyle>
                 <Style TargetType="DataGridRow">
                     <EventSetter Event="MouseLeftButtonDown" Handler="TopVariableGrid_OnMouseLeftButtonDown"/>
+                    <EventSetter Event="Selected" Handler="TopVariableGrid_RowSelectedChanged"></EventSetter>
                 </Style>
             </DataGrid.ItemContainerStyle>
             <DataGrid.Columns>
