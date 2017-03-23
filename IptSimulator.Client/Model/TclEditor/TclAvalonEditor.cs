@@ -122,12 +122,13 @@ namespace IptSimulator.Client.Model.TclEditor
 
         private bool CanSetBreakpoint(int breakpointLine)
         {
-            var vm = DataContext as TclEditorViewModel;
-            if (vm == null) return false;
-            //when not debugging allow set/unset
-            if (!vm.CurrentBreakpointLine.HasValue) return true;
-            //if we are currently debugging only allow to unset breakpoint, not set new one
-            return _breakpointBarMarginMargin.HasBreakpointAt(breakpointLine);
+            return true;
+            //var vm = DataContext as TclEditorViewModel;
+            //if (vm == null) return false;
+            ////when not debugging allow set/unset
+            //if (!vm.CurrentBreakpointLine.HasValue) return true;
+            ////if we are currently debugging only allow to unset breakpoint, not set new one
+            //return _breakpointBarMarginMargin.HasBreakpointAt(breakpointLine);
         }
 
         #endregion

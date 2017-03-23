@@ -38,7 +38,8 @@
             <tclEditor:TclAvalonEditor.InputBindings>
                 <KeyBinding Modifiers="Control" Key="Enter" Command="{Binding EvaluateCommand}"/>
                 <KeyBinding Modifiers="Control+Shift" Key="Enter" Command="{Binding EvaluateSelectionCommand}"/>
-                <KeyBinding Key="F8" Command="{Binding ContinueEvaluationCommand}"/>
+                <KeyBinding Key="F10" Command="{Binding ContinueEvaluationCommand}"/>
+                <KeyBinding Key="F11" Command="{Binding StepIntoCommand}"/>
             </tclEditor:TclAvalonEditor.InputBindings>
         </tclEditor:TclAvalonEditor>
         <local:TclEditorToolbar Grid.Row="2"

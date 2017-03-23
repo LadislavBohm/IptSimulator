@@ -30,10 +30,13 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
         private int? _breakpointLineNumber;
         private bool _pauseOnBreakpoint;
         private bool _pauseOnActiveBreakpoint = true;
+        private bool _delayExecution = false;
+        private bool _delayingExecution;
+        private TimeSpan _executionDelay = TimeSpan.FromMilliseconds(250);
         private string _currentState;
         private string _currentEvent;
 
-        
+
         #region Creation
 
         private TclVoiceInterpreter(Interpreter interpreter)
@@ -90,7 +93,7 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
             Logger.Debug("TCL Interpreter created.");
 
             var interpreter = new TclVoiceInterpreter(tclInterpreter);
-            
+
             interpreter.StartAsync(cancellationToken);
 
             Logger.Info("TCL interpreter successfully initialized.");
@@ -104,95 +107,64 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         private bool PauseOnBreakpoint
         {
-            get
-            {
-                lock (_lockRoot)
-                {
-                    return _pauseOnBreakpoint;
-                }
-
-            }
+            get { lock (_lockRoot) return _pauseOnBreakpoint; }
             set
             {
                 lock (_lockRoot)
                 {
                     _pauseOnBreakpoint = value;
                 }
-                RaiseDebugModeChangedEvent(value, _breakpointLineNumber);
+                RaiseDebugModeChangedEvent(value, DelayingExecution, _breakpointLineNumber);
+            }
+        }
+
+        private bool DelayingExecution
+        {
+            get { lock(_lockRoot) return _delayingExecution; }
+            set
+            {
+                lock (_lockRoot)
+                {
+                    _delayingExecution = value;
+                }
+                RaiseDebugModeChangedEvent(PauseOnBreakpoint, value, _breakpointLineNumber);
             }
         }
 
         private bool PauseOnActiveBreakpoint
         {
-            get
-            {
-                lock (_lockRoot)
-                {
-                    return _pauseOnActiveBreakpoint;
-                }
-            }
-            set
-            {
-                lock (_lockRoot)
-                {
-                    _pauseOnActiveBreakpoint = value;
-                }
-            }
+            get { lock (_lockRoot) return _pauseOnActiveBreakpoint; }
+            set { lock (_lockRoot) _pauseOnActiveBreakpoint = value; }
+        }
+
+        private bool DelayExecution
+        {
+            get { lock (_lockRoot) return _delayExecution; }
+            set { lock (_lockRoot) _delayExecution = value; }
+        }
+
+        private TimeSpan ExecutionDelay
+        {
+            get { lock (_lockRoot) return _executionDelay; }
+            set { lock (_lockRoot) _executionDelay = value; }
         }
 
         public IEnumerable<VariableWithValue> WatchVariables
         {
-            get
-            {
-                lock (_lockRoot)
-                {
-                    return _watchVariables;
-                }
-            }
-            private set
-            {
-                lock (_lockRoot)
-                {
-                    _watchVariables = value;
-                }
-                RaiseWatchVariablesChangedEvent();
-            }
+            get { lock (_lockRoot) return _watchVariables; }
+            private set { lock (_lockRoot) _watchVariables = value; RaiseWatchVariablesChangedEvent(); }
         }
 
         public string CurrentState
         {
-            get
-            {
-                lock (_lockRoot)
-                {
-                    return _currentState;
-                }
-            }
-            private set
-            {
-                lock (_lockRoot)
-                {
-                    _currentState = value;
-                }
-            }
+            get { lock (_lockRoot) return _currentState; }
+            private set { lock (_lockRoot) _currentState = value; }
         }
 
         public string CurrentEvent
         {
-            get
-            {
-                lock (_lockRoot)
-                {
-                    return _currentEvent;
-                }
-            }
-            private set
-            {
-                lock (_lockRoot)
-                {
-                    _currentEvent = value;
-                }
-            }
+            get { lock (_lockRoot) return _currentEvent; }
+            private set { lock (_lockRoot) _currentEvent = value; }
         }
 
         #endregion
@@ -249,6 +221,17 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
         public void ResetBreakpoints()
         {
             _activeBreakpoints.Clear();
+        }
+
+        public void DisableDelayedExecution()
+        {
+            DelayExecution = false;
+        }
+
+        public void EnableDelayedExecution(TimeSpan delay)
+        {
+            ExecutionDelay = delay;
+            DelayExecution = true;
         }
 
         #endregion
@@ -320,27 +303,37 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         private void OnBreakpointHit(object sender, BreakpointHitEventArgs eventArgs)
         {
+            _breakpointLineNumber = eventArgs.LineNumber;
             if (_pauseOnActiveBreakpoint && !_activeBreakpoints.ContainsKey(eventArgs.LineNumber))
             {
-                Logger.Info("Breakpoint is no longer in active breakpoints, continuing execution.");
-                return;
+                if (!DelayExecution)
+                {
+                    _breakpointLineNumber = null;
+                    Logger.Info("Breakpoint is no longer in active breakpoints, continuing execution.");
+                }
+                else
+                {
+                    Logger.Info( $"Breakpoint not in active breakpoints, delaying execution for {ExecutionDelay.TotalMilliseconds} milliseconds.");
+                    RefreshCurrentVariables();
+                    DelayingExecution = true;
+                    Thread.Sleep(ExecutionDelay);
+                    DelayingExecution = false;
+                }
             }
-
-            //breakpoint hit, stop here
-            _breakpointLineNumber = eventArgs.LineNumber;
-            PauseOnBreakpoint = true;
-            
-            Logger.Info("Stopping at breakpoint.");
-
-            RefreshCurrentVariables();
-
-            while (PauseOnBreakpoint)
+            else
             {
-                Logger.Trace($"Sleeping on breakpoint for {_commandEvaluateTimeout.TotalMilliseconds} milliseconds.");
-                Thread.Sleep(_commandEvaluateTimeout);
-            }
+                PauseOnBreakpoint = true;
+                Logger.Info("Stopping at breakpoint.");
+                RefreshCurrentVariables();
 
-            Logger.Info("Continuing from breakpoint.");
+                while (PauseOnBreakpoint)
+                {
+                    Logger.Trace($"Sleeping on breakpoint for {_commandEvaluateTimeout.TotalMilliseconds} milliseconds.");
+                    Thread.Sleep(_commandEvaluateTimeout);
+                }
+
+                Logger.Info("Continuing from breakpoint.");
+            }
         }
 
         private void DigitInputOnOnInputRequested(object sender, InputEventArgs<DigitsInputData> inputEventArgs)
@@ -352,12 +345,12 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         #region Events
 
-        private void RaiseDebugModeChangedEvent(bool isBreakpointHit, int? lineNumber) => 
-            BreakpointHitChanged?.Invoke(this, new DebugModeEventArgs(isBreakpointHit, lineNumber));
+        private void RaiseDebugModeChangedEvent(bool isBreakpointHit, bool isDealayedLineHit, int? lineNumber) =>
+            BreakpointHitChanged?.Invoke(this, new DebugModeEventArgs(isBreakpointHit, isDealayedLineHit, lineNumber));
 
         private void RaiseWatchVariablesChangedEvent() => WatchVariablesChanged?.Invoke(this, System.EventArgs.Empty);
 
-        private void RaiseEvaluateCompletedEvent(ReturnCode returnCode, Result result, int errorLine = 0) => 
+        private void RaiseEvaluateCompletedEvent(ReturnCode returnCode, Result result, int errorLine = 0) =>
             EvaluateCompleted?.Invoke(this, new EvaluteResultEventArgs(result, returnCode, errorLine));
 
         private void RaiseOnInputDigitsRequestedEvent(InputEventArgs<DigitsInputData> inputEventArgs)

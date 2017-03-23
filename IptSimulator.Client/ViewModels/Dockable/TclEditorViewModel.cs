@@ -41,8 +41,11 @@ namespace IptSimulator.Client.ViewModels.Dockable
         private IEnumerable<int> _breakpoints;
 
         private readonly DigitInputViewModel _digitInputViewModel = new DigitInputViewModel();
-        private bool _isDisposed = false;
+        private bool _isDisposed;
         private RelayCommand _stepIntoCommand;
+        private bool _delayedExecutionEnabled = true;
+        private bool _pausedOnBreakpoint;
+        private int _executionDelay = 100;
 
         public TclEditorViewModel()
         {
@@ -111,6 +114,53 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         public ConfigurationViewModel Configuration { get; private set; }
 
+        public bool DelayedExecutionEnabled
+        {
+            get { return _delayedExecutionEnabled; }
+            set
+            {
+                if (value == _delayedExecutionEnabled) return;
+                _delayedExecutionEnabled = value; 
+                RaisePropertyChanged();
+                if (_delayedExecutionEnabled)
+                {
+                    _interpreter.EnableDelayedExecution(TimeSpan.FromMilliseconds(ExecutionDelay));
+                }
+                else
+                {
+                    _interpreter.DisableDelayedExecution();
+                }
+            }
+        }
+
+        public bool PausedOnBreakpoint
+        {
+            get { return _pausedOnBreakpoint; }
+            set
+            {
+                _pausedOnBreakpoint = value;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    EvaluateCommand.RaiseCanExecuteChanged();
+                    EvaluateSelectionCommand.RaiseCanExecuteChanged();
+                    ContinueEvaluationCommand.RaiseCanExecuteChanged();
+                    StepIntoCommand.RaiseCanExecuteChanged();
+                });
+            }
+        }
+
+        public int ExecutionDelay
+        {
+            get { return _executionDelay; }
+            set
+            {
+                if (value < 0 || value == _executionDelay) return;
+                _executionDelay = value;
+                RaisePropertyChanged();
+                _interpreter.EnableDelayedExecution(TimeSpan.FromMilliseconds(value));
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -128,19 +178,19 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                    _logger.Info("No script to evaluate.");
                                    return;
                                }
+                               var script = InsertBreakpoints(Script);
                                if (Breakpoints != null)
                                {
                                    _logger.Debug("Inserting breakpoints to script");
 
                                    var breakpoints = new HashSet<int>(Breakpoints ?? new List<int>());
-                                   var script = InsertBreakpoints(Script, breakpoints);
                                    _logger.Debug("Evaluating whole script");
                                    _interpreter.Evaluate(script, breakpoints);
                                }
                                else
                                {
                                    _logger.Debug("Evaluating whole script");
-                                   _interpreter.Evaluate(Script);
+                                   _interpreter.Evaluate(script);
                                }
                             }
                            catch (Exception e)
@@ -148,7 +198,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                _logger.Error(e, "Script evaluation has thrown an exception.");
                                EvaluationResult = string.Empty;
                            }
-                       }, () => !CurrentBreakpointLine.HasValue));
+                       }, () => !PausedOnBreakpoint));
             }
         }
 
@@ -168,7 +218,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                _logger.Debug("Inserting breakpoints to script");
 
                                var breakpoints = new HashSet<int>(Breakpoints ?? new List<int>());
-                               var script = InsertBreakpoints(SelectedScript, breakpoints);
+                               var script = InsertBreakpoints(SelectedScript);
 
                                _logger.Debug($"Evaluating selection: {SelectedScript}");
 
@@ -179,7 +229,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                                _logger.Error(e, "Script evaluation has thrown an exception.");
                                EvaluationResult = string.Empty;
                            }
-                       }, () => !CurrentBreakpointLine.HasValue));
+                       }, () => !PausedOnBreakpoint));
             }
         }
 
@@ -191,7 +241,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                        {
                            _logger.Info($"Continuing evaluation from breakpoint at line {CurrentBreakpointLine}");
                            _interpreter.Continue();
-                       }, () => CurrentBreakpointLine.HasValue));
+                       }, () => PausedOnBreakpoint));
             }
         }
 
@@ -203,7 +253,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
                 {
                     _logger.Info($"Stepping into evaluation from breakpoint at line {CurrentBreakpointLine}");
                     _interpreter.StepInto();
-                }, () => CurrentBreakpointLine.HasValue));
+                }, () => PausedOnBreakpoint));
             }
         }
 
@@ -258,9 +308,11 @@ namespace IptSimulator.Client.ViewModels.Dockable
             _logger.Info("Initializing TCL Interpreter.");
 
             _interpreter = TclVoiceInterpreter.Create(_cancellationTokenSource);
-
-            //add event handlers
-            _interpreter.EvaluateCompleted += (sender, args) => EvaluationResult = args.Result;
+            if (DelayedExecutionEnabled)
+            {
+                _interpreter.EnableDelayedExecution(TimeSpan.FromMilliseconds(ExecutionDelay));
+            }
+            _interpreter.EvaluateCompleted += InterpreterOnEvaluateCompleted;
             _interpreter.WatchVariablesChanged += (sender, args) => Variables =  
                 new ObservableCollection<WatchVariableViewModel>(_interpreter.WatchVariables.Select(Mapper.Map));
             _interpreter.BreakpointHitChanged += OnBreakpointHitChanged;
@@ -268,6 +320,12 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
             _logger.Info("Initializing configuration");
             Configuration = new ConfigurationViewModel();
+        }
+
+        private void InterpreterOnEvaluateCompleted(object sender, EvaluteResultEventArgs evaluteResultEventArgs)
+        {
+            EvaluationResult = evaluteResultEventArgs.Result;
+            CurrentBreakpointLine = null;
         }
 
         private void SetupEvents()
@@ -278,7 +336,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
 
         private void OnBreakpointHitChanged(object sender, DebugModeEventArgs e)
         {
-            if (e.IsBreakpointHit && e.LineNumber.HasValue)
+            if (e.LineNumber.HasValue)
             {
                 CurrentBreakpointLine = e.LineNumber.Value;
             }
@@ -286,6 +344,7 @@ namespace IptSimulator.Client.ViewModels.Dockable
             {
                 CurrentBreakpointLine = null;
             }
+            PausedOnBreakpoint = e.IsBreakpointHit;
         }
 
         private void OnInputDigitsRequested(object sender, InputEventArgs<DigitsInputData> inputEventArgs)
@@ -311,9 +370,9 @@ namespace IptSimulator.Client.ViewModels.Dockable
                 new ObservableCollection<string>(_allEvents.Where(e => e.ToUpper().Contains(FilterEventsText.ToUpper())));
         }
 
-        private string InsertBreakpoints(string text, HashSet<int> breakpoints)
+        private string InsertBreakpoints(string text)
         {
-            var sb = new StringBuilder(text.Length + breakpoints.Count * 20);
+            var sb = new StringBuilder(text.Length * 2);
             int lineNumber = 1;
             foreach (string line in new LineReader(() => new StringReader(text)))
             {
