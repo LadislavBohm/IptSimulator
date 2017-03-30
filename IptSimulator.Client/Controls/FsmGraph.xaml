@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="IptSimulator.Client.Controls.FsmGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IptSimulator.Client.Controls"
+             xmlns:graphx="http://schemas.panthernet.ru/graphx/"
+             xmlns:fsmGraph="clr-namespace:IptSimulator.Client.Model.FsmGraph"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1100">
+    <Grid>
+        <Grid.Resources>
+            <ResourceDictionary Source="../Resources/Themes/FsmGraphStyles.xaml"/>
+        </Grid.Resources>
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Header="Save as img..."
+                          Click="SaveAsImgMenuItem_OnClick"/>
+                <MenuItem Header="Print"
+                          Click="PrintMenuItem_OnClick"/>
+            </ContextMenu>
+        </Grid.ContextMenu>
+
+        <graphx:ZoomControl x:Name="GraphZoomControl"
+                            AnimationLength="00:00:00.300"
+                            IsAnimationEnabled="False"
+                            ZoomSensitivity="28">
+            <fsmGraph:FsmGraphArea x:Name="GraphArea"/>
+        </graphx:ZoomControl>
+    </Grid>
+</UserControl>

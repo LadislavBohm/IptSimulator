@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="IptSimulator.Client.Controls.Dockable.EventRaisingWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:IptSimulator.Client.Controls"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="300"
+             d:DataContext="{Binding Source={StaticResource Locator}, Path=EventRaising}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0"
+              Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <xctk:WatermarkTextBox Grid.Column="0"
+                                   Margin="0,0,5,0"
+                                   Watermark="Search..."
+                                   VerticalContentAlignment="Center"
+                                   Text="{Binding FilterEventsText, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="KeyUp">
+                        <i:InvokeCommandAction Command="{Binding FilterEventsCommand}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </xctk:WatermarkTextBox>
+            
+            <Button Grid.Column="1" Height="26" Width="70" 
+                    Command="{Binding RaiseEventCommand}"
+                    Background="WhiteSmoke"
+                    HorizontalContentAlignment="Left">
+                <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                    <iconPacks:PackIconMaterial Kind="Flash" Foreground="#E3E323"/>
+                    <TextBlock VerticalAlignment="Center" Text="Raise" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+            
+        </Grid>
+        
+        <Grid Grid.Row="1"
+              Margin="5,0,5,5">
+            
+            <ListBox ItemsSource="{Binding Events}"
+                     SelectedItem="{Binding SelectedEvent}"
+                     SelectionMode="Single">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Height="25">
+                            <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListBox.Resources>
+            </ListBox>
+        </Grid>
+    </Grid>
+</UserControl>

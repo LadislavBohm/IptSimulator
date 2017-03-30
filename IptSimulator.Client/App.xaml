@@ -1,0 +1,20 @@
+﻿<Application x:Class="IptSimulator.Client.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+             xmlns:local="clr-namespace:IptSimulator.Client" 
+             StartupUri="Views/MainWindow.xaml" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             d1P1:Ignorable="d" xmlns:d1P1="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:IptSimulator.Client.ViewModels"
+             xmlns:converters="clr-namespace:IptSimulator.Client.Converters">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <viewModels:ViewModelLocator x:Key="Locator" d:IsDataSource="True" />
+                    <converters:BreakpointLineToBooleanConverter x:Key="BreakpointLineToBooleanConverter"/>
+                    <converters:BreakpointLineToReverseBooleanConverter x:Key="BreakpointLineToReverseBooleanConverter"/>
+                    <converters:BreakpointLineToVisibilityConverter x:Key="BreakpointLineToVisibilityConverter"/>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

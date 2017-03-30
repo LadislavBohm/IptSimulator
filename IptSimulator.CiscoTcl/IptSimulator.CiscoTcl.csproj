@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EEE0C038-33F7-41F7-99BB-112E21EB1683}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IptSimulator.CiscoTcl</RootNamespace>
+    <AssemblyName>IptSimulator.CiscoTcl</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Eagle, Version=1.0.6234.51946, Culture=neutral, PublicKeyToken=29c6297630be05eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Eagle.1.0.6234.51946\lib\Eagle.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.4\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\Abstractions\CiscoTclCommand.cs" />
+    <Compile Include="Commands\Abstractions\IInputRequestingCommand.cs" />
+    <Compile Include="Commands\Abstractions\ILegCommand.cs" />
+    <Compile Include="Commands\Abstractions\ISubCommand.cs" />
+    <Compile Include="Commands\Infotag\Infotag.cs" />
+    <Compile Include="Commands\Infotag\InfotagGet.cs" />
+    <Compile Include="Commands\Infotag\InfotagSet.cs" />
+    <Compile Include="Model\EventArgs\FsmEventArgs.cs" />
+    <Compile Include="Model\Infotag\IInfotagData.cs" />
+    <Compile Include="Model\Infotag\InfotagIdentifier.cs" />
+    <Compile Include="Model\Infotag\InfotagKind.cs" />
+    <Compile Include="Model\Infotag\InfotagMode.cs" />
+    <Compile Include="Model\Infotag\InfotagScope.cs" />
+    <Compile Include="Model\Infotag\InfotagProvider.cs" />
+    <Compile Include="Model\Infotag\InfotagScopeType.cs" />
+    <Compile Include="Model\InputData\BaseInputData.cs" />
+    <Compile Include="Commands\Abstractions\InputRequestingCommandBase.cs" />
+    <Compile Include="Commands\Breakpoint.cs" />
+    <Compile Include="Commands\Fsm\Fsm.cs" />
+    <Compile Include="Commands\Leg\LegCollectDigits.cs" />
+    <Compile Include="Commands\Leg\LegConnect.cs" />
+    <Compile Include="Commands\Leg\LegDisconnect.cs" />
+    <Compile Include="Events\CiscoTclEvents.cs" />
+    <Compile Include="Model\InputData\DigitsInputData.cs" />
+    <Compile Include="Model\EventArgs\InputEventArgs.cs" />
+    <Compile Include="TclInterpreter\Commands\EvaluteScriptCommand.cs" />
+    <Compile Include="TclInterpreter\EventArgs\BreakpointHitEventArgs.cs" />
+    <Compile Include="TclInterpreter\EventArgs\DebugModeEventArgs.cs" />
+    <Compile Include="TclInterpreter\EventArgs\EvaluteResultEventArgs.cs" />
+    <Compile Include="TclInterpreter\ICommand.cs" />
+    <Compile Include="TclInterpreter\InterpreterCommandBase.cs" />
+    <Compile Include="TclInterpreter\TclVoiceInterpreter.cs" />
+    <Compile Include="Model\FsmTransition.cs" />
+    <Compile Include="Commands\Leg\Leg.cs" />
+    <Compile Include="Model\VariableWithValue.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\TclCommandProvider.cs" />
+    <Compile Include="Utils\FsmSpecialStates.cs" />
+    <Compile Include="Utils\FsmUtils.cs" />
+    <Compile Include="Utils\TclConstants.cs" />
+    <Compile Include="Utils\TclUtils.cs" />
+    <Compile Include="Utils\FsmExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IptSimulator.Core\IptSimulator.Core.csproj">
+      <Project>{E0DB2147-83FC-46E5-A0F1-110F72AF1ED9}</Project>
+      <Name>IptSimulator.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Eagle.1.0.6234.51946\build\Eagle.targets" Condition="Exists('..\packages\Eagle.1.0.6234.51946\build\Eagle.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Eagle.1.0.6234.51946\build\Eagle.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Eagle.1.0.6234.51946\build\Eagle.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
