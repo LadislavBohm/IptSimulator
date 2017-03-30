@@ -55,6 +55,7 @@
     <Compile Include="Commands\Infotag\Infotag.cs" />
     <Compile Include="Commands\Infotag\InfotagGet.cs" />
     <Compile Include="Commands\Infotag\InfotagSet.cs" />
+    <Compile Include="Model\EventArgs\FsmEventArgs.cs" />
     <Compile Include="Model\Infotag\IInfotagData.cs" />
     <Compile Include="Model\Infotag\InfotagIdentifier.cs" />
     <Compile Include="Model\Infotag\InfotagKind.cs" />
@@ -65,13 +66,13 @@
     <Compile Include="Model\InputData\BaseInputData.cs" />
     <Compile Include="Commands\Abstractions\InputRequestingCommandBase.cs" />
     <Compile Include="Commands\Breakpoint.cs" />
-    <Compile Include="Commands\Fsm.cs" />
+    <Compile Include="Commands\Fsm\Fsm.cs" />
     <Compile Include="Commands\Leg\LegCollectDigits.cs" />
     <Compile Include="Commands\Leg\LegConnect.cs" />
     <Compile Include="Commands\Leg\LegDisconnect.cs" />
     <Compile Include="Events\CiscoTclEvents.cs" />
     <Compile Include="Model\InputData\DigitsInputData.cs" />
-    <Compile Include="Model\InputEventArgs.cs" />
+    <Compile Include="Model\EventArgs\InputEventArgs.cs" />
     <Compile Include="TclInterpreter\Commands\EvaluteScriptCommand.cs" />
     <Compile Include="TclInterpreter\EventArgs\BreakpointHitEventArgs.cs" />
     <Compile Include="TclInterpreter\EventArgs\DebugModeEventArgs.cs" />

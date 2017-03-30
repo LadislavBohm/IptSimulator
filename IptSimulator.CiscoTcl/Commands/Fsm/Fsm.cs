@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Eagle._Commands;
 using Eagle._Components.Public;
 using Eagle._Containers.Public;
 using Eagle._Interfaces.Public;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.CiscoTcl.Model.EventArgs;
 using IptSimulator.CiscoTcl.Utils;
 
-namespace IptSimulator.CiscoTcl.Commands
+namespace IptSimulator.CiscoTcl.Commands.Fsm
 {
     public sealed class Fsm : CiscoTclCommand
     {
@@ -22,7 +20,8 @@ namespace IptSimulator.CiscoTcl.Commands
 
         private readonly HashSet<FsmTransition> _transitions = new HashSet<FsmTransition>();
         private string _overriddenNextState = string.Empty;
-        
+        private string _currentState;
+
         public Fsm() : base(
             new CommandData("fsm", null, null, null, typeof(Fsm).FullName, CommandFlags.None, null, 0))
         {
@@ -32,9 +31,17 @@ namespace IptSimulator.CiscoTcl.Commands
         {
         }
 
-        public string CurrentState { get; private set; }
+        public string CurrentState
+        {
+            get { return _currentState; }
+            private set
+            {
+                _currentState = value; 
+                RaiseStateChangedEvent();
+            }
+        }
 
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
+        protected override ReturnCode ExecuteInternal(Interpreter interpreter, IClientData clientData, ArgumentList arguments,
             ref Result result)
         {
             try
@@ -205,6 +212,21 @@ namespace IptSimulator.CiscoTcl.Commands
             return ReturnCode.Ok;
         }
 
+        protected override void PostExecute(Interpreter interpreter, IClientData clientData, ArgumentList arguments)
+        {
+            if (arguments[1] == DefineCommand)
+            {
+                //FSM is defined, raise event
+                RaiseFsmGeneratedEvent();
+            }
+            if (arguments[1] == RaiseEventCommand)
+            {
+                //event was raised and current state *might* have changed
+                //TODO: maybe add proper state change detection
+                RaiseStateChangedEvent();
+            }
+        }
+
         #region Helper methods
 
         private ReturnCode ValidateArguments(ArgumentList arguments, out Result result)
@@ -281,6 +303,14 @@ namespace IptSimulator.CiscoTcl.Commands
                 .Distinct();
         }
 
+        private void RaiseStateChangedEvent() => StateChanged?.Invoke(this, new FsmEventArgs(CurrentState, _transitions));
+
+        private void RaiseFsmGeneratedEvent() => FsmGenerated?.Invoke(this, new FsmEventArgs(CurrentState, _transitions));
+
         #endregion
+
+        public event EventHandler<FsmEventArgs> StateChanged;
+
+        public event EventHandler<FsmEventArgs> FsmGenerated;
     }
 }

@@ -8,9 +8,10 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
 
         public void Evaluate(TclVoiceInterpreter interpreter)
         {
-            Logger.Info($"Evaluating {GetType().Name} command.");
+            var commandName = GetType().Name;
+            Logger.Info($"Evaluating {commandName} command.");
             EvaluateInternal(interpreter);
-            Logger.Info("Command evaluated.");
+            Logger.Info($"{commandName} command evaluated.");
         }
 
         protected abstract void EvaluateInternal(TclVoiceInterpreter interpreter);

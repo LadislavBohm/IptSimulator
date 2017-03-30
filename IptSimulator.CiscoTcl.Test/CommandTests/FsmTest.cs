@@ -1,5 +1,6 @@
 ﻿using Eagle._Components.Public;
 using IptSimulator.CiscoTcl.Commands;
+using IptSimulator.CiscoTcl.Commands.Fsm;
 using Xunit;
 
 namespace IptSimulator.CiscoTcl.Test.CommandTests

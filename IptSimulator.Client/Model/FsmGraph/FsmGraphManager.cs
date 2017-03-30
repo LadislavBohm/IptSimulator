@@ -7,6 +7,9 @@ using GraphX.PCL.Common.Enums;
 using GraphX.PCL.Common.Interfaces;
 using GraphX.PCL.Logic.Algorithms.LayoutAlgorithms;
 using GraphX.PCL.Logic.Algorithms.OverlapRemoval;
+using IptSimulator.CiscoTcl.Events;
+using IptSimulator.CiscoTcl.Utils;
+using IptSimulator.Client.Annotations;
 using NLog;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
@@ -15,7 +18,6 @@ namespace IptSimulator.Client.Model.FsmGraph
     internal class FsmGraphManager : IFsmGraphManager
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        private readonly Random _rnd = new Random();
 
         private LayoutAlgorithmTypeEnum _layout = LayoutAlgorithmTypeEnum.KK;
         private EdgeRoutingAlgorithmTypeEnum _edgeRouting = EdgeRoutingAlgorithmTypeEnum.SimpleER;
@@ -104,12 +106,12 @@ namespace IptSimulator.Client.Model.FsmGraph
 
         #endregion
 
-        public FsmGraphLogic Generate(ICollection<CiscoTcl.Model.FsmTransition> transitions)
+        public FsmGraphLogic Generate(string initialState, ICollection<CiscoTcl.Model.FsmTransition> transitions)
         {
             
             var logic = new FsmGraphLogic()
             {
-                Graph = GenerateGraph(transitions),
+                Graph = GenerateGraph(initialState, transitions),
                 DefaultLayoutAlgorithm = Layout,
                 DefaultEdgeRoutingAlgorithm = EdgeRouting,
                 EdgeCurvingEnabled = CurveEdges,
@@ -121,13 +123,13 @@ namespace IptSimulator.Client.Model.FsmGraph
             return logic;
         }
 
-        private FsmGraph GenerateGraph(ICollection<CiscoTcl.Model.FsmTransition> transitions)
+        private FsmGraph GenerateGraph(string initialState, ICollection<CiscoTcl.Model.FsmTransition> transitions)
         {
             var graph = new FsmGraph();
 
             _logger.Info("Generating graph vertices.");
 
-            var vertices = GenerateVertices(transitions);
+            var vertices = GenerateVertices(initialState, transitions);
             
             _logger.Info($"Generated a total of {vertices.Count} vertices.");
             _logger.Debug($"Generated vertices are: [{string.Join("|", vertices)}]");
@@ -156,6 +158,11 @@ namespace IptSimulator.Client.Model.FsmGraph
                 var source = vertices.FirstOrDefault(s => transition.SourceState == s.Name);
                 var target = vertices.FirstOrDefault(s => transition.DetermineActualTargetState() == s.Name);
 
+                if (transition.SourceState == FsmSpecialStates.AnyState)
+                {
+                    result.AddRange(HandleAnyStateTransition(transition, transitions, vertices));
+                    continue;
+                }
                 if (source == null)
                 {
                     _logger.Warn($"Source state is NULL for transition: {transition}. Not adding to graph.");
@@ -172,18 +179,57 @@ namespace IptSimulator.Client.Model.FsmGraph
             return result;
         }
 
-        private ICollection<FsmState> GenerateVertices(ICollection<CiscoTcl.Model.FsmTransition> transitions)
+        private ICollection<FsmState> GenerateVertices(string initialState, ICollection<CiscoTcl.Model.FsmTransition> transitions)
         {
             var allUniqueStates = transitions
+                .Where(t => t.SourceState != FsmSpecialStates.AnyState)
                 .Select(t => t.SourceState)
-                .Union(transitions.Select(t => t.DetermineActualTargetState()))
+                .Union(transitions.Where(t => t.SourceState != FsmSpecialStates.AnyState).Select(t => t.DetermineActualTargetState()))
                 .Distinct()
-                .Select(s => new FsmState(s, false, false))
+                .Select(s => new FsmState(s, s == initialState, s == initialState))
                 .ToList();
 
-            allUniqueStates[0].IsInitial = true;
-            allUniqueStates[_rnd.Next(0, allUniqueStates.Count)].IsCurrent = true;
             return allUniqueStates;
+        }
+
+        private IEnumerable<FsmTransition> HandleAnyStateTransition([NotNull] CiscoTcl.Model.FsmTransition anyStateTransition,
+            [NotNull] ICollection<CiscoTcl.Model.FsmTransition> transitions, [NotNull] ICollection<FsmState> vertices)
+        {
+            if (anyStateTransition == null) throw new ArgumentNullException(nameof(anyStateTransition));
+            if (transitions == null) throw new ArgumentNullException(nameof(transitions));
+            if (vertices == null) throw new ArgumentNullException(nameof(vertices));
+            if(anyStateTransition.SourceState != FsmSpecialStates.AnyState) 
+                throw new ArgumentException(@"Transition's source state is not of any event type.", nameof(anyStateTransition));
+
+            var result = new List<FsmTransition>();
+            _logger.Debug($"Creating edges for following any_state transition: {anyStateTransition}");
+
+            foreach (var transition in transitions)
+            {
+                if(transition.Equals(anyStateTransition)) continue;
+
+                var source = vertices.FirstOrDefault(s => transition.DetermineActualTargetState() == s.Name);
+                if (source == null)
+                {
+                    _logger.Warn($"Target state is NULL for transition: {transition}. Not adding to graph.");
+                    continue;
+                }
+                var actualTargetState = anyStateTransition.DetermineActualTargetState();
+                var anyStateTarget = actualTargetState == FsmSpecialStates.AnyState
+                    ? source
+                    : vertices.FirstOrDefault(s => actualTargetState == s.Name);
+                
+                if (anyStateTarget == null)
+                {
+                    _logger.Warn($"Source state is NULL for transition: {anyStateTransition}. Not adding to graph.");
+                    return Enumerable.Empty<FsmTransition>();
+                }
+
+                result.Add(new FsmTransition(source, anyStateTarget, anyStateTransition.Event, anyStateTransition.Procedure));
+            }
+
+            _logger.Debug($"Created {result.Count} edges based on {CiscoTclEvents.AnyEvent} event transition.");
+            return result;
         }
 
         private void RaiseGraphPropertyChanged()

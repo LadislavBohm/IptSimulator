@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.CiscoTcl.Model.EventArgs;
 using IptSimulator.CiscoTcl.Model.InputData;
 using NLog;
 

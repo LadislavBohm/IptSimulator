@@ -240,6 +240,7 @@
     <Compile Include="ViewModels\Data\WatchVariableViewModel.cs" />
     <Compile Include="ViewModels\Dockable\DebugWindowViewModel.cs" />
     <Compile Include="ViewModels\Dockable\EndpointTerminalViewModel.cs" />
+    <Compile Include="ViewModels\Dockable\FsmGraphViewModel.cs" />
     <Compile Include="ViewModels\DockerManagerViewModel.cs" />
     <Compile Include="ViewModels\Abstractions\DockWindowViewModel.cs" />
     <Compile Include="ViewModels\Data\LogViewModel.cs" />

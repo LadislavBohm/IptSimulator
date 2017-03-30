@@ -8,7 +8,9 @@ using Eagle._Commands;
 using Eagle._Components.Public;
 using IptSimulator.CiscoTcl.Commands;
 using IptSimulator.CiscoTcl.Commands.Abstractions;
+using IptSimulator.CiscoTcl.Commands.Fsm;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.CiscoTcl.Model.EventArgs;
 using IptSimulator.CiscoTcl.Model.InputData;
 using IptSimulator.CiscoTcl.TclInterpreter.Commands;
 using IptSimulator.CiscoTcl.TclInterpreter.EventArgs;
@@ -58,13 +60,21 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
                 }
 
                 SubscribeToInputCommand(customCommand as CiscoTclCommand);
-
-                var breakpoint = customCommand as Breakpoint;
-                if (breakpoint == null) continue;
-
-                breakpoint.BreakpointHit += OnBreakpointHit;
+                SubscribeToBreakpointCommand(customCommand as Breakpoint);
+                SubscribeToFsmCommand(customCommand as Fsm);
             }
 
+            void SubscribeToFsmCommand(Fsm fsmCommand)
+            {
+                if (fsmCommand == null) return;
+                fsmCommand.FsmGenerated += (sender, args) => RaiseFsmGeneratedEvent(args);
+                fsmCommand.StateChanged += (sender, args) => RaiseFsmStateChangedEvent(args);
+            }
+            void SubscribeToBreakpointCommand(Breakpoint breakpoint)
+            {
+                if (breakpoint == null) return;
+                breakpoint.BreakpointHit += OnBreakpointHit;
+            }
             void SubscribeToInputCommand(CiscoTclCommand command)
             {
                 if (command == null) return;
@@ -309,11 +319,11 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
                 if (!DelayExecution)
                 {
                     _breakpointLineNumber = null;
-                    Logger.Info("Breakpoint is no longer in active breakpoints, continuing execution.");
+                    Logger.Debug("Breakpoint is no longer in active breakpoints, continuing execution.");
                 }
                 else
                 {
-                    Logger.Info( $"Breakpoint not in active breakpoints, delaying execution for {ExecutionDelay.TotalMilliseconds} milliseconds.");
+                    Logger.Debug( $"Breakpoint not in active breakpoints, delaying execution for {ExecutionDelay.TotalMilliseconds} milliseconds.");
                     RefreshCurrentVariables();
                     DelayingExecution = true;
                     Thread.Sleep(ExecutionDelay);
@@ -353,19 +363,42 @@ namespace IptSimulator.CiscoTcl.TclInterpreter
         private void RaiseEvaluateCompletedEvent(ReturnCode returnCode, Result result, int errorLine = 0) =>
             EvaluateCompleted?.Invoke(this, new EvaluteResultEventArgs(result, returnCode, errorLine));
 
-        private void RaiseOnInputDigitsRequestedEvent(InputEventArgs<DigitsInputData> inputEventArgs)
-        {
+        private void RaiseOnInputDigitsRequestedEvent(InputEventArgs<DigitsInputData> inputEventArgs) => 
             OnInputDigitsRequested?.Invoke(this, inputEventArgs);
-        }
 
+        private void RaiseFsmGeneratedEvent(FsmEventArgs args) => FsmGenerated?.Invoke(this, args);
+
+        private void RaiseFsmStateChangedEvent(FsmEventArgs args) => FsmStateChanged?.Invoke(this, args);
+
+        /// <summary>
+        /// Breakpoint was hit, either by being in active breakpoints or by step into.
+        /// </summary>
         public event EventHandler<DebugModeEventArgs> BreakpointHitChanged;
+
+        /// <summary>
+        /// Script variables in global scope are refreshed.
+        /// </summary>
         public event EventHandler<System.EventArgs> WatchVariablesChanged;
+
+        /// <summary>
+        /// Event that is raised when script evaluation is completed.
+        /// </summary>
         public event EventHandler<EvaluteResultEventArgs> EvaluateCompleted;
 
         /// <summary>
         /// Input digits requested by TCL command. Don't forget to call SetInputData method to pass collected digits.
         /// </summary>
         public event EventHandler<InputEventArgs<DigitsInputData>> OnInputDigitsRequested;
+
+        /// <summary>
+        /// Event that fires when FSM is declared or redeclared. Contains info about all transitions and current state.
+        /// </summary>
+        public event EventHandler<FsmEventArgs> FsmGenerated;
+
+        /// <summary>
+        /// Event that fires when FSM state changes. Contains info about all transitions and current state.
+        /// </summary>
+        public event EventHandler<FsmEventArgs> FsmStateChanged;
 
         public void Dispose()
         {

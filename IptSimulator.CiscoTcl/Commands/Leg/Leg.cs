@@ -19,7 +19,7 @@ namespace IptSimulator.CiscoTcl.Commands.Leg
             TclSubCommands.Add(_legCollectDigits);
         }
 
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        protected override ReturnCode ExecuteInternal(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
         {
             if (arguments == null || (arguments.Count < 3))
             {

@@ -47,7 +47,7 @@
                         <avalonDock:LayoutDocument Title="FSM graph"
                                                    CanClose="False"
                                                    ContentId="06d813ada10c4d8d9757fad385959335">
-                            <controls:FsmGraph/>
+                            <controls:FsmGraph DataContext="{Binding Source={StaticResource Locator}, Path=TclEditor.FsmGraph}"/>
                         </avalonDock:LayoutDocument>
                     </avalonDock:LayoutDocumentPane>
                 </avalonDock:LayoutDocumentPaneGroup>

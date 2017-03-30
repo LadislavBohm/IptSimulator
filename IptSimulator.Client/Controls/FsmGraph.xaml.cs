@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight;
 using GraphX.Controls;
 using GraphX.PCL.Common.Enums;
 using IptSimulator.Client.Model.FsmGraph;
+using IptSimulator.Client.ViewModels.Dockable;
 using NLog;
 using FsmTransition = IptSimulator.CiscoTcl.Model.FsmTransition;
 
@@ -37,34 +38,49 @@ namespace IptSimulator.Client.Controls
             ZoomControl.SetViewFinderVisibility(GraphZoomControl, Visibility.Collapsed);
 
             Loaded += Window_OnLoaded;
-            //GotFocus += Window_OnLoaded;
-            
+
             _graphManager.GraphPropertyChanged += GraphManagerOnGraphPropertyChanged;
         }
 
         private void GraphManagerOnGraphPropertyChanged(object sender, EventArgs eventArgs)
         {
-            GenerateGraph();
+            var vm = (FsmGraphViewModel)DataContext;
+            if (vm.Transitions != null)
+            {
+                GenerateGraph(vm.CurrentState, vm.Transitions);
+            }
         }
 
         private void Window_OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
             if (!_loaded)
             {
-                GenerateGraph();
+                var vm = (FsmGraphViewModel) DataContext;
+                vm.PropertyChanged += (o, args) =>
+                {
+                    if (args.PropertyName == nameof(FsmGraphViewModel.CurrentState))
+                    {
+                        
+                    }
+                    if (args.PropertyName == nameof(FsmGraphViewModel.Transitions))
+                    {
+                        if (vm.Transitions != null)
+                        {
+                            GenerateGraph(vm.CurrentState, vm.Transitions);
+                        }
+                    }
+                };
                 _loaded = true;
             }
         }
 
-        private void GenerateGraph()
+        private void GenerateGraph(string initialState, ICollection<FsmTransition> transitions)
         {
             try
             {
                 _logger.Info("Generating graph from FSM transitions.");
 
-                var transitions = GenerateRandomTransitions();
-
-                GraphArea.LogicCore = _graphManager.Generate(transitions);
+                GraphArea.LogicCore = _graphManager.Generate(initialState, transitions);
 
                 _logger.Debug("Graph successfully generated from transitions.");
 
@@ -89,26 +105,6 @@ namespace IptSimulator.Client.Controls
                 _logger.Error(e, "Error while generating graph in OnLoad event.");
                 throw;
             }
-        }
-
-        private ICollection<FsmTransition> GenerateRandomTransitions()
-        {
-            var result = new List<FsmTransition>
-            {
-                new FsmTransition("INIT_STATE", "ev_setup_indication", "LanguageSelected", "CallInitReqLanguage"),
-                new FsmTransition("LanguageSelected", "ev_collectdigits_done", "PinEntered", "SetLanguageCheckBlockedNumber"),
-                new FsmTransition("PinEntered", "ev_collectdigits_done", "TransferNotified", "SetPinFindConfNumber"),
-                new FsmTransition("TransferNotified", "ev_media_done", "FirstTransferNotified", "SaveAttendeeToConnect"),
-                new FsmTransition("FirstTransferNotified", "ev_media_done", "TransferredToConf", "TransferToConf"),
-                new FsmTransition("TransferredToConf", "ev_setup_done", "same_state", "CheckSetupResult"),
-                new FsmTransition("ErrorNotifi", "ev_media_done", "same_state", "Disconnect"),
-                new FsmTransition("ConferenceFull", "ev_media_done", "same_state", "TransferToHelpdesk"),
-                new FsmTransition("ConferenceFull", "ev_setup_done", "same_state", "CheckTransToHelpdesk"),
-                new FsmTransition("any_state", "ev_disconnected", "AttendeeDisconnectedSaved", "SaveAttendeeDisconnected"),
-                new FsmTransition("NumberIsBlocked", "ev_media_done", "AttendeeDisconnectedSaved", "DisconnectAndSaveAttendeeDisconnected"),
-            };
-
-            return result;
         }
 
         private Rect EnlargeBy(Rect original, int enlargeBy = 150)

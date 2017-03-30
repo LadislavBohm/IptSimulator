@@ -9,6 +9,7 @@ using System.Windows;
 using GalaSoft.MvvmLight.Command;
 using IptSimulator.CiscoTcl.Events;
 using IptSimulator.CiscoTcl.Model;
+using IptSimulator.CiscoTcl.Model.EventArgs;
 using IptSimulator.CiscoTcl.Model.InputData;
 using IptSimulator.CiscoTcl.TclInterpreter;
 using IptSimulator.CiscoTcl.TclInterpreter.EventArgs;
@@ -113,6 +114,8 @@ namespace IptSimulator.Client.ViewModels.Dockable
         public string EvaluationResult { get; set; } = string.Empty;
 
         public ConfigurationViewModel Configuration { get; private set; }
+
+        public FsmGraphViewModel FsmGraph { get; private set; }
 
         public bool DelayedExecutionEnabled
         {
@@ -302,10 +305,11 @@ namespace IptSimulator.Client.ViewModels.Dockable
             base.Initialize();
 
             Variables = new ObservableCollection<WatchVariableViewModel>();
+            Configuration = new ConfigurationViewModel();
+            FsmGraph = new FsmGraphViewModel();
+
             EvaluationResult = string.Empty;
             SetupEvents();
-
-            _logger.Info("Initializing TCL Interpreter.");
 
             _interpreter = TclVoiceInterpreter.Create(_cancellationTokenSource);
             if (DelayedExecutionEnabled)
@@ -317,9 +321,10 @@ namespace IptSimulator.Client.ViewModels.Dockable
                 new ObservableCollection<WatchVariableViewModel>(_interpreter.WatchVariables.Select(Mapper.Map));
             _interpreter.BreakpointHitChanged += OnBreakpointHitChanged;
             _interpreter.OnInputDigitsRequested += OnInputDigitsRequested;
-
-            _logger.Info("Initializing configuration");
-            Configuration = new ConfigurationViewModel();
+            _interpreter.FsmStateChanged += (sender, args) => 
+                Application.Current.Dispatcher.Invoke(() => FsmGraph.SetNewState(args.CurrentState));
+            _interpreter.FsmGenerated += (sender, args) => 
+                Application.Current.Dispatcher.Invoke(() => FsmGraph.ResetFsmGraph(args.CurrentState, args.Transitions));
         }
 
         private void InterpreterOnEvaluateCompleted(object sender, EvaluteResultEventArgs evaluteResultEventArgs)

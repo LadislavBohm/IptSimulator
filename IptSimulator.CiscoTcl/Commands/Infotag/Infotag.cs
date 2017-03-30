@@ -22,7 +22,7 @@ namespace IptSimulator.CiscoTcl.Commands.Infotag
 
         public static IReadOnlyDictionary<string, IInfotagData> InfoTagData => InfoTagDataInternal;
 
-        public override ReturnCode Execute(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
+        protected override ReturnCode ExecuteInternal(Interpreter interpreter, IClientData clientData, ArgumentList arguments, ref Result result)
         {
             InternalLogger.Info("Executing Infotag command.");
             InternalLogger.Debug($"Parameters: {string.Join(", ", arguments.Select(a => $"{a.Name}: {a.Value}"))}");
